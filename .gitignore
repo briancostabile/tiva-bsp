@@ -50,3 +50,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+#CCS project settings
+.settings/
+project/ektm4c123gxl
+

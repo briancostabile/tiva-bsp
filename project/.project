@@ -87,7 +87,12 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>source/TI</name>
+			<name>third_party</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>third_party/TI</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -102,7 +107,7 @@
 			<locationURI>SOURCE_ROOT/main.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -277,670 +282,674 @@
 			<locationURI>SOURCE_ROOT/bsp/bsp_UsbIo.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/adc.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/adc.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/adc.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/adc.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/adc.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/adc.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/adc.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/adc.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/aes.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/aes.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/aes.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/aes.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/aes.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/aes.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/aes.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/aes.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/can.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/can.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/can.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/can.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/can.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/can.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/can.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/can.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/comp.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/comp.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/comp.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/comp.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/comp.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/comp.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/comp.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/comp.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/cpu.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/cpu.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/cpu.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/cpu.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/cpu.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/cpu.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/cpu.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/cpu.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/crc.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/crc.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/crc.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/crc.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/crc.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/crc.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/crc.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/crc.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/debug.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/debug.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/debug.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/debug.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/des.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/des.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/des.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/des.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/des.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/des.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/des.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/des.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/eeprom.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/eeprom.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/eeprom.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/eeprom.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/eeprom.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/eeprom.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/eeprom.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/eeprom.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/emac.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/emac.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/emac.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/emac.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/emac.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/emac.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/emac.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/emac.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi_workaround_ccs.s</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi_workaround_ccs.s</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi_workaround_ccs.s</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi_workaround_ccs.s</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/flash.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/flash.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/flash.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/flash.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/flash.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/flash.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/flash.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/flash.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/fpu.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/fpu.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/fpu.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/fpu.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/fpu.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/fpu.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/fpu.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/fpu.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/gpio.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/gpio.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/gpio.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/gpio.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/gpio.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/gpio.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/gpio.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/gpio.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/hibernate.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/hibernate.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/hibernate.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/hibernate.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/hibernate.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/hibernate.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/hibernate.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/hibernate.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/i2c.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/i2c.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/i2c.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/i2c.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/i2c.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/i2c.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/i2c.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/i2c.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/interrupt.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/interrupt.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/interrupt.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/interrupt.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/interrupt.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/interrupt.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/interrupt.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/interrupt.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/lcd.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/lcd.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/lcd.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/lcd.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/lcd.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/lcd.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/lcd.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/lcd.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/mpu.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/mpu.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/mpu.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/mpu.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/mpu.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/mpu.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/mpu.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/mpu.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pin_map.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pin_map.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pin_map.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pin_map.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pwm.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pwm.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pwm.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pwm.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pwm.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pwm.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pwm.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/pwm.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/qei.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/qei.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/qei.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/qei.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/qei.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/qei.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/qei.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/qei.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rom.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rom.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rom.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rom.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rom_map.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rom_map.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rom_map.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rom_map.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rtos_bindings.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rtos_bindings.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rtos_bindings.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/rtos_bindings.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/shamd5.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/shamd5.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/shamd5.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/shamd5.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/shamd5.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/shamd5.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/shamd5.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/shamd5.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/ssi.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/ssi.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/ssi.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/ssi.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/ssi.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/ssi.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/ssi.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/ssi.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sw_crc.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sw_crc.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sw_crc.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sw_crc.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sw_crc.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sw_crc.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sw_crc.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sw_crc.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysctl.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysctl.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysctl.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysctl.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysctl.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysctl.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysctl.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysctl.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysexc.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysexc.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysexc.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysexc.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysexc.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysexc.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysexc.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/sysexc.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/systick.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/systick.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/systick.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/systick.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/systick.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/systick.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/systick.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/systick.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/timer.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/timer.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/timer.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/timer.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/timer.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/timer.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/timer.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/timer.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/uart.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/uart.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/uart.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/uart.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/uart.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/uart.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/uart.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/uart.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/udma.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/udma.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/udma.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/udma.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/udma.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/udma.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/udma.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/udma.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/usb.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/usb.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/usb.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/usb.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/usb.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/usb.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/usb.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/usb.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/watchdog.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/watchdog.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/watchdog.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/watchdog.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/driverlib/watchdog.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/watchdog.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/watchdog.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/driverlib/watchdog.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usb-ids.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usb-ids.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usb-ids.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usb-ids.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbaudio.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbaudio.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbaudio.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbaudio.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbbuffer.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbbuffer.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbbuffer.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbbuffer.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbcdc.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbcdc.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbcdc.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbcdc.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdesc.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdesc.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdesc.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdesc.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdfu.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdfu.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdfu.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdfu.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdma.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdma.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdma.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbdma.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbhid.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbhid.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbhid.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbhid.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbkeyboardmap.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbkeyboardmap.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbkeyboardmap.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbkeyboardmap.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usblib.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usblib.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usblib.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usblib.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usblibpriv.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usblibpriv.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usblibpriv.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usblibpriv.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbmode.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbmode.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbmode.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbmode.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbmsc.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbmsc.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbmsc.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbmsc.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbringbuf.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbringbuf.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbringbuf.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbringbuf.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbtick.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbtick.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbtick.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbtick.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbulpi.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbulpi.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbulpi.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbulpi.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbulpi.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbulpi.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbulpi.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/usbulpi.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdaudio.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdaudio.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdaudio.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdaudio.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdaudio.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdaudio.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdaudio.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdaudio.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdbulk.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdbulk.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdbulk.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdbulk.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdbulk.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdbulk.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdbulk.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdbulk.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdc.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdc.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdc.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdc.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdc.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdc.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdc.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdc.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdesc.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdesc.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdesc.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcdesc.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcomp.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcomp.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcomp.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcomp.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcomp.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcomp.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcomp.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdcomp.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdconfig.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdconfig.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdconfig.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdconfig.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbddfu-rt.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbddfu-rt.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbddfu-rt.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbddfu-rt.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbddfu-rt.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbddfu-rt.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbddfu-rt.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbddfu-rt.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdenum.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdenum.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdenum.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdenum.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdevice.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdevice.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdevice.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdevice.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdevicepriv.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdevicepriv.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdevicepriv.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdevicepriv.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhandler.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhandler.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhandler.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhandler.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhid.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhid.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhid.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhid.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhid.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhid.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhid.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhid.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidkeyb.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidkeyb.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidkeyb.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidkeyb.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidkeyb.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidkeyb.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidkeyb.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidkeyb.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidmouse.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidmouse.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidmouse.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidmouse.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidmouse.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidmouse.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidmouse.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidmouse.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdmsc.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdmsc.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdmsc.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdmsc.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdmsc.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdmsc.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdmsc.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdmsc.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidgamepad.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidgamepad.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidgamepad.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidgamepad.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidgamepad.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidgamepad.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidgamepad.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/device/usbdhidgamepad.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhaudio.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhaudio.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhaudio.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhaudio.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhaudio.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhaudio.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhaudio.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhaudio.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhid.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhid.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhid.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhid.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhid.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhid.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhid.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhid.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidkeyboard.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidkeyboard.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidkeyboard.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidkeyboard.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidkeyboard.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidkeyboard.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidkeyboard.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidkeyboard.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidmouse.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidmouse.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidmouse.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidmouse.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidmouse.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidmouse.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidmouse.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhidmouse.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhub.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhub.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhub.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhub.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhub.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhub.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhub.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhhub.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhmsc.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhmsc.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhmsc.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhmsc.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhmsc.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhmsc.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhmsc.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhmsc.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhost.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhost.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhost.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhost.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhostenum.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhostenum.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhostenum.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhostenum.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhostpriv.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhostpriv.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhostpriv.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhostpriv.h</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhscsi.c</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhscsi.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhscsi.c</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhscsi.c</locationURI>
 		</link>
 		<link>
-			<name>source/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhscsi.h</name>
+			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhscsi.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhscsi.h</locationURI>
+			<locationURI>THIRD_PARTY_ROOT/TI/TivaWare_C_Series-2.1.0.12573/usblib/host/usbhscsi.h</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
 		<variable>
 			<name>SOURCE_ROOT</name>
 			<value>$%7BPARENT-1-PROJECT_LOC%7D/source</value>
+		</variable>
+		<variable>
+			<name>THIRD_PARTY_ROOT</name>
+			<value>$%7BPARENT-1-PROJECT_LOC%7D/third_party</value>
 		</variable>
 	</variableList>
 </projectDescription>
