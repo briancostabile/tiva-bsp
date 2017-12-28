@@ -132,16 +132,6 @@
 			<locationURI>SOURCE_ROOT/bsp/bsp_Clk.h</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/bsp_UartIo.c</name>
-			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/bsp_UartIo.c</locationURI>
-		</link>
-		<link>
-			<name>source/bsp/bsp_UartIo.h</name>
-			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/bsp_UartIo.h</locationURI>
-		</link>
-		<link>
 			<name>source/bsp/bsp_Gpio.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/bsp_Gpio.c</locationURI>
@@ -270,6 +260,16 @@
 			<name>source/bsp/bsp_Uart.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/bsp_Uart.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_UartIo.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_UartIo.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_UartIo.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_UartIo.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/bsp_UsbIo.c</name>

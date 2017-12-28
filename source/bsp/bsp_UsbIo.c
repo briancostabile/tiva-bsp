@@ -165,7 +165,7 @@ uint32_t bsp_UsbIo_controlHandler( void* pvCBData, uint32_t ui32Event, uint32_t 
 /**
  * dynamic table to hold all the info needed for a USB CDC device
  */
-bsp_UartIo_InternalInfo_t bsp_UsbIo_InternalInfoTable[ BSP_PLATFORM_IO_USB_NUM ];
+bsp_UartIo_InternalInfo_t bsp_UsbIo_InternalInfo;
 
 
 /*============================================================================*/
@@ -180,41 +180,23 @@ bsp_UartIo_InternalInfo_t bsp_UsbIo_InternalInfoTable[ BSP_PLATFORM_IO_USB_NUM ]
  * instance data. The buffer, in turn, has its callback set to the application
  * function and the callback data set to our CDC instance structure.
  */
-extern const tUSBBuffer bsp_UsbIo_txBufferInfoTable[ BSP_PLATFORM_IO_USB_NUM ];
-extern const tUSBBuffer bsp_UsbIo_rxBufferInfoTable[ BSP_PLATFORM_IO_USB_NUM ];
+extern const tUSBBuffer bsp_UsbIo_txBufferInfo;
+extern const tUSBBuffer bsp_UsbIo_rxBufferInfo;
 
-tUSBDCDCDevice bsp_UsbIo_deviceInfoTable[ BSP_PLATFORM_IO_USB_NUM ] =
+tUSBDCDCDevice bsp_UsbIo_deviceInfo =
 {
-    {
-        USB_VID_TI_1CBE,                            // VendorId
-        USB_PID_SERIAL,                             // PID
-        0,                                          // maxPower in mA
-        USB_CONF_ATTR_SELF_PWR,                     // power attributes
-        bsp_UsbIo_controlHandler,                   // control event handler
-        (void *)&(bsp_UsbIo_InternalInfoTable[0]),  // parameter to pass into control event handler
-        USBBufferEventCallback,                     // rx event handler
-        (void *)&(bsp_UsbIo_rxBufferInfoTable[0]),  // parameter to pass into rx event handler
-        USBBufferEventCallback,                     // tx event handler
-        (void *)&(bsp_UsbIo_txBufferInfoTable[0]),  // parameter to pass into tx event handler
-        bsp_UsbIo_stringDescriptors,                // Descriptor strings structure array
-        NUM_STRING_DESCRIPTORS                      // Number of descriptors
-    },
-#if( BSP_PLATFORM_IO_USB_NUM > 1 )
-    {
-        USB_VID_TI_1CBE,                            // VendorId
-        USB_PID_SERIAL,                             // PID
-        0,                                          // maxPower in mA
-        USB_CONF_ATTR_SELF_PWR,                     // power attributes
-        bsp_UsbIo_controlHandler,                   // control event handler
-        (void *)&(bsp_UsbIo_InternalInfoTable[1]),  // parameter to pass into control event handler
-        USBBufferEventCallback,                     // rx event handler
-        (void *)&(bsp_UsbIo_rxBufferInfoTable[1]),  // parameter to pass into rx event handler
-        USBBufferEventCallback,                     // tx event handler
-        (void *)&(bsp_UsbIo_txBufferInfoTable[1]),  // parameter to pass into tx event handler
-        bsp_UsbIo_stringDescriptors,                // Descriptor strings structure array
-        NUM_STRING_DESCRIPTORS                      // Number of descriptors
-    }
-#endif
+    USB_VID_TI_1CBE,                    // VendorId
+    USB_PID_SERIAL,                     // PID
+    0,                                  // maxPower in mA
+    USB_CONF_ATTR_SELF_PWR,             // power attributes
+    bsp_UsbIo_controlHandler,           // control event handler
+    (void *)&(bsp_UsbIo_InternalInfo),  // parameter to pass into control event handler
+    USBBufferEventCallback,             // rx event handler
+    (void *)&(bsp_UsbIo_rxBufferInfo),  // parameter to pass into rx event handler
+    USBBufferEventCallback,             // tx event handler
+    (void *)&(bsp_UsbIo_txBufferInfo),  // parameter to pass into tx event handler
+    bsp_UsbIo_stringDescriptors,        // Descriptor strings structure array
+    NUM_STRING_DESCRIPTORS              // Number of descriptors
 };
 
 
@@ -224,36 +206,17 @@ tUSBDCDCDevice bsp_UsbIo_deviceInfoTable[ BSP_PLATFORM_IO_USB_NUM ] =
  */
 uint8_t bsp_UsbIo_usbRxBuffer0[BSP_PLATFORM_IO_USB0_RX_BUF_LEN];
 uint8_t bsp_UsbIo_rxBufferWorkspace0[USB_BUFFER_WORKSPACE_SIZE];
-#if( BSP_PLATFORM_IO_USB_NUM > 1 )
-uint8_t bsp_UsbIo_usbRxBuffer1[BSP_PLATFORM_IO_USB1_RX_BUF_LEN];
-uint8_t bsp_UsbIo_rxBufferWorkspace1[USB_BUFFER_WORKSPACE_SIZE];
-#endif
-const tUSBBuffer bsp_UsbIo_rxBufferInfoTable[ BSP_PLATFORM_IO_USB_NUM ] =
+const tUSBBuffer bsp_UsbIo_rxBufferInfo =
 {
-    {
-        false,                                     // This is a receive buffer.
-        bsp_UsbIo_rxHandler,                       // pfnCallback
-        (void *)&(bsp_UsbIo_InternalInfoTable[0]), // Callback data is our device pointer.
-        USBDCDCPacketRead,                         // pfnTransfer
-        USBDCDCRxPacketAvailable,                  // pfnAvailable
-        (void *)&(bsp_UsbIo_deviceInfoTable[0]),   // pvHandle
-        bsp_UsbIo_usbRxBuffer0,                    // pui8Buffer
-        sizeof(bsp_UsbIo_usbRxBuffer0),            // ui32BufferSize
-        bsp_UsbIo_rxBufferWorkspace0               // pvWorkspace
-    },
-#if( BSP_PLATFORM_IO_USB_NUM > 1 )
-    {
-        false,                                     // This is a receive buffer.
-        bsp_UsbIo_rxHandler,                       // pfnCallback
-        (void *)&(bsp_UsbIo_InternalInfoTable[1]), // Callback data is our device pointer.
-        USBDCDCPacketRead,                         // pfnTransfer
-        USBDCDCRxPacketAvailable,                  // pfnAvailable
-        (void *)&(bsp_UsbIo_deviceInfoTable[1]),   // pvHandle
-        bsp_UsbIo_usbRxBuffer1,                    // pui8Buffer
-        sizeof(bsp_UsbIo_usbRxBuffer1),            // ui32BufferSize
-        bsp_UsbIo_rxBufferWorkspace1               // pvWorkspace
-    }
-#endif
+    false,                             // This is a receive buffer.
+    bsp_UsbIo_rxHandler,               // pfnCallback
+    (void *)&(bsp_UsbIo_InternalInfo), // Callback data is our device pointer.
+    USBDCDCPacketRead,                 // pfnTransfer
+    USBDCDCRxPacketAvailable,          // pfnAvailable
+    (void *)&(bsp_UsbIo_deviceInfo),   // pvHandle
+    bsp_UsbIo_usbRxBuffer0,            // pui8Buffer
+    sizeof(bsp_UsbIo_usbRxBuffer0),    // ui32BufferSize
+    bsp_UsbIo_rxBufferWorkspace0       // userData
 };
 
 /*============================================================================*/
@@ -262,36 +225,17 @@ const tUSBBuffer bsp_UsbIo_rxBufferInfoTable[ BSP_PLATFORM_IO_USB_NUM ] =
  */
 uint8_t bsp_UsbIo_usbTxBuffer0[BSP_PLATFORM_IO_USB0_TX_BUF_LEN];
 uint8_t bsp_UsbIo_txBufferWorkspace0[USB_BUFFER_WORKSPACE_SIZE];
-#if( BSP_PLATFORM_IO_USB_NUM > 1 )
-uint8_t bsp_UsbIo_usbTxBuffer1[BSP_PLATFORM_IO_USB1_TX_BUF_LEN];
-uint8_t bsp_UsbIo_txBufferWorkspace1[USB_BUFFER_WORKSPACE_SIZE];
-#endif
-const tUSBBuffer bsp_UsbIo_txBufferInfoTable[ BSP_PLATFORM_IO_USB_NUM ] =
+const tUSBBuffer bsp_UsbIo_txBufferInfo =
 {
-    {
-        true,                                      // This is a transmit buffer.
-        bsp_UsbIo_txHandler,                       // pfnCallback
-        (void *)&(bsp_UsbIo_InternalInfoTable[0]), // Callback data is our device pointer.
-        USBDCDCPacketWrite,                        // pfnTransfer
-        USBDCDCTxPacketAvailable,                  // pfnAvailable
-        (void *)&(bsp_UsbIo_deviceInfoTable[0]),   // pvHandle
-        bsp_UsbIo_usbTxBuffer0,                    // pui8Buffer
-        sizeof(bsp_UsbIo_usbTxBuffer0),            // ui32BufferSize
-        bsp_UsbIo_txBufferWorkspace0               // pvWorkspace
-    },
-#if( BSP_PLATFORM_IO_USB_NUM > 1 )
-    {
-        true,                                      // This is a transmit buffer.
-        bsp_UsbIo_txHandler,                       // pfnCallback
-        (void *)&(bsp_UsbIo_InternalInfoTable[1]), // Callback data is our device pointer.
-        USBDCDCPacketWrite,                        // pfnTransfer
-        USBDCDCTxPacketAvailable,                  // pfnAvailable
-        (void *)&(bsp_UsbIo_deviceInfoTable[1]),   // pvHandle
-        bsp_UsbIo_usbTxBuffer1,                    // pui8Buffer
-        sizeof(bsp_UsbIo_usbTxBuffer1),            // ui32BufferSize
-        bsp_UsbIo_txBufferWorkspace1               // pvWorkspace
-    }
-#endif
+    true,                              // This is a transmit buffer.
+    bsp_UsbIo_txHandler,               // pfnCallback
+    (void *)&(bsp_UsbIo_InternalInfo), // Callback data is our device pointer.
+    USBDCDCPacketWrite,                // pfnTransfer
+    USBDCDCTxPacketAvailable,          // pfnAvailable
+    (void *)&(bsp_UsbIo_deviceInfo),   // pvHandle
+    bsp_UsbIo_usbTxBuffer0,            // pui8Buffer
+    sizeof(bsp_UsbIo_usbTxBuffer0),    // ui32BufferSize
+    bsp_UsbIo_txBufferWorkspace0       // userData
 };
 
 
@@ -304,25 +248,6 @@ const tUSBBuffer bsp_UsbIo_txBufferInfoTable[ BSP_PLATFORM_IO_USB_NUM ] =
 //****************************************************************************
 uint8_t bsp_UsbIo_descriptorData[ BSP_USBIO_DESCRIPTOR_DATA_SIZE ];
 
-tCompositeEntry bsp_UsbIo_compositeEntries[ BSP_PLATFORM_IO_USB_NUM ];
-
-//****************************************************************************
-//
-// Allocate the Device Data for the top level composite device class.
-//
-//****************************************************************************
-tUSBDCompositeDevice bsp_UsbIo_compositeDevice =
-{
-    USB_VID_TI_1CBE,               // Stellaris VID.
-    USB_PID_COMP_SERIAL,           // Stellaris PID for composite serial device.
-    250,                           // This is in 2mA increments so 500mA.
-    USB_CONF_ATTR_BUS_PWR,         // Bus powered device.
-    0,                             // There is no need for a default composite event handler.
-    bsp_UsbIo_stringDescriptors,   // The string table.
-    NUM_STRING_DESCRIPTORS,        // The string table len
-    DIM(bsp_UsbIo_compositeEntries), // Composite device array len
-    bsp_UsbIo_compositeEntries       // The Composite device array.
-};
 
 
 /*==============================================================================
@@ -590,17 +515,11 @@ uint32_t bsp_UsbIo_rxHandler( void*    pvCBData,
 void
 bsp_UsbIo_init( void )
 {
-    uint8_t i;
-    char filenameBuf[5] = "usbX";
+    char filenameBuf[5] = "usb0";
 
     /* Configure USB pins as input no pull */
     bsp_Gpio_configInput(  BSP_GPIO_PORT_ID_USB_DP,
                            (BSP_GPIO_BIT_MASK_USB_DP | BSP_GPIO_BIT_MASK_USB_DM),
-                           false, //openDrain
-                           BSP_GPIO_PULL_NONE );
-
-    bsp_Gpio_configInput(  BSP_GPIO_PORT_ID_USB_VB,
-                           (BSP_GPIO_BIT_MASK_USB_VB),
                            false, //openDrain
                            BSP_GPIO_PULL_NONE );
 
@@ -610,55 +529,38 @@ bsp_UsbIo_init( void )
                                 true, //analog
                                 0 );
 
-    bsp_Gpio_configAltFunction( BSP_GPIO_PORT_ID_USB_VB,
-                                (BSP_GPIO_BIT_MASK_USB_VB),
-                                true, //analog
-                                0 );
+    bsp_UsbIo_InternalInfo.deviceInfoPtr = &(bsp_UsbIo_deviceInfo);
+    bsp_UsbIo_InternalInfo.dataAvailCallback = NULL;
 
-    for( i=0; i<BSP_PLATFORM_IO_USB_NUM; i++ )
-    {
-        bsp_UsbIo_InternalInfoTable[i].deviceInfoPtr = &(bsp_UsbIo_deviceInfoTable[i]);
-        bsp_UsbIo_InternalInfoTable[i].dataAvailCallback = NULL;
+    /* Add IO device to be used in stdio */
+    add_device( filenameBuf,
+                _MSA, /* Single stream open at a time (_MSA is for multiple) */
+                bsp_UsbIo_open,
+                bsp_UsbIo_close,
+                bsp_UsbIo_read,
+                bsp_UsbIo_write,
+                bsp_UsbIo_lseek,
+                bsp_UsbIo_unlink,
+                bsp_UsbIo_rename );
 
-        snprintf( filenameBuf, sizeof(filenameBuf), "usb%d", i );
+    bsp_UsbIo_InternalInfo.file.fd        = (int)&(bsp_UsbIo_InternalInfo);
+    bsp_UsbIo_InternalInfo.file.pos       = NULL;
+    bsp_UsbIo_InternalInfo.file.bufend    = NULL;
+    bsp_UsbIo_InternalInfo.file.buff_stop = NULL;
+    bsp_UsbIo_InternalInfo.file.flags     = 0;
 
-        /* Add IO device to be used in stdio */
-        add_device( filenameBuf,
-                    _MSA, /* Single stream open at a time (_MSA is for multiple) */
-                    bsp_UsbIo_open,
-                    bsp_UsbIo_close,
-                    bsp_UsbIo_read,
-                    bsp_UsbIo_write,
-                    bsp_UsbIo_lseek,
-                    bsp_UsbIo_unlink,
-                    bsp_UsbIo_rename );
+    /* Open the usb file for reading/writing */
+    fopen( filenameBuf,"rw" );
 
-        bsp_UsbIo_InternalInfoTable[i].file.fd        = (int)&(bsp_UsbIo_InternalInfoTable[i]);
-        bsp_UsbIo_InternalInfoTable[i].file.pos       = NULL;
-        bsp_UsbIo_InternalInfoTable[i].file.bufend    = NULL;
-        bsp_UsbIo_InternalInfoTable[i].file.buff_stop = NULL;
-        bsp_UsbIo_InternalInfoTable[i].file.flags     = 0;
-
-        /* Open the usb file for reading/writing */
-        fopen( filenameBuf,"rw" );
-
-        /* Initialize the transmit and receive buffers. */
-        USBBufferInit( &(bsp_UsbIo_txBufferInfoTable[i]) );
-        USBBufferInit( &(bsp_UsbIo_rxBufferInfoTable[i]) );
-
-        /* Initialize the composite device */
-        bsp_UsbIo_compositeDevice.psDevices[i].pvInstance =
-            USBDCDCCompositeInit( 0, &(bsp_UsbIo_deviceInfoTable[i]), &(bsp_UsbIo_compositeEntries[i]) );
-
-    }
+    /* Initialize the transmit and receive buffers. */
+    USBBufferInit( &(bsp_UsbIo_txBufferInfo) );
+    USBBufferInit( &(bsp_UsbIo_rxBufferInfo) );
 
     /* Set the USB stack mode to Device mode with no VBUS monitoring. */
     USBStackModeSet( NULL, eUSBModeForceDevice, NULL );
 
-    /* Pass our device information to the USB library and place the device on the bus. */
-    USBDCompositeInit( 0, &bsp_UsbIo_compositeDevice,
-                       sizeof(bsp_UsbIo_descriptorData),
-                       bsp_UsbIo_descriptorData );
+    /* Initialize the composite device */
+    USBDCDCInit( 0, &(bsp_UsbIo_deviceInfo) );
 
     return;
 }
@@ -692,11 +594,11 @@ bsp_UsbIo_open( const char*  path,
     /* Todo: Do something smarter here */
     if( path[(pathLen-1)] == '0' )
     {
-        ret = (int)&(bsp_UsbIo_InternalInfoTable[0]);
+        ret = (int)&(bsp_UsbIo_InternalInfo);
     }
     else
     {
-        ret = (int)&(bsp_UsbIo_InternalInfoTable[1]);
+        ret = (int)&(bsp_UsbIo_InternalInfo);
     }
 
     return( ret );

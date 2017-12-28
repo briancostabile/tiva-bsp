@@ -9,6 +9,7 @@
 #include "bsp_Pragma.h"
 #include "driverlib/rom.h"
 #include "driverlib/rom_map.h"
+#include "driverlib/interrupt.h"
 
 /*==============================================================================
  *                                 Defines

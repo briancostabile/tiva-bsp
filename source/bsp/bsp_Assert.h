@@ -28,19 +28,19 @@
 #if BSP_ASSERT_HALT
 #warning HALT ON ASSERTION ENABLED!
 #define BSP_ASSERT( _cond )                         \
-{                                                      \
-    if( !(_cond) )                                     \
-    {                                                  \
+{                                                   \
+    if( !(_cond) )                                  \
+    {                                               \
         bsp_Assert_halt( __FUNCTION__, __LINE__ );  \
-    }                                                  \
+    }                                               \
 }
 #else
 #define BSP_ASSERT( _cond )                         \
-{                                                      \
-    if( !(_cond) )                                     \
-    {                                                  \
+{                                                   \
+    if( !(_cond) )                                  \
+    {                                               \
         bsp_Assert_reset( __FUNCTION__, __LINE__ ); \
-    }                                                  \
+    }                                               \
 }
 #endif
 #else
@@ -51,7 +51,7 @@
 /*============================================================================*/
 /**
  * @brief Macro that works just like assert except this will never be compiled
- *        out of the build
+ *        out of the build.
  */
 #define BSP_ASSERT_SALSA_CHECK( _cond )             \
 {                                                   \

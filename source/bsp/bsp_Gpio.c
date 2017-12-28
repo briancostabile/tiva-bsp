@@ -114,6 +114,7 @@ bsp_Gpio_configAltFunction( bsp_Gpio_PortId_t    portId,
     {
         /* Disable the digital select bit */
         BSP_GPIO_REG(portAddr, DEN) &= ~mask;
+        BSP_GPIO_REG(portAddr, AMSEL) |= mask;
     }
     else
     {

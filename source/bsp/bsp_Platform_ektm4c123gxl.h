@@ -26,7 +26,6 @@
  *                            IO defines
  *============================================================================*/
 #define BSP_PLATFORM_IO_UART_NUM         1
-#define BSP_PLATFORM_IO_USB_NUM          2
 
 #define BSP_PLATFORM_IO_UART0_ID         0
 #define BSP_PLATFORM_IO_UART0_RX_PIN_SEL 0
@@ -45,6 +44,6 @@
  *============================================================================*/
 #define BSP_PLATFORM_STDOUT_MAPPING "usb0"
 #define BSP_PLATFORM_STDIN_MAPPING  "usb0"
-#define BSP_PLATFORM_STDERR_MAPPING "usb1"
+#define BSP_PLATFORM_STDERR_MAPPING "usb0"
 
 #endif

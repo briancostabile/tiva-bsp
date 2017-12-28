@@ -14,6 +14,7 @@
 #include "driverlib/rom.h"
 #include "driverlib/rom_map.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/uart.h"
 
 
 /*==============================================================================
@@ -703,7 +704,7 @@ bsp_Uart_rcv( bsp_Uart_Id_t         id,
        data to be received by the Rx ISR */
     if( callback == NULL )
     {
-        while( rxTransInfoPtr->valid ) asm( "NOP" );
+        while( rxTransInfoPtr->valid ) asm( " NOP" );
     }
     BSP_TRACE_UART_RCV_EXIT();
 
