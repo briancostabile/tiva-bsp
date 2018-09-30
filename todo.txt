@@ -1,0 +1,26 @@
+X Point to latest Gnu tools
+X Build newlib-nano from source and point to it from project
+X Create makefiles for build
+- Switch to vscode for building and source browsing
+- Add syslog style logging
+- Complete port of newlib (exit)
+X Build out command interpreter
+  X Binary mode
+- Python test harness
+- HW test menu
+  X read/write registers
+  - external peripheral tests
+- Build message passing framework
+  - Event handler
+  - pre-allocated messages
+  - reference counting
+  - forwarding with zero-copy
+  - injection from serial interface
+- Add Mac/linux support for OSAPI
+- Add Sys menu
+  - Reset reason (HW/SW)
+  - assert string
+  - version string
+- Exception handling
+  - Register dump
+- Strings in sections

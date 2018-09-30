@@ -1,3 +1,24 @@
+/**
+ * Copyright 2017 Brian Costabile
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 /*============================================================================*/
 /**
  * @file bsp_UsbIo.c
@@ -10,6 +31,7 @@
 #include "bsp_Clk.h"
 #include "bsp_Assert.h"
 #include "bsp_Interrupt.h"
+#include "bsp_Io.h"
 
 #include "driverlib/rom.h"
 #include "driverlib/rom_map.h"
@@ -26,6 +48,8 @@
 #include "usblib/device/usbdevice.h"
 #include "usblib/device/usbdcomp.h"
 #include "usblib/device/usbdcdc.h"
+
+#include <stdio.h>
 
 #define BSP_USBIO_DESCRIPTOR_DATA_SIZE    (COMPOSITE_DCDC_SIZE + COMPOSITE_DCDC_SIZE)
 
@@ -51,8 +75,7 @@ typedef struct
 {
     tUSBDCDCDevice*                   deviceInfoPtr;
     bsp_UsbIo_DataAvailableCallback_t dataAvailCallback;
-    FILE                              file;
-} bsp_UartIo_InternalInfo_t;
+} bsp_UsbIo_InternalInfo_t;
 
 /*==============================================================================
  *                                Globals
@@ -165,7 +188,7 @@ uint32_t bsp_UsbIo_controlHandler( void* pvCBData, uint32_t ui32Event, uint32_t 
 /**
  * dynamic table to hold all the info needed for a USB CDC device
  */
-bsp_UartIo_InternalInfo_t bsp_UsbIo_InternalInfo;
+bsp_UsbIo_InternalInfo_t bsp_UsbIo_InternalInfo;
 
 
 /*============================================================================*/
@@ -322,9 +345,9 @@ uint32_t bsp_UsbIo_controlHandler( void*    pvCBData,
                                    uint32_t ui32MsgValue,
                                    void*    pvMsgData )
 {
-    bsp_UartIo_InternalInfo_t* internalInfoPtr;
+    bsp_UsbIo_InternalInfo_t* internalInfoPtr;
 
-    internalInfoPtr = (bsp_UartIo_InternalInfo_t*)pvCBData;
+    internalInfoPtr = (bsp_UsbIo_InternalInfo_t*)pvCBData;
 
     /* Which event are we being asked to process? */
     switch( ui32Event )
@@ -449,9 +472,9 @@ uint32_t bsp_UsbIo_rxHandler( void*    pvCBData,
                               void*    pvMsgData )
 {
     uint32_t                   retVal;
-    bsp_UartIo_InternalInfo_t* internalInfoPtr;
+    bsp_UsbIo_InternalInfo_t* internalInfoPtr;
 
-    internalInfoPtr = (bsp_UartIo_InternalInfo_t*)pvCBData;
+    internalInfoPtr = (bsp_UsbIo_InternalInfo_t*)pvCBData;
 
     switch( ui32Event )
     {
@@ -532,32 +555,22 @@ bsp_UsbIo_init( void )
     bsp_UsbIo_InternalInfo.deviceInfoPtr = &(bsp_UsbIo_deviceInfo);
     bsp_UsbIo_InternalInfo.dataAvailCallback = NULL;
 
-    /* Add IO device to be used in stdio */
-    add_device( filenameBuf,
-                _MSA, /* Single stream open at a time (_MSA is for multiple) */
-                bsp_UsbIo_open,
-                bsp_UsbIo_close,
-                bsp_UsbIo_read,
-                bsp_UsbIo_write,
-                bsp_UsbIo_lseek,
-                bsp_UsbIo_unlink,
-                bsp_UsbIo_rename );
-
-    bsp_UsbIo_InternalInfo.file.fd        = (int)&(bsp_UsbIo_InternalInfo);
-    bsp_UsbIo_InternalInfo.file.pos       = NULL;
-    bsp_UsbIo_InternalInfo.file.bufend    = NULL;
-    bsp_UsbIo_InternalInfo.file.buff_stop = NULL;
-    bsp_UsbIo_InternalInfo.file.flags     = 0;
-
-    /* Open the usb file for reading/writing */
-    fopen( filenameBuf,"rw" );
+    bsp_Io_addDevice( filenameBuf,
+                      &bsp_UsbIo_InternalInfo,
+                      bsp_UsbIo_open,
+                      bsp_UsbIo_close,
+                      bsp_UsbIo_read,
+                      bsp_UsbIo_write,
+                      bsp_UsbIo_lseek,
+                      bsp_UsbIo_unlink,
+                      bsp_UsbIo_rename );
 
     /* Initialize the transmit and receive buffers. */
     USBBufferInit( &(bsp_UsbIo_txBufferInfo) );
     USBBufferInit( &(bsp_UsbIo_rxBufferInfo) );
 
     /* Set the USB stack mode to Device mode with no VBUS monitoring. */
-    USBStackModeSet( NULL, eUSBModeForceDevice, NULL );
+    USBStackModeSet( 0, eUSBModeForceDevice, NULL );
 
     /* Initialize the composite device */
     USBDCDCInit( 0, &(bsp_UsbIo_deviceInfo) );
@@ -571,9 +584,9 @@ void
 bsp_UsbIo_registerDataAvailableCallback( int                               file_descriptor,
                                          bsp_UsbIo_DataAvailableCallback_t callback )
 {
-    bsp_UartIo_InternalInfo_t* internalInfoPtr;
+    bsp_UsbIo_InternalInfo_t* internalInfoPtr;
 
-    internalInfoPtr = (bsp_UartIo_InternalInfo_t*)file_descriptor;
+    internalInfoPtr = (bsp_UsbIo_InternalInfo_t*)file_descriptor;
     internalInfoPtr->dataAvailCallback = callback;
 
     return;
@@ -592,7 +605,7 @@ bsp_UsbIo_open( const char*  path,
     pathLen = strlen(path);
 
     /* Todo: Do something smarter here */
-    if( path[(pathLen-1)] == '0' )
+    if( path[(pathLen-2)] == '0' )
     {
         ret = (int)&(bsp_UsbIo_InternalInfo);
     }
@@ -619,9 +632,9 @@ bsp_UsbIo_read( int    file_descriptor,
                 char*  buffer,
                 size_t count )
 {
-    bsp_UartIo_InternalInfo_t* internalInfoPtr;
+    bsp_UsbIo_InternalInfo_t* internalInfoPtr;
 
-    internalInfoPtr = (bsp_UartIo_InternalInfo_t*)file_descriptor;
+    internalInfoPtr = (bsp_UsbIo_InternalInfo_t*)file_descriptor;
 
     return( USBBufferRead((tUSBBuffer *)(internalInfoPtr->deviceInfoPtr->pvRxCBData), (uint8_t*)buffer, count) );
 }
@@ -633,9 +646,9 @@ bsp_UsbIo_write( int         file_descriptor,
                  const char* buffer,
                  size_t      count )
 {
-    bsp_UartIo_InternalInfo_t* internalInfoPtr;
+    bsp_UsbIo_InternalInfo_t* internalInfoPtr;
 
-    internalInfoPtr = (bsp_UartIo_InternalInfo_t*)file_descriptor;
+    internalInfoPtr = (bsp_UsbIo_InternalInfo_t*)file_descriptor;
 
     return( USBBufferWrite( (tUSBBuffer *)(internalInfoPtr->deviceInfoPtr->pvTxCBData), (uint8_t*)buffer, count ) );
 }
