@@ -10,17 +10,37 @@ X Build out command interpreter
 - HW test menu
   X read/write registers
   - external peripheral tests
-- Build message passing framework
+X Add Sys menu
+  X Reset reason (HW/SW)
+  X assert string
+  - version string
+X Exception handling
+  X Register dump
+X Strings in sections- Build message passing framework
   - Event handler
   - pre-allocated messages
   - reference counting
   - forwarding with zero-copy
   - injection from serial interface
-- Add Mac/linux support for OSAPI
-- Add Sys menu
-  - Reset reason (HW/SW)
-  - assert string
-  - version string
-- Exception handling
-  - Register dump
-- Strings in sections
+- Build out OSAPI
+  - Add mem-block interface
+  - Add queue interface
+  - Add timer interface
+  - Add Mac/linux support for OSAPI
+- Drivers for Push-Buttons
+- Driver for LED (3 Separate colors)
+- I2C transaction driver
+- Add Sensorhub to platform/build
+  - Temp
+  - Pressure
+  - Motion
+  - Light
+  - Humidity 
+  - LED
+  - Push Buttons
+  - Sensor Thread
+  - Event Handlers for Temp
+- Service Peripheral Thread
+  - Event handler for Buttons
+  - Event handler for Temp
+  - Event handelr for Pressure

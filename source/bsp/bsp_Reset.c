@@ -51,7 +51,7 @@ static uint16_t    bsp_Reset_assertLine BSP_ATTR_NO_INIT;
 static const char* bsp_Reset_assertFunction BSP_ATTR_NO_INIT;
 
 /*
- * The following 2 globals are placed in fixed locations in RAM so they will
+ * The following globals are placed in fixed locations in RAM so they will
  * be in the same location even after a FW upgrade.
  */
 volatile uint32_t    BSP_ATTR_SECTION(".reset_info") bsp_Reset_count;

@@ -172,7 +172,7 @@ tst_Mem_dumpHex32( void* addr )
     uint8_t line_idx;
     for( line_idx=0; line_idx<DUMP_BYTES_PER_LINE; line_idx+=4 )
     {
-        printf( "%08X ", ((uint32_t*)addr)[line_idx] );
+        printf( "%08X ", (unsigned int)((uint32_t*)addr)[line_idx] );
     }
     return;
 }

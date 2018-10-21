@@ -32,6 +32,7 @@
 #include "bsp_UsbIo.h"
 #include "bsp_Gpio.h"
 #include "bsp_Trace.h"
+#include "bsp_Button.h"
 #include "bsp_I2CMaster.h"
 #include "bsp_Io.h"
 
@@ -74,6 +75,7 @@ main(void)
 	bsp_Interrupt_init();
 	bsp_Gpio_init();
     bsp_Trace_init();
+    bsp_Button_init();
     bsp_I2cMaster_init();
 	bsp_Uart_init();
 	bsp_Io_init();

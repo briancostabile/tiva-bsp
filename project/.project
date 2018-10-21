@@ -147,6 +147,16 @@
 			<locationURI>SOURCE_ROOT/bsp/bsp_Assert.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/bsp_Button.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Button.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_Button.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Button.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/bsp_Clk.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/bsp_Clk.c</locationURI>
@@ -380,6 +390,16 @@
 			<name>third_party/TI/TivaWare_C_Series-2.1.0.12573/usblib</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/ektm4c123gxl/bsp_Button_ektm4c123gxl.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123gxl/bsp_Button_ektm4c123gxl.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/ektm4c123gxl/bsp_Button_ektm4c123gxl.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123gxl/bsp_Button_ektm4c123gxl.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/platform/ektm4c123gxl/bsp_Gpio_ektm4c123gxl.c</name>
