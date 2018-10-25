@@ -21,7 +21,7 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_I2cPerIf.c
+ * @file bsp_I2cMaster.c
  * @brief Contains Functions for configuring and accessing the I2C peripheral
  *        bus
  */
@@ -87,5 +87,23 @@ bsp_I2cMaster_init( void )
     // Wait until done transmitting
     //while(I2CMasterBusy(I2C_BASE));
 
+    return;
+}
+
+/*============================================================================*/
+void
+bsp_I2cMaster_snd( uint8_t addr,
+                   size_t  len,
+                   void*   data )
+{
+    return;
+}
+
+/*============================================================================*/
+void
+bsp_I2cMaster_rcv( uint8_t addr,
+                   size_t  len,
+                   void*   data )
+{
     return;
 }

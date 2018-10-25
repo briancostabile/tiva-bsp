@@ -28,6 +28,7 @@
 #include "bsp_Interrupt.h"
 #include "bsp_Mcu.h"
 #include "bsp_Pragma.h"
+#include "inc/hw_nvic.h"
 #include "driverlib/rom.h"
 #include "driverlib/rom_map.h"
 #include "driverlib/interrupt.h"
@@ -117,3 +118,9 @@ bsp_Interrupt_clearPending( bsp_Interrupt_Id_t intId )
 }
 
 
+/*============================================================================*/
+bsp_Interrupt_Id_t
+bsp_Interrupt_activeId( void )
+{
+    return( ADDR_TO_REG( NVIC_INT_CTRL ) & NVIC_INT_CTRL_VEC_ACT_M );
+}

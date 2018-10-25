@@ -118,5 +118,11 @@ bsp_Interrupt_disable( bsp_Interrupt_Id_t intId );
 void
 bsp_Interrupt_clearPending( bsp_Interrupt_Id_t intId );
 
+/*==============================================================================
+ * Get the active interrupt 0 is returned if not running in an interrupt
+ */
+bsp_Interrupt_Id_t
+bsp_Interrupt_activeId( void );
+
 
 #endif

@@ -139,7 +139,7 @@
 
 /*============================================================================*/
 /**
- * @brief Macro to supress warnings
+ * @brief Macro to suppress warnings
  */
 #if defined(BSP_PRAGMA_COMPILER_CCS)
 #define BSP_PRAGMA_COMPILER_WARNING_DISABLE_START(gcc_option,clang_unused,msvc_unused)

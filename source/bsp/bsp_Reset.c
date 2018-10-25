@@ -43,12 +43,12 @@
  * cleared and maintained throughout the operation. One every reset they are
  * latched into the corresponding "last" variable.
  ******************************/
-static bsp_Reset_Reason_t bsp_Reset_lastReason;
-static uint16_t           bsp_Reset_lastAssertLine;
-static const char*        bsp_Reset_lastAssertFunction;
+bsp_Reset_Reason_t bsp_Reset_lastReason;
+uint16_t           bsp_Reset_lastAssertLine;
+const char*        bsp_Reset_lastAssertFunction;
 
-static uint16_t    bsp_Reset_assertLine BSP_ATTR_NO_INIT;
-static const char* bsp_Reset_assertFunction BSP_ATTR_NO_INIT;
+uint16_t    bsp_Reset_assertLine BSP_ATTR_NO_INIT;
+const char* bsp_Reset_assertFunction BSP_ATTR_NO_INIT;
 
 /*
  * The following globals are placed in fixed locations in RAM so they will

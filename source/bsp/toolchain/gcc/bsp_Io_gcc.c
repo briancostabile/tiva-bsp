@@ -27,6 +27,7 @@
 #include "bsp_Types.h"
 #include "bsp_Io.h"
 #include "bsp_Platform.h"
+#include "bsp_Reset.h"
 
 #include <reent.h>
 
@@ -88,7 +89,8 @@ bsp_Io_fdToIdx( int fd )
 void exit(int code)
 {
     (void)code;
-    while(1);
+    bsp_Reset_systemReset( BSP_RESET_SWREASON_EXIT );
+    while(1); // Will never reach this while loop
 }
 
 /*============================================================================*/

@@ -21,36 +21,45 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Button_ektm4c123gxl.h
- * @brief Contains platform specific trace mappings to IO pins
+ * @file svc_Eh.h
+ * @brief Contains the structures, definitions and functions common for all
+ *        Event Handlers
  */
-#ifndef BSP_BUTTON_EKTM4C123GXL_H
-#define BSP_BUTTON_EKTM4C123GXL_H
+#ifndef SVC_EH_H
+#define SVC_EH_H
 
-#include "bsp_Gpio.h"
-
-/*==============================================================================
- *                               Defines
- *============================================================================*/
-/*============================================================================*/
-
-#define BSP_PLATFORM_IO_BUTTON_NUM   2
-#define BSP_GPIO_PORT_ID_BUTTON_0    BSP_GPIO_PORT_ID_USR_SW1
-#define BSP_GPIO_BASE_ADDR_BUTTON_0  BSP_GPIO_BASE_ADDR_USR_SW1
-#define BSP_GPIO_BIT_OFFSET_BUTTON_0 BSP_GPIO_BIT_OFFSET_USR_SW1
-#define BSP_GPIO_BIT_MASK_BUTTON_0   BSP_GPIO_BIT_MASK_USR_SW1
-
-#define BSP_GPIO_PORT_ID_BUTTON_1    BSP_GPIO_PORT_ID_USR_SW2
-#define BSP_GPIO_BASE_ADDR_BUTTON_1  BSP_GPIO_BASE_ADDR_USR_SW2
-#define BSP_GPIO_BIT_OFFSET_BUTTON_1 BSP_GPIO_BIT_OFFSET_USR_SW2
-#define BSP_GPIO_BIT_MASK_BUTTON_1   BSP_GPIO_BIT_MASK_USR_SW2
-
-
+#include "bsp_Types.h"
+#include "bsp_Platform.h"
+#include "svc_MsgFwk.h"
+#include "svc_EhId.h"
+#include "osapi.h"
 
 /*==============================================================================
- *                            Public Functions
+ *                                Defines
  *============================================================================*/
+
+/*==============================================================================
+ *                                Types
+ *============================================================================*/
+typedef void (*svc_Eh_InitHandler_t)( void );
+typedef void (*svc_Eh_MsgHandler_t)( svc_MsgFwk_Hdr_t* msgPtr );
+
 /*============================================================================*/
-extern const bsp_Button_IoInfo_t bsp_Button_ioInfoTable[BSP_PLATFORM_IO_BUTTON_NUM];
+typedef struct svc_Eh_Info_s
+{
+    svc_EhId_t                eh;
+    size_t                    bcastListLen;
+    const svc_MsgFwk_MsgId_t* bcastList;
+    svc_Eh_InitHandler_t      initHandler;
+    svc_Eh_MsgHandler_t       msgHandler;
+} svc_Eh_Info_t;
+
+
+/*============================================================================*/
+void
+svc_Eh_listRun( size_t                cnt, 
+                const svc_Eh_Info_t** infoPtrList,
+                size_t                queueDepth,
+                void*                 queueMem );
 
 #endif

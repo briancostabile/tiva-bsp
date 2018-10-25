@@ -21,48 +21,51 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Gpio_ektm4c123gxl.c
- * @brief Contains Configuration table for the supported IO ports on this platform
+ * @file svc_TimerEh.h
+ * @brief Contains the message interface related to the timer service
  */
-#include "bsp_Gpio.h"
-#include "bsp_Clk.h"
-#include "bsp_Interrupt.h"
+#ifndef SVC_TIMER_EH_H
+#define SVC_TIMER_EH_H
 
-#include "driverlib/sysctl.h"
-#include "inc/hw_memmap.h"
+#include "bsp_Types.h"
+#include "bsp_Platform.h"
+#include "bsp_Button.h"
+#include <stdint.h>
+#include "svc_Eh.h"
+#include "svc_MsgFwk.h"
+#include "osapi.h"
 
 /*==============================================================================
- *                              Global Data
+ *                               Defines
  *============================================================================*/
 /*============================================================================*/
-bsp_Gpio_InputHandler_t bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_NUM_PORTS][BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT];
+// Event handler message IDs
+#define SVC_BUTTONEH_TIMER_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_TIMER, 0 )
 
+
+/*==============================================================================
+ *                                Types
+ *============================================================================*/
 /*============================================================================*/
-const bsp_Gpio_PlatformPortInfo_t bsp_Gpio_platformPortInfoTable[ BSP_GPIO_PORT_ID_NUM_PORTS ] =
+// Event handler message structures
+typedef struct BSP_ATTR_PACKED svc_TimerEh_TimeoutInd_s
 {
-    { GPIO_PORTA_BASE, SYSCTL_PERIPH_GPIOA, BSP_INTERRUPT_ID_GPIOA, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_A][0]) },
-    { GPIO_PORTB_BASE, SYSCTL_PERIPH_GPIOB, BSP_INTERRUPT_ID_GPIOB, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_B][0]) },
-    { GPIO_PORTC_BASE, SYSCTL_PERIPH_GPIOC, BSP_INTERRUPT_ID_GPIOC, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_C][0]) },
-    { GPIO_PORTD_BASE, SYSCTL_PERIPH_GPIOD, BSP_INTERRUPT_ID_GPIOD, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_D][0]) },
-    { GPIO_PORTE_BASE, SYSCTL_PERIPH_GPIOE, BSP_INTERRUPT_ID_GPIOE, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_E][0]) },
-    { GPIO_PORTF_BASE, SYSCTL_PERIPH_GPIOF, BSP_INTERRUPT_ID_GPIOF, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_F][0]) }
-};
+    svc_MsgFwk_Hdr_t hdr;
+    osapi_TimerId_t  id;
+} svc_TimerEh_TimeoutInd_t;
+
 
 /*==============================================================================
- *                               Public functions
+ *                                Prototypes
  *============================================================================*/
 /*============================================================================*/
-// Platform specific initializations
 void
-bsp_Gpio_initPlatform( void )
-{
-    /* Configure No Connect pins as no-pull inputs */
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_NCPB6,
-                          BSP_GPIO_BIT_MASK_NCPB6,
-                          FALSE, BSP_GPIO_PULL_NONE );
+svc_TimerEh_buildAndSendTimeoutInd( osapi_TimerId_t id );
 
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_NCPB7,
-                          BSP_GPIO_BIT_MASK_NCPB7,
-                          FALSE, BSP_GPIO_PULL_NONE );
-    return;
-}
+/*============================================================================*/
+void
+svc_TimerEh_timerStart( osapi_TimerId_t   data,
+                        osapi_Timeout_t   timeout,
+                        osapi_TimerType_t type );
+
+#endif

@@ -16,18 +16,19 @@ X Add Sys menu
   - version string
 X Exception handling
   X Register dump
-X Strings in sections- Build message passing framework
+X Strings in sections
+- Build message passing framework
   - Event handler
   - pre-allocated messages
   - reference counting
   - forwarding with zero-copy
   - injection from serial interface
 - Build out OSAPI
-  - Add mem-block interface
-  - Add queue interface
-  - Add timer interface
+  X Add mem-block interface
+  X Add queue interface
+  X Add timer interface
   - Add Mac/linux support for OSAPI
-- Drivers for Push-Buttons
+X Drivers for Push-Buttons
 - Driver for LED (3 Separate colors)
 - I2C transaction driver
 - Add Sensorhub to platform/build

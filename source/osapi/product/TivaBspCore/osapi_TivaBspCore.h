@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2018 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,26 +21,34 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Platform.h
- *
- * @brief
- *    The purpose of this file is to conditionally include the proper platform
- *    specific header file. A compile time flag must be defined on the command
- *    line to specify a platform -DPLATFORM=<platformName>. This component
- *    defines all of the defines for each supported <platformName>. A separate
- *    header file called main_Platform_<platformName>.h will be included by this
- *    header file.
+ * @file osapi_TivaBspCore.h
+ * @brief Contains the product specific OS configuration
  */
-#ifndef BSP_PLATFORM_H
-#define BSP_PLATFORM_H
+#ifndef OSAPI_TIVA_BSP_CORE_H
+#define OSAPI_TIVA_BSP_CORE_H
 
-#include "bsp_Types.h"
+#include "bsp_Platform.h"
 
-#if defined(PLATFORM)
-/* The name of the platform turns into the tail end of the headerfile that is included */
-#include BUILD_INCLUDE_STRING(bsp_Platform_, PLATFORM)
-#else
-# error "PLATFORM must be defined on command line"
-#endif
+#define OSAPI_THREAD_MAX_CNT 4
+#define OSAPI_SEMAPHORE_MAX_CNT 4
+#define OSAPI_QUEUE_MAX_CNT 4
+#define OSAPI_TIMER_MAX_CNT 4
+#define OSAPI_MS_PER_TICK 1
+
+// Define the memory pools (byte-size, count)
+OSAPI_MEMORY_POOL_DEFINE(   8, 8 )
+OSAPI_MEMORY_POOL_DEFINE(  16, 4 )
+OSAPI_MEMORY_POOL_DEFINE(  32, 4 )
+OSAPI_MEMORY_POOL_DEFINE(  64, 2 )
+OSAPI_MEMORY_POOL_DEFINE( 128, 2 )
+
+/* Arranged smallest to largest block-size */
+#define OSAPI_MEMORY_POOL_ELEMENTS         \
+    OSAPI_MEMORY_POOL_INFO_ELEMENT(   8 ), \
+    OSAPI_MEMORY_POOL_INFO_ELEMENT(  16 ), \
+    OSAPI_MEMORY_POOL_INFO_ELEMENT(  32 ), \
+    OSAPI_MEMORY_POOL_INFO_ELEMENT(  64 ), \
+    OSAPI_MEMORY_POOL_INFO_ELEMENT( 128 )
+
 
 #endif

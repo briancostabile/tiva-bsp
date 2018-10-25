@@ -275,11 +275,11 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
 {
 	// 0-3: GPIO Port A, GPIO Port B, GPIO Port C, GPIO Port D
 	BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
 	// 4-7: GPIO Port E, UART0 Rx and Tx, UART1 Rx and Tx, SSI0 Rx and Tx
-	BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+	BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
@@ -311,7 +311,7 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
 	// 28-31: System Control (PLL, OSC, BO), FLASH Control, GPIO Port F, GPIO Port G
 	BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
 	// 32-35: GPIO Port H, UART2 Rx and Tx, SSI1 Rx and Tx, Timer 3 subtimer A
 	BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),

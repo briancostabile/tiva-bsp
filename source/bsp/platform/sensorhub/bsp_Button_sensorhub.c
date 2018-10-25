@@ -21,26 +21,23 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Platform.h
- *
- * @brief
- *    The purpose of this file is to conditionally include the proper platform
- *    specific header file. A compile time flag must be defined on the command
- *    line to specify a platform -DPLATFORM=<platformName>. This component
- *    defines all of the defines for each supported <platformName>. A separate
- *    header file called main_Platform_<platformName>.h will be included by this
- *    header file.
+ * @file bsp_Button_sensorhub.c
+ * @brief Contains table of IOs used as simple switch-style buttons
  */
-#ifndef BSP_PLATFORM_H
-#define BSP_PLATFORM_H
 
 #include "bsp_Types.h"
+#include "bsp_Button.h"
+#include "bsp_Gpio.h"
 
-#if defined(PLATFORM)
-/* The name of the platform turns into the tail end of the headerfile that is included */
-#include BUILD_INCLUDE_STRING(bsp_Platform_, PLATFORM)
-#else
-# error "PLATFORM must be defined on command line"
-#endif
-
-#endif
+/*==============================================================================
+ *                               Globals
+ *============================================================================*/
+/*============================================================================*/
+/* One entry for each IO port. */
+const bsp_Button_IoInfo_t bsp_Button_ioInfoTable[BSP_PLATFORM_IO_BUTTON_NUM]=
+{
+    { BSP_GPIO_PORT_ID(BUTTON_0), BSP_GPIO_MASK(BUTTON_0), BSP_BUTTON_PRESS_POLARITY_LOW },
+    { BSP_GPIO_PORT_ID(BUTTON_1), BSP_GPIO_MASK(BUTTON_1), BSP_BUTTON_PRESS_POLARITY_LOW },
+    { BSP_GPIO_PORT_ID(BUTTON_2), BSP_GPIO_MASK(BUTTON_2), BSP_BUTTON_PRESS_POLARITY_LOW },
+    { BSP_GPIO_PORT_ID(BUTTON_3), BSP_GPIO_MASK(BUTTON_3), BSP_BUTTON_PRESS_POLARITY_LOW }
+};

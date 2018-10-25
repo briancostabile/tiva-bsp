@@ -57,7 +57,7 @@ endif
 
 # Product and Build options typically passed in on command line
 ifndef PRODUCT
-PRODUCT := TivaBspCore
+PRODUCT := TivaBspSensor
 endif
 
 # gcc or ccs
@@ -238,6 +238,7 @@ NEWLIB_CONFIG  := --target=arm-none-eabi \
 #####
 # TivaBsp source
 SRC_DIRS := $(sort $(dir $(wildcard $(SRC_DIR)/*/)))
+SRC_DIRS += $(sort $(dir $(wildcard $(SRC_DIR)/*/product/$(PRODUCT)/)))
 SRC_DIRS += $(sort $(dir $(wildcard $(SRC_DIR)/*/platform/$(PLATFORM)/)))
 SRC_DIRS += $(sort $(dir $(wildcard $(SRC_DIR)/*/processor/$(PROCESSOR)/)))
 SRC_DIRS += $(sort $(dir $(wildcard $(SRC_DIR)/*/toolchain/$(COMPILER)/)))

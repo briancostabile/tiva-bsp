@@ -21,36 +21,49 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Button_ektm4c123gxl.h
- * @brief Contains platform specific trace mappings to IO pins
+ * @file svc_ButtonEh.h
+ * @brief Contains the message interface related to the button service
  */
-#ifndef BSP_BUTTON_EKTM4C123GXL_H
-#define BSP_BUTTON_EKTM4C123GXL_H
+#ifndef SVC_BUTTON_EH_H
+#define SVC_BUTTON_EH_H
 
-#include "bsp_Gpio.h"
+#include "bsp_Types.h"
+#include "bsp_Platform.h"
+#include "bsp_Button.h"
+#include <stdint.h>
+#include "svc_Eh.h"
+#include "svc_MsgFwk.h"
 
 /*==============================================================================
  *                               Defines
  *============================================================================*/
 /*============================================================================*/
-
-#define BSP_PLATFORM_IO_BUTTON_NUM   2
-#define BSP_GPIO_PORT_ID_BUTTON_0    BSP_GPIO_PORT_ID_USR_SW1
-#define BSP_GPIO_BASE_ADDR_BUTTON_0  BSP_GPIO_BASE_ADDR_USR_SW1
-#define BSP_GPIO_BIT_OFFSET_BUTTON_0 BSP_GPIO_BIT_OFFSET_USR_SW1
-#define BSP_GPIO_BIT_MASK_BUTTON_0   BSP_GPIO_BIT_MASK_USR_SW1
-
-#define BSP_GPIO_PORT_ID_BUTTON_1    BSP_GPIO_PORT_ID_USR_SW2
-#define BSP_GPIO_BASE_ADDR_BUTTON_1  BSP_GPIO_BASE_ADDR_USR_SW2
-#define BSP_GPIO_BIT_OFFSET_BUTTON_1 BSP_GPIO_BIT_OFFSET_USR_SW2
-#define BSP_GPIO_BIT_MASK_BUTTON_1   BSP_GPIO_BIT_MASK_USR_SW2
-
+// Event handler message IDs
+#define SVC_BUTTONEH_PRESS_IND       SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_BUTTON, 0 )
+#define SVC_BUTTONEH_LONG_PRESS_IND  SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_BUTTON, 1 )
+#define SVC_BUTTONEH_RELEASE_IND     SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_BUTTON, 2 )
 
 
 /*==============================================================================
- *                            Public Functions
+ *                                Types
  *============================================================================*/
 /*============================================================================*/
-extern const bsp_Button_IoInfo_t bsp_Button_ioInfoTable[BSP_PLATFORM_IO_BUTTON_NUM];
+// Event handler message structures
+typedef struct BSP_ATTR_PACKED svc_ButtonEh_HwPressInd_s
+{
+    svc_MsgFwk_Hdr_t hdr;
+    bsp_Button_Id_t  id;
+} svc_ButtonEh_PressInd_t;
+
+typedef svc_ButtonEh_PressInd_t svc_ButtonEh_LongPressInd_t;
+
+typedef svc_ButtonEh_PressInd_t svc_ButtonEh_ReleaseInd_t;
+
+
+/*==============================================================================
+ *                                Globals
+ *============================================================================*/
+/*============================================================================*/
+extern const svc_Eh_Info_t svc_ButtonEh_info;
 
 #endif

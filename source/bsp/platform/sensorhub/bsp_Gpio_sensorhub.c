@@ -21,7 +21,7 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Gpio_ektm4c123gxl.c
+ * @file bsp_Gpio_sensorhub.c
  * @brief Contains Configuration table for the supported IO ports on this platform
  */
 #include "bsp_Gpio.h"

@@ -31,37 +31,40 @@
 #include "bsp_Mcu.h"
 
 #include "osapi.h"
+#include "osapi_Product.h"
 
 /* Kernel includes. */
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
-
-/*==============================================================================
- *                                  Defines
- *============================================================================*/
-// Service, UI
-#define OSAPI_THREAD_MAX_CNT 4
-#define OSAPI_SEMAPHORE_MAX_CNT 4
-#define OSAPI_MS_PER_TICK 1
-
-/*==============================================================================
- *                                 Types
- *============================================================================*/
+#include "timers.h"
 
 /*==============================================================================
  *                                 Globals
  *============================================================================*/
+// Add 2 thread control blocks for idle and timer
 StaticTask_t osapi_threadControlBlockArray[OSAPI_THREAD_MAX_CNT + 2];
 uint8_t osapi_threadControlBlockIdx;
 
 StaticSemaphore_t osapi_semaphoreControlBlockArray[OSAPI_SEMAPHORE_MAX_CNT];
+uint8_t osapi_queueControlBlockIdx;
+
+StaticQueue_t osapi_queueControlBlockArray[OSAPI_QUEUE_MAX_CNT];
 uint8_t osapi_semaphoreControlBlockIdx;
+
+StaticTimer_t osapi_timerControlBlockArray[OSAPI_TIMER_MAX_CNT];
+uint8_t osapi_timerControlBlockIdx;
+
+const osapi_MemoryPoolInfo_t osapi_memoryPoolTable[] =
+{
+    OSAPI_MEMORY_POOL_ELEMENTS
+};
 
 /*==============================================================================
  *                            Local Functions
  *============================================================================*/
-static StaticTask_t* osapi_threadCtrlBlockAlloc(void)
+static StaticTask_t*
+osapi_threadCtrlBlockAlloc(void)
 {
     BSP_MCU_INT_DISABLE();
     BSP_ASSERT( osapi_threadControlBlockIdx < OSAPI_THREAD_MAX_CNT );
@@ -70,7 +73,8 @@ static StaticTask_t* osapi_threadCtrlBlockAlloc(void)
     return( tcbPtr );
 }
 
-static StaticSemaphore_t* osapi_semaphoreCtrlBlockAlloc(void)
+static StaticSemaphore_t*
+osapi_semaphoreCtrlBlockAlloc(void)
 {
     BSP_MCU_INT_DISABLE();
     BSP_ASSERT( osapi_semaphoreControlBlockIdx < OSAPI_SEMAPHORE_MAX_CNT );
@@ -79,12 +83,80 @@ static StaticSemaphore_t* osapi_semaphoreCtrlBlockAlloc(void)
     return( semPtr );
 }
 
+static StaticQueue_t*
+osapi_queueCtrlBlockAlloc(void)
+{
+    BSP_MCU_INT_DISABLE();
+    BSP_ASSERT( osapi_queueControlBlockIdx < OSAPI_QUEUE_MAX_CNT );
+    StaticQueue_t *queuePtr = &osapi_queueControlBlockArray[ osapi_queueControlBlockIdx++ ];
+    BSP_MCU_INT_ENABLE();
+    return( queuePtr );
+}
+
+static StaticTimer_t*
+osapi_timerCtrlBlockAlloc(void)
+{
+    BSP_MCU_INT_DISABLE();
+    BSP_ASSERT( osapi_timerControlBlockIdx < OSAPI_TIMER_MAX_CNT );
+    StaticTimer_t *timerPtr = &osapi_timerControlBlockArray[ osapi_timerControlBlockIdx++ ];
+    BSP_MCU_INT_ENABLE();
+    return( timerPtr );
+}
+
 /*============================================================================*/
-void
-osapi_Semaohire_Init( void )
+static void
+osapi_Thread_init( void )
+{
+    extern uint32_t _tinitStart;
+    extern uint32_t _tinitEnd;
+
+    osapi_ThreadInitInfo_t* tinitPtr = (osapi_ThreadInitInfo_t*)&_tinitStart;
+
+    while( tinitPtr < (osapi_ThreadInitInfo_t*)&_tinitEnd )
+    {
+        osapi_Thread_create( tinitPtr );
+        tinitPtr++;
+    }
+}
+
+/*============================================================================*/
+static void
+osapi_Semaphore_init( void )
 {
     osapi_semaphoreControlBlockIdx = 0;
     memset( osapi_semaphoreControlBlockArray, 0, sizeof(osapi_semaphoreControlBlockArray) );
+}
+
+/*============================================================================*/
+static void
+osapi_Memory_initPool( const osapi_MemoryPoolInfo_t* poolInfoPtr )
+{
+    uint8_t*  poolPtr    = ((uint8_t*)(poolInfoPtr->pool));
+    uint8_t*  poolEndPtr = (poolPtr + poolInfoPtr->poolSize);
+    uint32_t* hdrPtr     = (uint32_t*)poolInfoPtr->hdrPtrPtr;
+
+    while( poolPtr < poolEndPtr )
+    {
+        *hdrPtr  = (uint32_t)poolPtr;
+        hdrPtr   = (uint32_t*)*hdrPtr;
+        poolPtr += poolInfoPtr->blockSize;
+    }
+
+    // Overwrite the last hdrPtr to Null-terminate the list
+    *hdrPtr = (uint32_t)NULL;
+
+    return;
+}
+
+/*============================================================================*/
+static void
+osapi_Memory_init( void )
+{
+    for( uint8_t i=0; i<DIM(osapi_memoryPoolTable); i++ )
+    {
+        osapi_Memory_initPool( &(osapi_memoryPoolTable[i]) );
+    }
+    return;
 }
 
 /*==============================================================================
@@ -94,21 +166,13 @@ osapi_Semaohire_Init( void )
 void
 osapi_init( void )
 {
-    extern uint32_t _tinitStart;
-    extern uint32_t _tinitEnd;
 
-    osapi_Semaohire_Init();
+    osapi_Semaphore_init();
+    osapi_Memory_init();
+    osapi_Thread_init();
 
-    osapi_ThreadInitInfo_t* tinitPtr = (osapi_ThreadInitInfo_t*)&_tinitStart;
-
-    while( tinitPtr < (osapi_ThreadInitInfo_t*)&_tinitEnd )
-    {
-        osapi_Thread_create( tinitPtr );
-        tinitPtr++;
-    }
     return;
 }
-
 
 /*============================================================================*/
 void
@@ -118,7 +182,9 @@ osapi_Scheduler_run( void )
     return;
 }
 
-
+/********************
+ * Thread Functions
+ */
 /*============================================================================*/
 void
 osapi_Thread_sleep( uint32_t sleepTimeMs )
@@ -143,6 +209,9 @@ osapi_Thread_create( osapi_ThreadInitInfo_t* tInitPtr )
 }
 
 
+/********************
+ * Semaphore Functions
+ */
 /*============================================================================*/
 osapi_Semaphore_t
 osapi_Semaphore_create( void )
@@ -150,16 +219,21 @@ osapi_Semaphore_create( void )
     return( (osapi_Semaphore_t)xSemaphoreCreateBinaryStatic( osapi_semaphoreCtrlBlockAlloc() ) );
 }
 
-
 /*============================================================================*/
 void
 osapi_Semaphore_give( osapi_Semaphore_t sem )
 {
-    BaseType_t pxHigherPriorityTaskWoken;
-    xSemaphoreGiveFromISR( (SemaphoreHandle_t)sem, &pxHigherPriorityTaskWoken );
+    if( bsp_Interrupt_activeId() != 0 )
+    {
+        BaseType_t pxHigherPriorityTaskWoken;
+        xSemaphoreGiveFromISR( (SemaphoreHandle_t)sem, &pxHigherPriorityTaskWoken );
+    }
+    else
+    {
+        xSemaphoreGive( (SemaphoreHandle_t)sem );
+    }
     return;
 }
-
 
 /*============================================================================*/
 bool
@@ -168,6 +242,190 @@ osapi_Semaphore_take( osapi_Semaphore_t sem, osapi_Timeout_t timeout )
     return ( xSemaphoreTake( (SemaphoreHandle_t)sem, (TickType_t)timeout ) == pdPASS );
 }
 
+
+/********************
+ * Memory Functions
+ */
+/*============================================================================*/
+void*
+osapi_Memory_alloc( size_t size )
+{
+    void* retPtr = NULL;
+    BSP_MCU_CRITICAL_SECTION_ENTER();
+    for( uint8_t i=0; (retPtr == NULL) && (i<DIM(osapi_memoryPoolTable)); i++ )
+    {
+        if( (osapi_memoryPoolTable[i].blockSize > size) && (*osapi_memoryPoolTable[i].hdrPtrPtr != NULL) )
+        {
+            void* blockPtr = *osapi_memoryPoolTable[i].hdrPtrPtr;
+
+            // The user-block is just past the header
+            retPtr = ((uint32_t*)blockPtr + OSAPI_MEMORY_HDR_SIZE_32);
+
+            // Unlink the block at the head of the free-list and return a pointer to the user-area
+            *osapi_memoryPoolTable[i].hdrPtrPtr = (uint32_t*)**osapi_memoryPoolTable[i].hdrPtrPtr;
+
+            // Save the list head in small area before the user-area
+            *(uint32_t*)blockPtr = (uint32_t)(osapi_memoryPoolTable[i].hdrPtrPtr);
+        }
+    }
+    BSP_MCU_CRITICAL_SECTION_EXIT();
+    return( retPtr );
+}
+
+/*============================================================================*/
+void
+osapi_Memory_free( void* freePtr )
+{
+    if( freePtr )
+    {
+        void* blockPtr       = ((uint32_t*)freePtr - OSAPI_MEMORY_HDR_SIZE_32);
+        uint32_t** hdrPtrPtr = (uint32_t**)*((uint32_t*)blockPtr);
+
+        BSP_MCU_CRITICAL_SECTION_ENTER();
+        *(uint32_t*)blockPtr = (uint32_t)*hdrPtrPtr;
+        *hdrPtrPtr = blockPtr;
+        BSP_MCU_CRITICAL_SECTION_EXIT();
+    }
+    return;
+}
+
+
+/********************
+ * Queue Functions
+ */
+/*============================================================================*/
+osapi_Queue_t
+osapi_Queue_create( size_t count,
+                    size_t elementSize,
+                    void*  buf )
+{
+    return( xQueueCreateStatic( (UBaseType_t)count,
+                                (UBaseType_t)elementSize,
+                                (uint8_t*)buf,
+                                osapi_queueCtrlBlockAlloc() ) );
+}
+
+/*============================================================================*/
+bool
+osapi_Queue_dequeue( osapi_Queue_t   queue,
+                     void*           dataPtr,
+                     osapi_Timeout_t timeout )
+{
+    BaseType_t ret;
+
+    ret = xQueueReceive( (QueueHandle_t)queue,
+                         dataPtr,
+                         (TickType_t)timeout );
+
+    return( ret == pdPASS );
+}
+
+/*============================================================================*/
+bool
+osapi_Queue_enqueue( osapi_Queue_t queue,
+                     void*         buf )
+{
+    BaseType_t ret;
+
+    if( bsp_Interrupt_activeId() != 0 )
+    {
+        BaseType_t pxHigherPriorityTaskWoken;
+        ret = xQueueSendToBackFromISR( (QueueHandle_t)queue,
+                                       buf,
+                                       &pxHigherPriorityTaskWoken );
+    }
+    else
+    {
+        ret = xQueueSendToBack( (QueueHandle_t)queue,
+                                buf,
+                                OSAPI_TIMEOUT_NO_WAIT );
+    }
+    return( ret == pdTRUE );
+}
+
+
+/********************
+ * Timer Functions
+ */
+/*============================================================================*/
+static void
+osapi_Timer_callbackWrapper( osapi_Timer_t handle )
+{
+    osapi_TimerId_t       id       = (osapi_TimerId_t)pcTimerGetTimerName( (TimerHandle_t)handle );
+    osapi_TimerCallback_t callback = (osapi_TimerCallback_t)pvTimerGetTimerID( (TimerHandle_t)handle );
+
+    if( callback )
+    {
+        callback( handle, id );
+    }
+    return;
+}
+
+/*============================================================================*/
+osapi_Timer_t
+osapi_Timer_create( osapi_TimerId_t       id,
+                    osapi_Timeout_t       timeout,
+                    osapi_TimerType_t     type,
+                    osapi_TimerCallback_t callback )
+{
+    return( (osapi_Timer_t)xTimerCreateStatic( (const char*)id,
+                                               pdMS_TO_TICKS(timeout),
+                                               (type == OSAPI_TIMER_TYPE_ONE_SHOT) ? pdFALSE : pdTRUE,
+                                               callback,
+                                               (TimerCallbackFunction_t)osapi_Timer_callbackWrapper,
+                                               osapi_timerCtrlBlockAlloc() ) );
+}
+
+/*============================================================================*/
+bool
+osapi_Timer_start( osapi_Timer_t timer )
+{
+    BaseType_t ret;
+
+    if( bsp_Interrupt_activeId() == 0 )
+    {
+        ret = xTimerStart( (TimerHandle_t)timer, (TickType_t)OSAPI_TIMEOUT_NO_WAIT );
+    }
+    else
+    {
+        BaseType_t pxHigherPriorityTaskWoken;
+        ret = xTimerStartFromISR( (TimerHandle_t)timer, &pxHigherPriorityTaskWoken );
+    }
+
+    return( ret == pdPASS );
+}
+
+/*============================================================================*/
+bool
+osapi_Timer_stop( osapi_Timer_t timer )
+{
+   BaseType_t ret;
+
+    if( bsp_Interrupt_activeId() == 0 )
+    {
+        ret = xTimerStop( (TimerHandle_t)timer, (TickType_t)OSAPI_TIMEOUT_NO_WAIT );
+    }
+    else
+    {
+        BaseType_t pxHigherPriorityTaskWoken;
+        ret = xTimerStopFromISR( (TimerHandle_t)timer, &pxHigherPriorityTaskWoken );
+    }
+
+    return( ret == pdPASS );
+}
+
+/*============================================================================*/
+bool
+osapi_Timer_resume( osapi_Timer_t timer )
+{
+    return osapi_Timer_start( timer );
+}
+
+
+
+/********************
+ * Free RTOS hooks
+ */
 
 /*-----------------------------------------------------------*/
 void vApplicationMallocFailedHook( void )
@@ -183,7 +441,7 @@ void vApplicationMallocFailedHook( void )
     to query the size of free heap space that remains (although it does not
     provide information on how the remaining heap might be fragmented). */
     taskDISABLE_INTERRUPTS();
-    for( ;; );
+    bsp_Reset_systemReset( BSP_RESET_SWREASON_OS_MALLOC );
 }
 
 
@@ -212,7 +470,7 @@ void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
     configCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
     function is called if a stack overflow is detected. */
     taskDISABLE_INTERRUPTS();
-    for( ;; );
+    bsp_Reset_systemReset( BSP_RESET_SWREASON_OS_STACK );
 }
 
 
@@ -252,6 +510,8 @@ void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer, Stack
     the stack and so not exists after this function exits. */
     static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
 
+    memset( uxTimerTaskStack, 0xA5, sizeof(uxTimerTaskStack) );
+
     /* Pass out a pointer to the StaticTask_t structure in which the Timer
     task's state will be stored. */
     *ppxTimerTaskTCBBuffer = osapi_threadCtrlBlockAlloc();
@@ -278,18 +538,8 @@ void vApplicationTickHook( void )
 /* Catch asserts so the file and line number of the assert can be viewed. */
 void vMainAssertCalled( const char *pcFileName, uint32_t ulLineNumber )
 {
-    volatile BaseType_t xSetToNonZeroToStepOutOfLoop = 0;
-
     taskENTER_CRITICAL();
-    while( xSetToNonZeroToStepOutOfLoop == 0 )
-    {
-        /* Use the variables to prevent compiler warnings and in an attempt to
-        ensure they can be viewed in the debugger.  If the variables get
-        optimised away then set copy their values to file scope or globals then
-        view the variables they are copied to. */
-        ( void ) pcFileName;
-        ( void ) ulLineNumber;
-    }
+    bsp_Assert_reset( pcFileName, ulLineNumber );
 }
 
 void bsp_Interrupt_sysTickHandler(void)

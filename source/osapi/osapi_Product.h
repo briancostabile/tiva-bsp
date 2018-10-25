@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2018 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,26 +21,36 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Platform.h
+ * @file osapi_Product.h
  *
  * @brief
- *    The purpose of this file is to conditionally include the proper platform
+ *    The purpose of this file is to conditionally include the proper product
  *    specific header file. A compile time flag must be defined on the command
- *    line to specify a platform -DPLATFORM=<platformName>. This component
- *    defines all of the defines for each supported <platformName>. A separate
- *    header file called main_Platform_<platformName>.h will be included by this
- *    header file.
+ *    line to specify a product -DPRODUCT=<productName>. This component
+ *    defines all of the OSAPI defines for each supported <productName>.
  */
-#ifndef BSP_PLATFORM_H
-#define BSP_PLATFORM_H
+#ifndef OSAPI_PRODUCT_H
+#define OSAPI_PRODUCT_H
 
-#include "bsp_Types.h"
+/*==============================================================================
+ *                                 Defines
+ *============================================================================*/
+#define OSAPI_MEMORY_HDR_SIZE_32 1
+#define OSAPI_MEMORY_HDR_SIZE_8  (OSAPI_MEMORY_HDR_SIZE_32 * 4)
 
-#if defined(PLATFORM)
-/* The name of the platform turns into the tail end of the headerfile that is included */
-#include BUILD_INCLUDE_STRING(bsp_Platform_, PLATFORM)
+#define OSAPI_MEMORY_POOL_DEFINE( _size, _cnt ) \
+uint32_t  osapi_MemoryPool##_size[ ((_cnt) * ((_size + OSAPI_MEMORY_HDR_SIZE_8) / 4)) ]; \
+uint32_t* osapi_MemoryPoolFree##_size;
+
+#define OSAPI_MEMORY_POOL_INFO_ELEMENT( _size ) \
+{ ((_size) + OSAPI_MEMORY_HDR_SIZE_8),  sizeof(osapi_MemoryPool##_size),   osapi_MemoryPool##_size,   &osapi_MemoryPoolFree##_size   }
+
+
+#if defined(PRODUCT)
+/* The name of the product turns into the tail end of the headerfile that is included */
+#include BUILD_INCLUDE_STRING(osapi_, PRODUCT)
 #else
-# error "PLATFORM must be defined on command line"
+# error "PRODUCT must be defined on command line"
 #endif
 
 #endif

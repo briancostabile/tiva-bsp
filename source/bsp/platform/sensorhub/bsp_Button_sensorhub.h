@@ -21,11 +21,11 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Button_ektm4c123gxl.h
+ * @file bsp_Button_sensorhub.h
  * @brief Contains platform specific trace mappings to IO pins
  */
-#ifndef BSP_BUTTON_EKTM4C123GXL_H
-#define BSP_BUTTON_EKTM4C123GXL_H
+#ifndef BSP_BUTTON_SENSORHUB_H
+#define BSP_BUTTON_SENSORHUB_H
 
 #include "bsp_Gpio.h"
 
@@ -34,7 +34,7 @@
  *============================================================================*/
 /*============================================================================*/
 
-#define BSP_PLATFORM_IO_BUTTON_NUM   2
+#define BSP_PLATFORM_IO_BUTTON_NUM   4
 #define BSP_GPIO_PORT_ID_BUTTON_0    BSP_GPIO_PORT_ID_USR_SW1
 #define BSP_GPIO_BASE_ADDR_BUTTON_0  BSP_GPIO_BASE_ADDR_USR_SW1
 #define BSP_GPIO_BIT_OFFSET_BUTTON_0 BSP_GPIO_BIT_OFFSET_USR_SW1
@@ -44,6 +44,16 @@
 #define BSP_GPIO_BASE_ADDR_BUTTON_1  BSP_GPIO_BASE_ADDR_USR_SW2
 #define BSP_GPIO_BIT_OFFSET_BUTTON_1 BSP_GPIO_BIT_OFFSET_USR_SW2
 #define BSP_GPIO_BIT_MASK_BUTTON_1   BSP_GPIO_BIT_MASK_USR_SW2
+
+#define BSP_GPIO_PORT_ID_BUTTON_2    BSP_GPIO_PORT_ID_SENSOR_SW1
+#define BSP_GPIO_BASE_ADDR_BUTTON_2  BSP_GPIO_BASE_ADDR_SENSOR_SW1
+#define BSP_GPIO_BIT_OFFSET_BUTTON_2 BSP_GPIO_BIT_OFFSET_SENSOR_SW1
+#define BSP_GPIO_BIT_MASK_BUTTON_2   BSP_GPIO_BIT_MASK_SENSOR_SW1
+
+#define BSP_GPIO_PORT_ID_BUTTON_3    BSP_GPIO_PORT_ID_SENSOR_SW2
+#define BSP_GPIO_BASE_ADDR_BUTTON_3  BSP_GPIO_BASE_ADDR_SENSOR_SW2
+#define BSP_GPIO_BIT_OFFSET_BUTTON_3 BSP_GPIO_BIT_OFFSET_SENSOR_SW2
+#define BSP_GPIO_BIT_MASK_BUTTON_3   BSP_GPIO_BIT_MASK_SENSOR_SW2
 
 
 

@@ -511,6 +511,10 @@ bsp_Gpio_init( void );
 
 /*============================================================================*/
 void
+bsp_Gpio_initPlatform( void );
+
+/*============================================================================*/
+void
 bsp_Gpio_write( bsp_Gpio_PortId_t  portId,
 		        bsp_Gpio_BitMask_t mask,
 		        bsp_Gpio_BitMask_t val );

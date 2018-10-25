@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>TivaBsp</name>
+	<name>TivaBspCore</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -302,6 +302,26 @@
 			<locationURI>SOURCE_ROOT/osapi/osapi_FreeRTOS.c</locationURI>
 		</link>
 		<link>
+			<name>source/osapi/product</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_ButtonEh.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_ButtonEh.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_ButtonEh.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_ButtonEh.h</locationURI>
+		</link>
+		<link>
 			<name>source/svc/svc_Cmd.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_Cmd.c</locationURI>
@@ -312,9 +332,54 @@
 			<locationURI>SOURCE_ROOT/svc/svc_Cmd.h</locationURI>
 		</link>
 		<link>
+			<name>source/svc/svc_Eh.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_Eh.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_Eh.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_Eh.h</locationURI>
+		</link>
+		<link>
 			<name>source/svc/svc_Log.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_Log.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_MsgFwk.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_MsgFwk.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_MsgFwk.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_MsgFwk.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_Periph.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_Periph.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_Periph.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_Periph.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_TestEh.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_TestEh.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_TestEh.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_TestEh.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_TimerEh.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_TimerEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/tst/tst.c</name>
@@ -362,6 +427,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/platform/sensorhub</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/processor/tm4c123</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -373,6 +443,26 @@
 		</link>
 		<link>
 			<name>source/bsp/toolchain/gcc</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>source/osapi/product/TIvaBspCore</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>source/osapi/product/TivaBspSensor</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspCore</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspSensor</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -427,6 +517,41 @@
 			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123gxl/bsp_Trace_ektm4c123gxl.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/platform/sensorhub/bsp_Button_sensorhub.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Button_sensorhub.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/sensorhub/bsp_Button_sensorhub.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Button_sensorhub.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/sensorhub/bsp_Gpio_sensorhub.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Gpio_sensorhub.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/sensorhub/bsp_Gpio_sensorhub.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Gpio_sensorhub.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/sensorhub/bsp_Platform_sensorhub.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Platform_sensorhub.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/sensorhub/bsp_Trace_sensorhub.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Trace_sensorhub.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/sensorhub/bsp_Trace_sensorhub.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Trace_sensorhub.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</locationURI>
@@ -465,6 +590,26 @@
 			<name>source/bsp/toolchain/gcc/bsp_Mcu_gcc.s</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/toolchain/gcc/bsp_Mcu_gcc.s</locationURI>
+		</link>
+		<link>
+			<name>source/osapi/product/TIvaBspCore/osapi_TivaBspCore.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/osapi/product/TivaBspCore/osapi_TivaBspCore.h</locationURI>
+		</link>
+		<link>
+			<name>source/osapi/product/TivaBspSensor/osapi_TivaBspSensor.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/osapi/product/TivaBspSensor/osapi_TivaBspSensor.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspCore/svc_EhId_TivaBspCore.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/TivaBspCore/svc_EhId_TivaBspCore.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspSensor/svc_EhId_TivaBspSensor.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/TivaBspSensor/svc_EhId_TivaBspSensor.h</locationURI>
 		</link>
 		<link>
 			<name>third_party/FreeRTOS/FreeRTOSv10.1.1/Source/croutine.c</name>

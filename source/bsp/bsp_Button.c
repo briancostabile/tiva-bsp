@@ -70,9 +70,9 @@ bsp_Button_ioHandler( bsp_Gpio_PortId_t    portId,
              * the press is "real" and then continue polling on a longer period
              * to determine a long press and release
              */
-            bsp_Button_infoTable[id].control = BSP_BUTTON_CONTROL_DISABLE;
-            bsp_Gpio_intControl( bsp_Button_ioInfoTable[id].portId,
-                                 bsp_Button_ioInfoTable[id].mask,
+            bsp_Button_infoTable[i].control = BSP_BUTTON_CONTROL_DISABLE;
+            bsp_Gpio_intControl( bsp_Button_ioInfoTable[i].portId,
+                                 bsp_Button_ioInfoTable[i].mask,
                                  BSP_GPIO_INT_CONTROL_DISABLE );
 
             bsp_Button_infoTable[i].handler(i);
@@ -128,6 +128,7 @@ bsp_Button_control( bsp_Button_Id_t      id,
     if( (control == BSP_BUTTON_CONTROL_DISABLE) && 
         (bsp_Button_infoTable[id].control != BSP_BUTTON_CONTROL_DISABLE) )
     {
+        bsp_Button_infoTable[id].control = control;
         bsp_Gpio_intControl( bsp_Button_ioInfoTable[id].portId,
                              bsp_Button_ioInfoTable[id].mask,
                              BSP_GPIO_INT_CONTROL_DISABLE );
@@ -136,6 +137,7 @@ bsp_Button_control( bsp_Button_Id_t      id,
               (bsp_Button_infoTable[id].control != BSP_BUTTON_CONTROL_ENABLE) &&
               (bsp_Button_infoTable[id].handler != NULL) )
     {
+        bsp_Button_infoTable[id].control = control;
         bsp_Gpio_intControl( bsp_Button_ioInfoTable[id].portId,
                              bsp_Button_ioInfoTable[id].mask,
                              BSP_GPIO_INT_CONTROL_ENABLE );

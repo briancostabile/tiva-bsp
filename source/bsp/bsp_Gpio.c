@@ -76,6 +76,8 @@ bsp_Gpio_init( void )
         while( MAP_SysCtlPeripheralReady( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr ) == FALSE );
     }
 
+    bsp_Gpio_initPlatform();
+    
     return;
 }
 
@@ -355,6 +357,15 @@ bsp_Gpio_intConfig( bsp_Gpio_PortId_t       portId,
     {
         BSP_GPIO_REG(portAddr, IS)  |= mask;
         BSP_GPIO_REG(portAddr, IEV) &= ~mask;
+    }
+
+    /* Register handler for each masked bit passed in */
+    for( uint8_t pin=0; pin<BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT; pin++ )
+    {
+        if( ((1 << pin) & mask) != 0 )
+        {
+            bsp_Gpio_platformPortInfoTable[portId].handlerTable[pin] = callback;
+        }
     }
 
     BSP_MCU_CRITICAL_SECTION_EXIT();

@@ -57,6 +57,9 @@ enum
     BSP_RESET_SWREASON_ASSERT        = 0x0001,
     BSP_RESET_SWREASON_UNHANDLED_INT = 0x0002,
     BSP_RESET_SWREASON_FAULT         = 0x0003,
+    BSP_RESET_SWREASON_EXIT          = 0x0004,
+    BSP_RESET_SWREASON_OS_MALLOC     = 0x0005,
+    BSP_RESET_SWREASON_OS_STACK      = 0x0006,
 };
 typedef uint8_t bsp_Reset_SwReason_t;
 
