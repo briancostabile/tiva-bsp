@@ -32,6 +32,7 @@
 #include "bsp_Pragma.h"
 #include "bsp_Reset.h"
 #include "bsp_Gpio.h"
+#include "bsp_I2c.h"
 #include "bsp_Uart.h"
 #include "bsp_UsbIo.h"
 
@@ -115,7 +116,7 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
 	bsp_Uart_interruptHandler0,               // UART0 Rx and Tx
 	bsp_Uart_interruptHandler1,               // UART1 Rx and Tx
     bsp_Interrupt_defaultHandler,             // SSI0 Rx and Tx
-    bsp_Interrupt_defaultHandler,             // I2C0 Master and Slave
+    bsp_I2c_interruptHandler0,                // I2C0 Master and Slave
     bsp_Interrupt_defaultHandler,             // PWM Fault
     bsp_Interrupt_defaultHandler,             // PWM Generator 0
     bsp_Interrupt_defaultHandler,             // PWM Generator 1
@@ -144,7 +145,7 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
     bsp_Interrupt_defaultHandler,             // SSI1 Rx and Tx
     bsp_Interrupt_defaultHandler,             // Timer 3 subtimer A
     bsp_Interrupt_defaultHandler,             // Timer 3 subtimer B
-    bsp_Interrupt_defaultHandler,             // I2C1 Master and Slave
+    bsp_I2c_interruptHandler1,                // I2C1 Master and Slave
     bsp_Interrupt_defaultHandler,             // Quadrature Encoder 1
     bsp_Interrupt_defaultHandler,             // CAN0
     bsp_Interrupt_defaultHandler,             // CAN1
@@ -175,8 +176,8 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
-    bsp_Interrupt_defaultHandler,             // I2C2 Master and Slave
-    bsp_Interrupt_defaultHandler,             // I2C3 Master and Slave
+    bsp_I2c_interruptHandler2,                // I2C2 Master and Slave
+    bsp_I2c_interruptHandler3,                // I2C3 Master and Slave
     bsp_Interrupt_defaultHandler,             // Timer 4 subtimer A
     bsp_Interrupt_defaultHandler,             // Timer 4 subtimer B
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
@@ -284,7 +285,7 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
 	// 8-11: I2C0 Master and Slave, PWM Fault, PWM Generator 0, PWM Generator 1
-	BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+	BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
@@ -359,8 +360,8 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
 	// 68-71: I2C2 Master and Slave, I2C3 Master and Slave, Timer 4 subtimer A, Timer 4 subtimer B
-	BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+	BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
 	                             BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
 	// 72-75: Reserved, Reserved, Reserved, Reserved

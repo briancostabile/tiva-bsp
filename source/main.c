@@ -33,7 +33,7 @@
 #include "bsp_Gpio.h"
 #include "bsp_Trace.h"
 #include "bsp_Button.h"
-#include "bsp_I2CMaster.h"
+#include "bsp_I2c.h"
 #include "bsp_Io.h"
 
 #include "osapi.h"
@@ -62,7 +62,6 @@ __error__(char *pcFilename, uint32_t ui32Line)
 }
 #endif
 
-char* str;
 
 //*****************************************************************************
 int
@@ -76,7 +75,7 @@ main(void)
 	bsp_Gpio_init();
     bsp_Trace_init();
     bsp_Button_init();
-    bsp_I2cMaster_init();
+    bsp_I2c_init();
 	bsp_Uart_init();
 	bsp_Io_init();
     bsp_UsbIo_init();

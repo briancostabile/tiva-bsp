@@ -21,21 +21,44 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_I2cMaster.h
- * @brief Contains types and prototypes to access the I2C
+ * @file svc_TempEh.h
+ * @brief Contains the message interface related to the Temperature service
  */
-#ifndef BSP_I2CMASTER_H
-#define BSP_I2CMASTER_H
+#ifndef SVC_TEMP_EH_H
+#define SVC_TEMP_EH_H
 
-#include "inc/hw_memmap.h"
-#include "inc/hw_i2c.h"
+#include "bsp_Types.h"
+#include "bsp_Platform.h"
+#include "dev_Temp.h"
+#include <stdint.h>
+#include "svc_Eh.h"
+#include "svc_MsgFwk.h"
 
 /*==============================================================================
- *                            Public Functions
+ *                               Defines
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_I2cMaster_init( void );
+// Event handler message IDs
+#define SVC_TEMPEH_MEAS_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_TEMP, 0 )
 
+
+/*==============================================================================
+ *                                Types
+ *============================================================================*/
+/*============================================================================*/
+// Event handler message structures
+typedef struct BSP_ATTR_PACKED svc_ButtonEhMeasInd_s
+{
+    svc_MsgFwk_Hdr_t     hdr;
+    dev_Temp_MeasHumid_t humidity;
+    dev_Temp_MeasTemp_t  temperature;
+} svc_TempEh_MeasInd_t;
+
+
+/*==============================================================================
+ *                                Globals
+ *============================================================================*/
+/*============================================================================*/
+extern const svc_Eh_Info_t svc_TempEh_info;
 
 #endif

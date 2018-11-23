@@ -30,6 +30,7 @@
 #include "svc_Periph.h"
 #include "svc_ButtonEh.h"
 #include "svc_TestEh.h"
+#include "svc_TempEh.h"
 #include "svc_Eh.h"
 #include "osapi.h"
 
@@ -61,6 +62,7 @@ void*    svc_Periph_queue[SVC_PERIPH_QUEUE_DEPTH];
 static const svc_Eh_Info_t* svc_Periph_ehTable[] = 
 {
     &svc_ButtonEh_info,
+    &svc_TempEh_info,
     &svc_TestEh_info
 };
 

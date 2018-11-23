@@ -102,6 +102,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>source/dev</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>source/main.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/main.c</locationURI>
@@ -177,14 +182,14 @@
 			<locationURI>SOURCE_ROOT/bsp/bsp_Gpio.h</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/bsp_I2cMaster.c</name>
+			<name>source/bsp/bsp_I2c.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/bsp_I2cMaster.c</locationURI>
+			<locationURI>SOURCE_ROOT/bsp/bsp_I2c.c</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/bsp_I2cMaster.h</name>
+			<name>source/bsp/bsp_I2c.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/bsp_I2cMaster.h</locationURI>
+			<locationURI>SOURCE_ROOT/bsp/bsp_I2c.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/bsp_Interrupt.c</name>
@@ -292,6 +297,16 @@
 			<locationURI>SOURCE_ROOT/config/FreeRTOSConfig.h</locationURI>
 		</link>
 		<link>
+			<name>source/dev/dev_Temp.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/dev/dev_Temp.h</locationURI>
+		</link>
+		<link>
+			<name>source/dev/dev_Temp_sht21.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/dev/dev_Temp_sht21.c</locationURI>
+		</link>
+		<link>
 			<name>source/osapi/osapi.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/osapi/osapi.h</locationURI>
@@ -365,6 +380,16 @@
 			<name>source/svc/svc_Periph.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_Periph.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_TempEh.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_TempEh.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_TempEh.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_TempEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_TestEh.c</name>

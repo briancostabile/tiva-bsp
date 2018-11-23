@@ -51,6 +51,9 @@
 #define SVC_MSGFWK_MSG_ID_TYPE_GET( _id ) (((_id) & 0x0080) >> 7)
 #define SVC_MSGFWK_MSG_ID_NUM_GET( _id )  (((_id) & 0x007F) >> 0)
 
+#define SVC_MSGFWK_MSG_PAYLOAD_PTR( _hdr )  (uint8_t*)(((svc_MsgFwk_Hdr_t*)(_hdr)) + 1)
+
+
 /*==============================================================================
  *                                Types
  *============================================================================*/

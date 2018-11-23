@@ -77,6 +77,17 @@
 #define BSP_PLATFORM_IO_BIT_OFFSET_LED_2 BSP_GPIO_BIT_OFFSET_LED_G
 #define BSP_PLATFORM_IO_BIT_MASK_LED_2   BSP_GPIO_BIT_MASK_LED_G
 
+// List the I2C devices for this platform as a comma separated list of integers for example: 0, 1, 2
+#define BSP_PLATFORM_I2C_LIST  3
+#define BSP_PLATFORM_I2C_SHT21 3
+
+// Humidity/Temperature sensor accuracy selection
+//      Humid  Temp
+// 0x00 12 bit 14 bit
+// 0x01  8 bit 12 bit
+// 0x02 10 bit 13 bit
+// 0x03 11 bit 11 bit
+#define BSP_PLATFORM_SHT21_RESOLUTION 0x03
 
 /*==============================================================================
  *                            STDIO Mapping

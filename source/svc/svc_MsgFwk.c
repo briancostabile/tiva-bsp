@@ -78,7 +78,10 @@ svc_MsgFwk_msgAllocCopy( svc_EhId_t          eh,
     svc_MsgFwk_Hdr_t* msgPtr = svc_MsgFwk_msgAlloc( eh, id, len );
     void* dataPtr = (msgPtr + 1);
 
-    memcpy( dataPtr, data, len );
+    if( len > sizeof(svc_MsgFwk_Hdr_t) )
+    {
+        memcpy( dataPtr, data, (len - sizeof(svc_MsgFwk_Hdr_t)) );
+    }
     return( msgPtr );
 }
 
@@ -117,7 +120,7 @@ svc_MsgFwk_msgSend( void* msgPtr )
 
 /*============================================================================*/
 void
-svc_MsgFwk_msgAllocAndSend( svc_EhId_t         eh,
+svc_MsgFwk_msgAllocAndSend( svc_EhId_t          eh,
                             svc_MsgFwk_MsgId_t  id,
                             svc_MsgFwk_MsgLen_t len,
                             void*               data )

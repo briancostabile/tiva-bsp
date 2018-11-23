@@ -29,8 +29,9 @@
 
 #define SVC_EHID_BROADCAST 0
 #define SVC_EHID_BUTTON    1
-#define SVC_EHID_TIMER     2
-#define SVC_EHID_TEST      3
-#define SVC_EHID_NUM_EHIDS 4
+#define SVC_EHID_TEMP      2
+#define SVC_EHID_TIMER     3
+#define SVC_EHID_TEST      4
+#define SVC_EHID_NUM_EHIDS 5
 
 #endif

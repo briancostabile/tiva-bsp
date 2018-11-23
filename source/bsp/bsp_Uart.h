@@ -153,9 +153,9 @@ bsp_Uart_init( void );
 
 /*============================================================================*/
 /**
- * @brief This function is used to do the basic setup of a USART.
+ * @brief This function is used to do the basic setup of a UART.
  *
- * This function selects the port to use for the USART and the mode (SPI or UART)
+ * This function selects the port to use for the UART
  *
  * @param id - The enumerated USART Id to setup.
  * @param port - The enumerated port to use for the selected USART
