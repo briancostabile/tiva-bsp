@@ -21,11 +21,11 @@
  */
 /*============================================================================*/
 /**
- * @file dev_Temp.h
+ * @file dev_Humid.h
  * @brief Contains Macros, defines, and prototypes for the Temperature/Humidity sensor.
  */
-#ifndef DEV_TEMP_H
-#define DEV_TEMP_H
+#ifndef DEV_HUMID_H
+#define DEV_HUMID_H
 
 #include "bsp_Types.h"
 
@@ -33,23 +33,39 @@
  *                                   Types
  *============================================================================*/
 // Signed Fixed point 10.6 values
-typedef int16_t dev_Temp_MeasTemperature_t;
+typedef int16_t dev_Humid_MeasHumidity_t;
+typedef int16_t dev_Humid_MeasTemperature_t;
 
-typedef void (*dev_Temp_MeasCallback_t)( dev_Temp_MeasTemperature_t temp );
+typedef void (*dev_Humid_MeasCallback_t)( dev_Humid_MeasHumidity_t    humidity,
+                                          dev_Humid_MeasTemperature_t temperature );
+typedef void (*dev_Humid_MeasCallbackHumidity_t)( dev_Humid_MeasHumidity_t meas );
+typedef void (*dev_Humid_MeasCallbackTemperature_t)( dev_Humid_MeasTemperature_t meas );
 
 /*==============================================================================
  *                               Prototypes
  *============================================================================*/
 /*===========================================================================*/
 void
-dev_Temp_init( void );
+dev_Humid_init( void );
 
 /*===========================================================================*/
 void
-dev_Temp_measTrigger( dev_Temp_MeasCallback_t callback );
+dev_Humid_measTrigger( dev_Humid_MeasCallback_t callback );
 
 /*===========================================================================*/
 void
-dev_Temp_measRead( dev_Temp_MeasTemperature_t* measPtr );
+dev_Humid_measTriggerHumidity( dev_Humid_MeasCallbackHumidity_t callback );
+
+/*===========================================================================*/
+void
+dev_Humid_measReadHumidity( dev_Humid_MeasHumidity_t* measPtr );
+
+/*===========================================================================*/
+void
+dev_Humid_measTriggerTemperature( dev_Humid_MeasCallbackHumidity_t callback );
+
+/*===========================================================================*/
+void
+dev_Humid_measReadTemperature( dev_Humid_MeasTemperature_t* measPtr );
 
 #endif

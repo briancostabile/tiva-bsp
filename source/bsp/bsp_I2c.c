@@ -217,7 +217,7 @@ bsp_I2c_isrMasterCommon( uint32_t baseAddr,
         {
             // Get the next byte received and trigger the I2C peripheral
             BSP_I2C_NEXT_BYTE_RCV( baseAddr, transPtr );
-            i2cCmd = (transPtr->len > 0) ? I2C_MASTER_CMD_BURST_RECEIVE_CONT : I2C_MASTER_CMD_BURST_RECEIVE_FINISH;
+            i2cCmd = (transPtr->len > 1) ? I2C_MASTER_CMD_BURST_RECEIVE_CONT : I2C_MASTER_CMD_BURST_RECEIVE_FINISH;
         }
         else // Assume Write
         {
@@ -259,14 +259,10 @@ bsp_I2c_isrMasterCommon( uint32_t baseAddr,
 static void
 bsp_I2c_isrCommon( bsp_I2c_Id_t id )
 {
-    uint32_t intStatusMaster;
-    uint32_t intStatusSlave;
-    uint32_t baseAddr;
-
-    baseAddr = bsp_I2c_staticInfo[id].baseAddr;
+    uint32_t baseAddr = bsp_I2c_staticInfo[id].baseAddr;
 
     // Read out and clear the masked interrupt status registers
-    intStatusMaster = BSP_I2C_REG( baseAddr, MCS );
+    uint32_t intStatusMaster = BSP_I2C_REG( baseAddr, MCS );
     MAP_I2CMasterIntClear( baseAddr );
 
     if( intStatusMaster != 0 )
@@ -274,7 +270,7 @@ bsp_I2c_isrCommon( bsp_I2c_Id_t id )
         bsp_I2c_isrMasterCommon( baseAddr, intStatusMaster );
     }
 
-    intStatusSlave = BSP_I2C_REG( baseAddr, SCSR );
+    uint32_t intStatusSlave = BSP_I2C_REG( baseAddr, SCSR );
     MAP_I2CSlaveIntClear( baseAddr );
 
     if( intStatusSlave != 0 )

@@ -47,11 +47,10 @@
  *============================================================================*/
 /*============================================================================*/
 // Event handler message structures
-typedef struct BSP_ATTR_PACKED svc_ButtonEhMeasInd_s
+typedef struct BSP_ATTR_PACKED svc_TempEh_MeasInd_s
 {
-    svc_MsgFwk_Hdr_t     hdr;
-    dev_Temp_MeasHumid_t humidity;
-    dev_Temp_MeasTemp_t  temperature;
+    svc_MsgFwk_Hdr_t           hdr;
+    dev_Temp_MeasTemperature_t temperature;
 } svc_TempEh_MeasInd_t;
 
 

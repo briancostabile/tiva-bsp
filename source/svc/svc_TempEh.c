@@ -28,6 +28,7 @@
 #include "bsp_Platform.h"
 #include "bsp_Button.h"
 #include "bsp_Mcu.h"
+#include "bsp_Clk.h"
 #include "svc_TempEh.h"
 #include "svc_MsgFwk.h"
 #include "svc_Log.h"
@@ -57,12 +58,10 @@ osapi_Timer_t svc_TempEh_timer;
 
 /*============================================================================*/
 static void
-svc_TempEh_buildAndSendMeasInd( dev_Temp_MeasHumid_t humidity,
-                                dev_Temp_MeasTemp_t  temperature )
+svc_TempEh_buildAndSendMeasInd( dev_Temp_MeasTemperature_t temperature )
 {
     svc_TempEh_MeasInd_t measInd;
 
-    measInd.humidity = humidity;
     measInd.temperature = temperature;
 
     svc_MsgFwk_msgAllocAndBroadcast( SVC_TEMPEH_MEAS_IND,
@@ -74,40 +73,25 @@ svc_TempEh_buildAndSendMeasInd( dev_Temp_MeasHumid_t humidity,
 
 /*============================================================================*/
 static void
-svc_TempEh_measHandler( dev_Temp_MeasHumid_t humidity,
-                        dev_Temp_MeasTemp_t  temperature )
+svc_TempEh_measHandler( dev_Temp_MeasTemperature_t temperature )
 {
-#if 0
+#if 1
     volatile int i=0;
     if( (i++ % 4) == 0 )
     {
-        printf( "humidity:%d.%d%% temperature:%d.%d"NL, (humidity/64), ((humidity%64) * 100 / 64), (temperature/64), ((temperature%64) * 100 / 64) );
+        printf( "temp:%d.%d"NL, (temperature/64), ((temperature%64) * 100 / 64) );
     }
 #endif
-    svc_TempEh_buildAndSendMeasInd( humidity, temperature );
-    return;
+    svc_TempEh_buildAndSendMeasInd( temperature );
 }
 
-
-/*============================================================================*/
-void
-svc_TempEh_timerCallback( osapi_Timer_t   timer,
-                          osapi_TimerId_t id )
-{
-    dev_Temp_measTrigger( svc_TempEh_measHandler );
-    return;
-}
 
 /*============================================================================*/
 static void
 svc_TempEh_init( void )
 {
-    dev_Temp_init(svc_TempEh_measHandler);
-    svc_TempEh_timer = osapi_Timer_create( SVC_TEMPEH_MEAS_POLLING_TIMER_ID,
-                                           SVC_TEMPEH_MEAS_POLLING_PERIOD_MS,
-                                           OSAPI_TIMER_TYPE_PERIODIC,
-                                           svc_TempEh_timerCallback );
-    osapi_Timer_start( svc_TempEh_timer );
+    dev_Temp_init();
+    dev_Temp_measTrigger( svc_TempEh_measHandler );
 }
 
 

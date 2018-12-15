@@ -297,14 +297,24 @@
 			<locationURI>SOURCE_ROOT/config/FreeRTOSConfig.h</locationURI>
 		</link>
 		<link>
+			<name>source/dev/dev_Humid.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/dev/dev_Humid.h</locationURI>
+		</link>
+		<link>
+			<name>source/dev/dev_Humid_sht21.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/dev/dev_Humid_sht21.c</locationURI>
+		</link>
+		<link>
 			<name>source/dev/dev_Temp.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/dev/dev_Temp.h</locationURI>
 		</link>
 		<link>
-			<name>source/dev/dev_Temp_sht21.c</name>
+			<name>source/dev/dev_Temp_tmp006.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/dev/dev_Temp_sht21.c</locationURI>
+			<locationURI>SOURCE_ROOT/dev/dev_Temp_tmp006.c</locationURI>
 		</link>
 		<link>
 			<name>source/osapi/osapi.h</name>
@@ -355,6 +365,16 @@
 			<name>source/svc/svc_Eh.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_Eh.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_HumidEh.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_HumidEh.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_HumidEh.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_HumidEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_Log.h</name>

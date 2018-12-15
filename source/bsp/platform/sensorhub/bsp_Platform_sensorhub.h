@@ -78,8 +78,9 @@
 #define BSP_PLATFORM_IO_BIT_MASK_LED_2   BSP_GPIO_BIT_MASK_LED_G
 
 // List the I2C devices for this platform as a comma separated list of integers for example: 0, 1, 2
-#define BSP_PLATFORM_I2C_LIST  3
-#define BSP_PLATFORM_I2C_SHT21 3
+#define BSP_PLATFORM_I2C_LIST   3
+#define BSP_PLATFORM_I2C_SHT21  3
+#define BSP_PLATFORM_I2C_TMP006 3
 
 // Humidity/Temperature sensor accuracy selection
 //      Humid  Temp

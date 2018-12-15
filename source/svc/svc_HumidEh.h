@@ -21,75 +21,58 @@
  */
 /*============================================================================*/
 /**
- * @file svc_Periph.c
- * @brief
+ * @file svc_HumidEh.h
+ * @brief Contains the message interface related to the Humidity service
  */
+#ifndef SVC_HUMID_EH_H
+#define SVC_HUMID_EH_H
 
 #include "bsp_Types.h"
-#include "bsp_Pragma.h"
-#include "svc_Periph.h"
-#include "svc_ButtonEh.h"
-#include "svc_TestEh.h"
-#include "svc_TempEh.h"
-#include "svc_HumidEh.h"
+#include "bsp_Platform.h"
+#include "dev_Humid.h"
+#include <stdint.h>
 #include "svc_Eh.h"
-#include "osapi.h"
+#include "svc_MsgFwk.h"
+
+/*==============================================================================
+ *                               Defines
+ *============================================================================*/
+/*============================================================================*/
+// Event handler message IDs
+#define SVC_HUMIDEH_MEAS_HUMIDITY_IND    SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_HUMID, 0 )
+#define SVC_HUMIDEH_MEAS_TEMPERATURE_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_HUMID, 1 )
+#define SVC_HUMIDEH_MEAS_COMBO_IND       SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_HUMID, 2 )
 
 
-#ifndef SVC_LOG_LEVEL
-#define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
+/*==============================================================================
+ *                                Types
+ *============================================================================*/
+/*============================================================================*/
+// Event handler message structures
+typedef struct BSP_ATTR_PACKED svc_HumidEh_MeasHumidityInd_s
+{
+    svc_MsgFwk_Hdr_t         hdr;
+    dev_Humid_MeasHumidity_t humidity;
+} svc_HumidEh_MeasHumidityInd_t;
+
+typedef struct BSP_ATTR_PACKED svc_HumidEh_MeasTemperatureInd_s
+{
+    svc_MsgFwk_Hdr_t            hdr;
+    dev_Humid_MeasTemperature_t temperature;
+} svc_HumidEh_MeasTemperatureInd_t;
+
+typedef struct BSP_ATTR_PACKED svc_HumidEh_MeasComboInd_s
+{
+    svc_MsgFwk_Hdr_t            hdr;
+    dev_Humid_MeasHumidity_t    humidity;
+    dev_Humid_MeasTemperature_t temperature;
+} svc_HumidEh_MeasComboInd_t;
+
+
+/*==============================================================================
+ *                                Globals
+ *============================================================================*/
+/*============================================================================*/
+extern const svc_Eh_Info_t svc_HumidEh_info;
+
 #endif
-#include "svc_Log.h"
-
-#include <stdio.h>
-
-
-/*==============================================================================
- *                                  Defines
- *============================================================================*/
-#define SVC_PERIPH_STACK_SIZE    2048
-#define SVC_PERIPH_STACK_SIZE_32 (SVC_PERIPH_STACK_SIZE / 4)
-
-#define SVC_PERIPH_QUEUE_DEPTH 10
-
-/*==============================================================================
- *                                 Globals
- *============================================================================*/
-// Total stack needed for the Peripheral thread
-uint32_t svc_Periph_stack[SVC_PERIPH_STACK_SIZE_32];
-void*    svc_Periph_queue[SVC_PERIPH_QUEUE_DEPTH];
-
-/*============================================================================*/
-static const svc_Eh_Info_t* svc_Periph_ehTable[] = 
-{
-    &svc_ButtonEh_info,
-    &svc_TempEh_info,
-    &svc_HumidEh_info,
-    &svc_TestEh_info
-};
-
-/*==============================================================================
- *                            Public Functions
- *============================================================================*/
-/*============================================================================*/
-void
-svc_Periph_threadMain( osapi_ThreadArg_t arg )
-{
-    svc_Eh_listRun( DIM(svc_Periph_ehTable),
-                    svc_Periph_ehTable,
-                    SVC_PERIPH_QUEUE_DEPTH,
-                    svc_Periph_queue );
-    return;
-}
-
-/*============================================================================*/
-const osapi_ThreadInitInfo_t BSP_ATTR_USED BSP_ATTR_SECTION(".tinit") svc_Periph_threadInitInfo =
-{
-  .name        = "Periph",
-  .handler     = svc_Periph_threadMain,
-  .arg         = NULL,
-  .priority    = 3,
-  .stackSize32 = SVC_PERIPH_STACK_SIZE_32,
-  .stackPtr    = &svc_Periph_stack[0]
-};
-BSP_PRAGMA_DATA_REQUIRED(svc_Periph_threadInitInfo)
