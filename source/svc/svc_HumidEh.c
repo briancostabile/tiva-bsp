@@ -30,9 +30,13 @@
 #include "bsp_Mcu.h"
 #include "svc_HumidEh.h"
 #include "svc_MsgFwk.h"
-#include "svc_Log.h"
 #include "osapi.h"
 #include "dev_Temp.h"
+
+#ifndef SVC_LOG_LEVEL
+#define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
+#endif
+#include "svc_Log.h"
 
 /*==============================================================================
  *                                Defines
@@ -55,6 +59,7 @@ osapi_Timer_t svc_HumidEh_timer;
  *                            Local Functions
  *============================================================================*/
 
+#if 0 // for testing
 /*============================================================================*/
 static void
 svc_HumidEh_buildAndSendMeasHumidityInd( dev_Humid_MeasHumidity_t humidity )
@@ -72,6 +77,22 @@ svc_HumidEh_buildAndSendMeasHumidityInd( dev_Humid_MeasHumidity_t humidity )
 
 /*============================================================================*/
 static void
+svc_HumidEh_measHandlerHumidity( dev_Humid_MeasHumidity_t humidity )
+{
+#if (SVC_LOG_LEVEL >= SVC_LOG_LEVEL_INFO)
+    volatile int i=0;
+    if( (i++ % 4) == 0 )
+    {
+        SVC_LOG_INFO( "humidity:%d.%d%%"NL, (humidity/64), ((humidity%64) * 100 / 64) );
+    }
+#endif
+    svc_HumidEh_buildAndSendMeasHumidityInd( humidity );
+    return;
+}
+
+
+/*============================================================================*/
+static void
 svc_HumidEh_buildAndSendMeasTemperatureInd( dev_Humid_MeasTemperature_t temperature )
 {
     svc_HumidEh_MeasTemperatureInd_t measInd;
@@ -84,6 +105,22 @@ svc_HumidEh_buildAndSendMeasTemperatureInd( dev_Humid_MeasTemperature_t temperat
 
     return;
 }
+
+/*============================================================================*/
+static void
+svc_HumidEh_measHandlerTemperature( dev_Humid_MeasTemperature_t temperature )
+{
+#if (SVC_LOG_LEVEL >= SVC_LOG_LEVEL_INFO)
+    volatile int i=0;
+    if( (i++ % 4) == 0 )
+    {
+        SVC_LOG_INFO( "temperature:%d.%d"NL, (temperature/64), ((temperature%64) * 100 / 64) );
+    }
+#endif
+    svc_HumidEh_buildAndSendMeasTemperatureInd( temperature );
+    return;
+}
+#endif
 
 /*============================================================================*/
 static void
@@ -104,44 +141,14 @@ svc_HumidEh_buildAndSendMeasComboInd( dev_Humid_MeasHumidity_t    humidity,
 
 /*============================================================================*/
 static void
-svc_HumidEh_measHandlerHumidity( dev_Humid_MeasHumidity_t humidity )
-{
-#if 1
-    volatile int i=0;
-    if( (i++ % 4) == 0 )
-    {
-        printf( "humidity:%d.%d%%"NL, (humidity/64), ((humidity%64) * 100 / 64) );
-    }
-#endif
-    svc_HumidEh_buildAndSendMeasHumidityInd( humidity );
-    return;
-}
-
-/*============================================================================*/
-static void
-svc_HumidEh_measHandlerTemperature( dev_Humid_MeasTemperature_t temperature )
-{
-#if 1
-    volatile int i=0;
-    if( (i++ % 4) == 0 )
-    {
-        printf( "temperature:%d.%d"NL, (temperature/64), ((temperature%64) * 100 / 64) );
-    }
-#endif
-    svc_HumidEh_buildAndSendMeasTemperatureInd( temperature );
-    return;
-}
-
-/*============================================================================*/
-static void
 svc_HumidEh_measHandlerCombo( dev_Humid_MeasHumidity_t    humidity,
                               dev_Humid_MeasTemperature_t temperature )
 {
-#if 1
+#if (SVC_LOG_LEVEL >= SVC_LOG_LEVEL_INFO)
     volatile int i=0;
     if( (i++ % 4) == 0 )
     {
-        printf( "humidity:%d.%d%% temperature:%d.%d"NL, (humidity/64), ((humidity%64) * 100 / 64), (temperature/64), ((temperature%64) * 100 / 64) );
+        SVC_LOG_INFO( "humidity:%d.%d%% temperature:%d.%d"NL, (humidity/64), ((humidity%64) * 100 / 64), (temperature/64), ((temperature%64) * 100 / 64) );
     }
 #endif
     svc_HumidEh_buildAndSendMeasComboInd( humidity, temperature );

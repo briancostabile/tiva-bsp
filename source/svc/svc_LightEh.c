@@ -21,7 +21,7 @@
  */
 /*============================================================================*/
 /**
- * @file svc_TempEh.c
+ * @file svc_LightEh.c
  * @brief Contains the Event handler for Service layer temperature/humidity messages
  */
 #include "bsp_Types.h"
@@ -29,23 +29,25 @@
 #include "bsp_Button.h"
 #include "bsp_Mcu.h"
 #include "bsp_Clk.h"
-#include "svc_TempEh.h"
+#include "svc_LightEh.h"
 #include "svc_MsgFwk.h"
 #include "osapi.h"
-#include "dev_Temp.h"
+#include "dev_Light.h"
 
 #ifndef SVC_LOG_LEVEL
 #define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
 #endif
 #include "svc_Log.h"
 
+#include "bsp_Trace.h"
 
 /*==============================================================================
  *                                Defines
  *============================================================================*/
 /*============================================================================*/
-#define SVC_TEMPEH_MEAS_POLLING_PERIOD_MS 500
-#define SVC_TEMPEH_MEAS_POLLING_TIMER_ID  0
+#define SVC_LIGHTEH_MEAS_POLLING_PERIOD_MS 250
+#define SVC_LIGHTEH_MEAS_POLLING_TIMER_ID  0
+
 
 /*==============================================================================
  *                                Types
@@ -55,7 +57,7 @@
 /*==============================================================================
  *                                Globals
  *============================================================================*/
-osapi_Timer_t svc_TempEh_timer;
+osapi_Timer_t svc_LightEh_timer;
 
 /*==============================================================================
  *                            Local Functions
@@ -63,14 +65,14 @@ osapi_Timer_t svc_TempEh_timer;
 
 /*============================================================================*/
 static void
-svc_TempEh_buildAndSendMeasInd( dev_Temp_MeasTemperature_t temperature )
+svc_LightEh_buildAndSendMeasInd( dev_Light_MeasLight_t light )
 {
-    svc_TempEh_MeasInd_t measInd;
+    svc_LightEh_MeasInd_t measInd;
 
-    measInd.temperature = temperature;
+    measInd.light = light;
 
-    svc_MsgFwk_msgAllocAndBroadcast( SVC_TEMPEH_MEAS_IND,
-                                     sizeof(svc_TempEh_MeasInd_t),
+    svc_MsgFwk_msgAllocAndBroadcast( SVC_LIGHTEH_MEAS_ALS_IND,
+                                     sizeof(svc_LightEh_MeasInd_t),
                                      SVC_MSGFWK_MSG_PAYLOAD_PTR(&measInd) );
 
     return;
@@ -78,25 +80,62 @@ svc_TempEh_buildAndSendMeasInd( dev_Temp_MeasTemperature_t temperature )
 
 /*============================================================================*/
 static void
-svc_TempEh_measHandler( dev_Temp_MeasTemperature_t temperature )
+svc_LightEh_measHandlerAls( dev_Light_MeasLight_t light )
 {
 #if (SVC_LOG_LEVEL >= SVC_LOG_LEVEL_INFO)
     volatile int i=0;
     if( (i++ % 4) == 0 )
     {
-        SVC_LOG_INFO( "temp:%d.%d"NL, (temperature/64), ((temperature%64) * 100 / 64) );
+        SVC_LOG_INFO( "als:%d.%d"NL, (light/256), (((light%256) * 100) / 256) );
     }
 #endif
-    svc_TempEh_buildAndSendMeasInd( temperature );
+    svc_LightEh_buildAndSendMeasInd( light );
+}
+
+/*============================================================================*/
+static void
+svc_LightEh_measHandlerIr( dev_Light_MeasLight_t light )
+{
+#if (SVC_LOG_LEVEL >= SVC_LOG_LEVEL_INFO)
+    volatile int i=0;
+    if( (i++ % 4) == 0 )
+    {
+        SVC_LOG_INFO( "ir :%d.%d"NL, (light/256), (((light%256) * 100) / 256) );
+    }
+#endif
+    svc_LightEh_buildAndSendMeasInd( light );
+}
+
+/*============================================================================*/
+void
+svc_LightEh_timerCallback( osapi_Timer_t   timer,
+                           osapi_TimerId_t id )
+{   
+    static uint8_t i = 0;
+
+    // Flip between measureing Als and Ir
+    if( i++ & 0x01 )
+    {
+        dev_Light_measTriggerAls( svc_LightEh_measHandlerAls );
+    }
+    else
+    {
+        dev_Light_measTriggerIr( svc_LightEh_measHandlerIr );
+    }
+    return;
 }
 
 
 /*============================================================================*/
 static void
-svc_TempEh_init( void )
+svc_LightEh_init( void )
 {
-    dev_Temp_init();
-    dev_Temp_measTrigger( svc_TempEh_measHandler );
+    dev_Light_init();
+    svc_LightEh_timer = osapi_Timer_create( SVC_LIGHTEH_MEAS_POLLING_TIMER_ID,
+                                            SVC_LIGHTEH_MEAS_POLLING_PERIOD_MS,
+                                            OSAPI_TIMER_TYPE_PERIODIC,
+                                            svc_LightEh_timerCallback );
+    osapi_Timer_start( svc_LightEh_timer );
 }
 
 
@@ -104,11 +143,11 @@ svc_TempEh_init( void )
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-const svc_Eh_Info_t svc_TempEh_info =
+const svc_Eh_Info_t svc_LightEh_info =
 {
-    SVC_EHID_TEMP,
+    SVC_EHID_LIGHT,
     0,    // bcastListLen
     NULL, // bcastList
-    svc_TempEh_init,
+    svc_LightEh_init,
     NULL  // msgHandler
 };

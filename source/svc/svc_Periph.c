@@ -32,6 +32,7 @@
 #include "svc_TestEh.h"
 #include "svc_TempEh.h"
 #include "svc_HumidEh.h"
+#include "svc_LightEh.h"
 #include "svc_Eh.h"
 #include "osapi.h"
 
@@ -65,6 +66,7 @@ static const svc_Eh_Info_t* svc_Periph_ehTable[] =
     &svc_ButtonEh_info,
     &svc_TempEh_info,
     &svc_HumidEh_info,
+    &svc_LightEh_info,
     &svc_TestEh_info
 };
 

@@ -307,6 +307,16 @@
 			<locationURI>SOURCE_ROOT/dev/dev_Humid_sht21.c</locationURI>
 		</link>
 		<link>
+			<name>source/dev/dev_Light.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/dev/dev_Light.h</locationURI>
+		</link>
+		<link>
+			<name>source/dev/dev_Light_isl29023.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/dev/dev_Light_isl29023.c</locationURI>
+		</link>
+		<link>
 			<name>source/dev/dev_Temp.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/dev/dev_Temp.h</locationURI>
@@ -375,6 +385,16 @@
 			<name>source/svc/svc_HumidEh.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_HumidEh.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_LightEh.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_LightEh.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_LightEh.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_LightEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_Log.h</name>

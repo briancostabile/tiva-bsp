@@ -100,7 +100,7 @@ static const bsp_I2c_Id_t bsp_I2c_idTable[] =
 
 static bsp_I2c_MasterTrans_t* bsp_I2c_masterTransQueueHeadPtr;
 static bsp_I2c_MasterTrans_t* bsp_I2c_masterTransQueueTailPtr;
-
+static bsp_I2c_MasterTrans_t bsp_I2c_masterTransActive;
 
 /*==============================================================================
  *                            Local Functions
@@ -171,46 +171,39 @@ bsp_I2c_isrMasterCommon( uint32_t baseAddr,
     if( (intStatus & I2C_MCS_IDLE) != 0 )
     {
         BSP_TRACE_I2C_STATUS_IDLE();
-        bsp_I2c_MasterTrans_t* transPtr = bsp_I2c_masterTransQueueHeadPtr;
+        bsp_I2c_MasterTrans_t* transPtr = &bsp_I2c_masterTransActive;
 
         if( transPtr->type == BSP_I2C_TRANS_TYPE_READ )
         {
             BSP_I2C_NEXT_BYTE_RCV( baseAddr, transPtr );
         }
 
-        // Special case when transaction structures are reused during i2c callbacks.
-        // In that case the nextPtr will be pointing back to the current structure
-        // That's fine and will cause the driver to re-execute whatever is in the
-        // structure after the callback has been called. The structure is safe to
-        // modify as soon as the callback is called. To identify when that has
-        // happened, set the nextPtr to NULL before calling the callback and if
-        // it's still NULL afterwards then that means the callback didn't reuse the
-        // structure.
-        if( transPtr->nextPtr == transPtr )
-        {
-            transPtr->nextPtr = NULL;
-        }
-
         // Call callback
         transPtr->callback( 0, transPtr->usrData );
 
-        // Unlink the transaction
-        bsp_I2c_masterTransQueueHeadPtr = bsp_I2c_masterTransQueueHeadPtr->nextPtr;
-        if( bsp_I2c_masterTransQueueHeadPtr == NULL )
-        {
-            bsp_I2c_masterTransQueueTailPtr = NULL;
-        }
+        // mark the active transaction as inactive
+        transPtr->nextPtr = NULL;
 
-        // See if there's another transaction waiting to be started
+        // See if there is a pending transaction in the queue
         if( bsp_I2c_masterTransQueueHeadPtr != NULL )
         {
-             bsp_I2c_masterTransStart( baseAddr, bsp_I2c_masterTransQueueHeadPtr );
+            memcpy( &bsp_I2c_masterTransActive, bsp_I2c_masterTransQueueHeadPtr, sizeof(bsp_I2c_masterTransActive) );
+
+            bsp_I2c_masterTransQueueHeadPtr = bsp_I2c_masterTransQueueHeadPtr->nextPtr;
+
+            // Check if the queue is empty
+            if( bsp_I2c_masterTransQueueHeadPtr == NULL )
+            {
+                bsp_I2c_masterTransQueueTailPtr = NULL;
+            }
+            bsp_I2c_masterTransActive.nextPtr = &bsp_I2c_masterTransActive;
+            bsp_I2c_masterTransStart( baseAddr, &bsp_I2c_masterTransActive );
         }
     }
     else if( (intStatus & I2C_MCS_BUSBSY) != 0 )
     {
         BSP_TRACE_I2C_STATUS_BUS_BUSY();
-        bsp_I2c_MasterTrans_t* transPtr = bsp_I2c_masterTransQueueHeadPtr;
+        bsp_I2c_MasterTrans_t* transPtr = &bsp_I2c_masterTransActive;
         uint32_t i2cCmd;
 
         if( transPtr->type == BSP_I2C_TRANS_TYPE_READ )
@@ -218,6 +211,16 @@ bsp_I2c_isrMasterCommon( uint32_t baseAddr,
             // Get the next byte received and trigger the I2C peripheral
             BSP_I2C_NEXT_BYTE_RCV( baseAddr, transPtr );
             i2cCmd = (transPtr->len > 1) ? I2C_MASTER_CMD_BURST_RECEIVE_CONT : I2C_MASTER_CMD_BURST_RECEIVE_FINISH;
+        }
+        else if( transPtr->type == BSP_I2C_TRANS_TYPE_WRITE_READ )
+        {
+            // Switch to read mode
+            transPtr->type = BSP_I2C_TRANS_TYPE_READ;
+
+            // Reset the slave address and the r/w bit
+            ROM_I2CMasterSlaveAddrSet( baseAddr, transPtr->addr, true );
+
+            i2cCmd = I2C_MASTER_CMD_BURST_RECEIVE_START;
         }
         else // Assume Write
         {
@@ -277,7 +280,6 @@ bsp_I2c_isrCommon( bsp_I2c_Id_t id )
     {
         bsp_I2c_isrSlaveCommon( baseAddr, intStatusSlave );
     }
-
     return;
 }
 
@@ -291,6 +293,7 @@ bsp_I2c_init( void )
 {
     bsp_I2c_masterTransQueueHeadPtr = NULL;
     bsp_I2c_masterTransQueueTailPtr = NULL;
+    memset( &bsp_I2c_masterTransActive, 0, sizeof(bsp_I2c_masterTransActive) );
 
     // Disable all I2C blocks
     for( size_t i=0; i<DIM(bsp_I2c_staticInfo); i++ )
@@ -389,17 +392,28 @@ bsp_I2c_masterTransQueue( bsp_I2c_Id_t           id,
         return;
     }
 
-    if( bsp_I2c_masterTransQueueHeadPtr == NULL )
+    // nextPtr will be NULL if there is no active transaction underway
+    if( bsp_I2c_masterTransActive.nextPtr == NULL )
     {
-        // Only thing in the queue so trigger the transaction immediately
-        bsp_I2c_masterTransQueueHeadPtr = transPtr;
-        bsp_I2c_masterTransQueueTailPtr = transPtr;
-        bsp_I2c_masterTransStart( bsp_I2c_staticInfo[id].baseAddr, transPtr );
+        memcpy( &bsp_I2c_masterTransActive, transPtr, sizeof(bsp_I2c_masterTransActive) );
+        bsp_I2c_masterTransActive.nextPtr = &bsp_I2c_masterTransActive;
+        bsp_I2c_masterTransStart( bsp_I2c_staticInfo[id].baseAddr, &bsp_I2c_masterTransActive );
     }
     else
     {
-        // put at the end of the list
-        bsp_I2c_masterTransQueueTailPtr->nextPtr = transPtr;
+        // There is an active transaction so queue it up
+        if( bsp_I2c_masterTransQueueHeadPtr == NULL )
+        {
+            // Only thing in the queue so setup the head/tail properly
+            bsp_I2c_masterTransQueueHeadPtr = transPtr;
+            bsp_I2c_masterTransQueueTailPtr = transPtr;
+        }
+        else
+        {
+            // put at the end of the list
+            bsp_I2c_masterTransQueueTailPtr->nextPtr = transPtr;
+            bsp_I2c_masterTransQueueTailPtr = transPtr;
+        }
     }
 
     BSP_MCU_CRITICAL_SECTION_EXIT();

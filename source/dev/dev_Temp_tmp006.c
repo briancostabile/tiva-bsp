@@ -90,12 +90,9 @@ typedef void (*dev_Temp_UsrDataCallback_t)( void );
 // Callback to be called at the end of the measurement transactions. Can be NULL.
 dev_Temp_MeasCallback_t dev_Temp_measCallback;
 
-// Write buffer is only ever 3 bytes max. 1 byte for the pointer Id and 2 bytes
-// for the register value
-uint8_t dev_Temp_i2cWriteBuffer[3];
-
-// Read buffer is only ever 3 bytes max. A temp/humidity conversion is 24-bits
-uint8_t dev_Temp_i2cReadBuffer[3];
+// I2C buffer is only ever 3 bytes max. On writes: 1 byte for the pointer Id and 2 bytes
+// for the register value. On reads: 2-bytes for temp and 1 byte for CRC
+uint8_t dev_Temp_i2cBuffer[3];
 
 // globals to hold the most recent Measurements
 dev_Temp_MeasTemperature_t dev_Temp_temperature;
@@ -131,7 +128,7 @@ dev_Temp_i2cTransCallback( bsp_I2c_Status_t status, void* usrData )
 
 /*===========================================================================*/
 // Wrapper function to setup the I2C transaction structure and queue it
-void
+static void
 dev_Temp_i2cTransQueue( bsp_I2c_TransType_t type,
                         size_t              len,
                         uint8_t*            buffer,
@@ -158,37 +155,55 @@ dev_Temp_i2cRegWrite( bsp_Temp_I2cCmd_t pointerId,
                       dev_Temp_Reg_t    regValue,
                       void*             usrData )
 {
-    dev_Temp_i2cWriteBuffer[0] = pointerId;
-    dev_Temp_i2cWriteBuffer[1] = ((regValue >> 8) & 0xFF);
-    dev_Temp_i2cWriteBuffer[2] = ((regValue >> 0) & 0xFF);
+    dev_Temp_i2cBuffer[0] = pointerId;
+    dev_Temp_i2cBuffer[1] = ((regValue >> 8) & 0xFF);
+    dev_Temp_i2cBuffer[2] = ((regValue >> 0) & 0xFF);
 
-    dev_Temp_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 3, dev_Temp_i2cWriteBuffer, usrData );
-}
-
-/*===========================================================================*/
-// Wrapper to read data from the SHT21. The amount of data available depends on the
-// command previously written. Measurements are 3 bytes, the config register is a
-// single byte
-static void
-dev_Temp_i2cRead( size_t len,
-                  void*  usrData )
-{
-    dev_Temp_i2cTransQueue( BSP_I2C_TRANS_TYPE_READ, len, dev_Temp_i2cReadBuffer, usrData );
-}
-
-/*===========================================================================*/
-void
-dev_Temp_tempRead( void* usrData )
-{
-    dev_Temp_i2cRead( sizeof(dev_Temp_Reg_t), usrData );
+    dev_Temp_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 3, dev_Temp_i2cBuffer, usrData );
     return;
 }
 
 /*===========================================================================*/
-void
+static void
+dev_Temp_regSelect( bsp_Temp_I2cCmd_t regId )
+{
+    // After reset is triggered, setup the pointer to be the Temperature register
+    dev_Temp_i2cBuffer[0] = regId;
+    dev_Temp_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 1, dev_Temp_i2cBuffer, NULL );
+    return;
+}
+
+/*===========================================================================*/
+static void
+dev_Temp_powerOn( void )
+{
+    dev_Temp_Reg_t reg = DEV_TEMP_REG_CONFIG_BUILD( DEV_TEMP_REG_NOT_RESET,
+                                                    DEV_TEMP_REG_MODE_POWER_ON,
+                                                    DEV_TEMP_REG_MODE_CONV_RATE_2,
+                                                    DEV_TEMP_REG_DATA_READY_ENABLE );
+
+    dev_Temp_i2cRegWrite( DEV_TEMP_REG_CONFIG, reg, NULL );
+    return;
+}
+
+/*===========================================================================*/
+static void
+dev_Temp_reset( void )
+{
+    dev_Temp_Reg_t reg = DEV_TEMP_REG_CONFIG_BUILD( DEV_TEMP_REG_RESET,
+                                                    DEV_TEMP_REG_MODE_POWER_DOWN,
+                                                    DEV_TEMP_REG_MODE_CONV_RATE_2,
+                                                    DEV_TEMP_REG_DATA_READY_DISABLE );
+
+    dev_Temp_i2cRegWrite( DEV_TEMP_REG_CONFIG, reg, NULL );
+    return;
+}
+
+/*===========================================================================*/
+static void
 dev_Temp_readCompleteHandler( void )
 {
-    float temp_float = DEV_TEMP_CONVERT_TEMP_FLOAT( ((dev_Temp_i2cReadBuffer[0] << 6) | (dev_Temp_i2cReadBuffer[1] >> 2)) );
+    float temp_float = DEV_TEMP_CONVERT_TEMP_FLOAT( ((dev_Temp_i2cBuffer[0] << 6) | (dev_Temp_i2cBuffer[1] >> 2)) );
     dev_Temp_temperature = dev_Temp_cnvFloatToFixed10p6( temp_float );
 
     if( dev_Temp_measCallback != NULL )
@@ -199,49 +214,14 @@ dev_Temp_readCompleteHandler( void )
 }
 
 /*===========================================================================*/
-void
-dev_Temp_enableHandler( void )
-{
-    // After reset is triggered, setup the pointer to be the Temperature register
-    dev_Temp_i2cWriteBuffer[0] = DEV_TEMP_REG_TEMPERATURE;
-    dev_Temp_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 1, dev_Temp_i2cWriteBuffer, NULL );
-    return;
-}
-
-/*===========================================================================*/
-void
-dev_Temp_resetCompleteHandler( void )
-{
-    bsp_Clk_delayMs( 100 );
-
-    dev_Temp_Reg_t reg = DEV_TEMP_REG_CONFIG_BUILD( DEV_TEMP_REG_NOT_RESET,
-                                                    DEV_TEMP_REG_MODE_POWER_ON,
-                                                    DEV_TEMP_REG_MODE_CONV_RATE_2,
-                                                    DEV_TEMP_REG_DATA_READY_ENABLE );
-
-    dev_Temp_i2cRegWrite( DEV_TEMP_REG_CONFIG, reg, dev_Temp_enableHandler );
-    return;
-}
-
-/*===========================================================================*/
-void
-dev_Temp_reset( void )
-{
-    dev_Temp_Reg_t reg = DEV_TEMP_REG_CONFIG_BUILD( DEV_TEMP_REG_RESET,
-                                                    DEV_TEMP_REG_MODE_POWER_DOWN,
-                                                    DEV_TEMP_REG_MODE_CONV_RATE_2,
-                                                    DEV_TEMP_REG_DATA_READY_DISABLE );
-
-    dev_Temp_i2cRegWrite( DEV_TEMP_REG_CONFIG, reg, dev_Temp_resetCompleteHandler );
-    return;
-}
-
-/*===========================================================================*/
-void
+static void
 dev_Temp_dataReadyHandler( bsp_Gpio_PortId_t    portId,
                            bsp_Gpio_PinOffset_t pinOffset )
 {
-    dev_Temp_tempRead( dev_Temp_readCompleteHandler );
+    dev_Temp_i2cTransQueue( BSP_I2C_TRANS_TYPE_READ,
+                            sizeof(dev_Temp_Reg_t),
+                            dev_Temp_i2cBuffer,
+                            dev_Temp_readCompleteHandler );
     return;
 }
 
@@ -285,6 +265,19 @@ dev_Temp_init( void )
 
     dev_Temp_reset();
 
+    // Need delay after reset before communication will work
+    bsp_Clk_delayMs( 100 );
+
+    // Enable the sensor
+    dev_Temp_powerOn();
+	
+	// Wait for power on command to complete before sending the register selection
+    bsp_Clk_delayMs( 1 );
+	
+	// This will forever set the read address to be the temperature reading. This
+	// allows less i2c traffic during reads.
+    dev_Temp_regSelect( DEV_TEMP_REG_TEMPERATURE );
+
     return;
 }
 
@@ -293,15 +286,9 @@ dev_Temp_init( void )
 void
 dev_Temp_measTrigger( dev_Temp_MeasCallback_t callback )
 {
-    dev_Temp_Reg_t reg = DEV_TEMP_REG_CONFIG_BUILD( DEV_TEMP_REG_NOT_RESET,
-                                                    DEV_TEMP_REG_MODE_POWER_ON,
-                                                    DEV_TEMP_REG_MODE_CONV_RATE_2,
-                                                    DEV_TEMP_REG_DATA_READY_ENABLE );
-
     // Callback is called through interrupt line
     BSP_MCU_CRITICAL_SECTION_ENTER();
     dev_Temp_measCallback = callback;
-    //dev_Temp_i2cRegWrite( DEV_TEMP_REG_CONFIG, reg, NULL );
     BSP_MCU_CRITICAL_SECTION_EXIT();
     return;
 }

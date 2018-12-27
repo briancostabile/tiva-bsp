@@ -92,12 +92,10 @@ typedef void (*dev_Humid_UsrDataCallback_t)( void );
  *                                   Globals
  *===========================================================================*/
 
-// Write buffer is only ever 2 bytes max. 1 byte for command Id and another
-// byte for the register value in the register-write command
-uint8_t dev_Humid_i2cWriteBuffer[2];
-
-// Read buffer is only ever 3 bytes max. A temp/humidity conversion is 24-bits
-uint8_t dev_Humid_i2cReadBuffer[3];
+// Buffer for reading and writing. The read operation needs 1-byte for the write
+// portion of the command. and then 3 additional bytes for the read portion 2-bytes for
+// the temp/humidity value plus one byte for CRC.
+uint8_t dev_Humid_i2cBuffer[4];
 
 // globals to hold the most recent Measurements
 dev_Humid_MeasHumidity_t    dev_Humid_humidity;
@@ -128,6 +126,7 @@ dev_Humid_i2cTransCallback( bsp_I2c_Status_t status, void* usrData )
     {
         ((dev_Humid_UsrDataCallback_t)usrData)();
     }
+
     return;
 }
 
@@ -160,8 +159,8 @@ static void
 dev_Humid_i2cSndCmd( dev_Humid_Cmd_t cmd,
                      void*           usrData )
 {
-    dev_Humid_i2cWriteBuffer[0] = cmd;
-    dev_Humid_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 1, dev_Humid_i2cWriteBuffer, usrData );
+    dev_Humid_i2cBuffer[0] = cmd;
+    dev_Humid_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 1, dev_Humid_i2cBuffer, usrData );
 }
 
 /*===========================================================================*/
@@ -171,21 +170,24 @@ static void
 dev_Humid_i2cRegWrite( uint8_t reg,
                        void*   usrData )
 {
-    dev_Humid_i2cWriteBuffer[0] = DEV_HUMID_CMD_REG_WRITE;
-    dev_Humid_i2cWriteBuffer[1] = reg;
+    dev_Humid_i2cBuffer[0] = DEV_HUMID_CMD_REG_WRITE;
+    dev_Humid_i2cBuffer[1] = reg;
 
-    dev_Humid_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 2, dev_Humid_i2cWriteBuffer, usrData );
+    dev_Humid_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 2, dev_Humid_i2cBuffer, usrData );
 }
 
 /*===========================================================================*/
-// Wrapper to read data from the SHT21. The amount of data available depends on the
-// command previously written. Measurements are 3 bytes, the config register is a
-// single byte
+// Wrapper to read 3 bytes of data from the SHT21. Used for measurement reads
 static void
-dev_Humid_i2cRead( size_t len,
-                   void*  usrData )
+dev_Humid_i2cRegRead( dev_Humid_Cmd_t cmdId,
+                      void*           usrData )
 {
-    dev_Humid_i2cTransQueue( BSP_I2C_TRANS_TYPE_READ, len, dev_Humid_i2cReadBuffer, usrData );
+    dev_Humid_i2cBuffer[0] = cmdId;
+    dev_Humid_i2cBuffer[1] = 0;
+    dev_Humid_i2cBuffer[2] = 0;
+    dev_Humid_i2cBuffer[3] = 0;
+
+    dev_Humid_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE_READ, 4, dev_Humid_i2cBuffer, usrData );
 }
 
 
@@ -200,7 +202,7 @@ static void
 dev_Humid_i2cTransCbackHumidRead( void )
 {
     // Save off the converted value and
-    float temp_float = DEV_HUMID_CONVERT_HUMID_FLOAT( ((dev_Humid_i2cReadBuffer[0] << 8) | (dev_Humid_i2cReadBuffer[1] & 0xFC)) );
+    float temp_float = DEV_HUMID_CONVERT_HUMID_FLOAT( ((dev_Humid_i2cBuffer[1] << 8) | (dev_Humid_i2cBuffer[2] & 0xFC)) );
     dev_Humid_humidity = dev_Humid_cnvFloatToFixed10p6( temp_float );
 
     // Measurements are complete so call the callback
@@ -211,21 +213,13 @@ dev_Humid_i2cTransCbackHumidRead( void )
 }
 
 /*===========================================================================*/
-static void
-dev_Humid_i2cTransCbackHumidTrigger( void )
-{
-    // Read out the Humidity
-    dev_Humid_i2cRead( 3, dev_Humid_i2cTransCbackHumidRead );
-}
-
-/*===========================================================================*/
 // Wrapper function to setup and trigger the sequence of i2c commands
 // to trigger the capture of temperature and humidity
 static void
 dev_Humid_i2cTriggerMeasHumidity( dev_Humid_MeasCallbackHumidity_t callback )
 {
     dev_Humid_measCallbackHumidity = callback;
-    dev_Humid_i2cSndCmd( DEV_HUMID_CMD_TRIG_RH_HOLD, dev_Humid_i2cTransCbackHumidTrigger );
+    dev_Humid_i2cRegRead( DEV_HUMID_CMD_TRIG_RH_HOLD, dev_Humid_i2cTransCbackHumidRead );
 }
 
 
@@ -239,7 +233,7 @@ static void
 dev_Humid_i2cTransCbackTempRead( void )
 {
     // Save off the converted value and
-    float temp_float = DEV_HUMID_CONVERT_TEMP_FLOAT( ((dev_Humid_i2cReadBuffer[0] << 8) | (dev_Humid_i2cReadBuffer[1] & 0xFC)) );
+    float temp_float = DEV_HUMID_CONVERT_TEMP_FLOAT( ((dev_Humid_i2cBuffer[1] << 8) | (dev_Humid_i2cBuffer[2] & 0xFC)) );
     dev_Humid_temperature = dev_Humid_cnvFloatToFixed10p6( temp_float );
 
     // Measurements are complete so call the callback
@@ -250,21 +244,13 @@ dev_Humid_i2cTransCbackTempRead( void )
 }
 
 /*===========================================================================*/
-static void
-dev_Humid_i2cTransCbackTempTrigger( void )
-{
-    // Read out the temperature
-    dev_Humid_i2cRead( 3, dev_Humid_i2cTransCbackTempRead );
-}
-
-/*===========================================================================*/
 // Wrapper function to setup and trigger the sequence of i2c commands
 // to trigger the capture of temperature and humidity
 static void
 dev_Humid_i2cTriggerMeasTemperature( dev_Humid_MeasCallbackTemperature_t callback )
 {
     dev_Humid_measCallbackTemperature = callback;
-    dev_Humid_i2cSndCmd( DEV_HUMID_CMD_TRIG_T_HOLD, dev_Humid_i2cTransCbackTempTrigger );
+    dev_Humid_i2cRegRead( DEV_HUMID_CMD_TRIG_T_HOLD, dev_Humid_i2cTransCbackTempRead );
 }
 
 
@@ -322,17 +308,8 @@ dev_Humid_i2cTransCbackRegWrite( void )
 static void
 dev_Humid_i2cTransCbackRegRead( void )
 {
-    uint8_t reg = DEV_HUMID_REG_SET_RES( dev_Humid_i2cReadBuffer[0], dev_Humid_resolution );
+    uint8_t reg = DEV_HUMID_REG_SET_RES( dev_Humid_i2cBuffer[0], dev_Humid_resolution );
     dev_Humid_i2cRegWrite( reg, dev_Humid_i2cTransCbackRegWrite );
-}
-
-/*===========================================================================*/
-// Callback called Reg-Read command has been sent. Presumably,
-// the register contents are waiting to be read out.
-static void
-dev_Humid_i2cTransCbackRegReadCmd( void )
-{
-    dev_Humid_i2cRead( 1, dev_Humid_i2cTransCbackRegRead );
 }
 
 /*===========================================================================*/
@@ -347,7 +324,7 @@ dev_Humid_Config( dev_Humid_Resolution_t resolution )
     dev_Humid_i2cTransCompleteRegWrite = FALSE;
     dev_Humid_resolution = resolution;
 
-    dev_Humid_i2cSndCmd( DEV_HUMID_CMD_REG_READ, dev_Humid_i2cTransCbackRegReadCmd );
+    dev_Humid_i2cRegRead( DEV_HUMID_CMD_REG_READ, dev_Humid_i2cTransCbackRegRead );
 
     // spin until complete
     while( dev_Humid_i2cTransCompleteRegWrite == FALSE );

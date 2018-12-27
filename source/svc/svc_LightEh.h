@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Brian Costabile
+ * Copyright 2017 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,25 +21,44 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Trace_sensorhub.c
- * @brief Contains table of available test point IOs
+ * @file svc_LightEh.h
+ * @brief Contains the message interface related to the Lighterature service
  */
+#ifndef SVC_LIGHT_EH_H
+#define SVC_LIGHT_EH_H
 
 #include "bsp_Types.h"
-#include "bsp_Trace.h"
-#include "bsp_Gpio.h"
+#include "bsp_Platform.h"
+#include "dev_Light.h"
+#include <stdint.h>
+#include "svc_Eh.h"
+#include "svc_MsgFwk.h"
 
 /*==============================================================================
- *                               Globals
+ *                               Defines
  *============================================================================*/
 /*============================================================================*/
-/* One entry for each IO port. */
-const bsp_Trace_IoInfo_t bsp_Trace_ioInfoTable[BSP_GPIO_PORT_ID_NUM_PORTS]=
+// Event handler message IDs
+#define SVC_LIGHTEH_MEAS_ALS_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_LIGHT, 0 )
+#define SVC_LIGHTEH_MEAS_IR_IND  SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_LIGHT, 1 )
+
+
+/*==============================================================================
+ *                                Types
+ *============================================================================*/
+/*============================================================================*/
+// Event handler message structures
+typedef struct BSP_ATTR_PACKED svc_LightEh_MeasInd_s
 {
-    { BSP_GPIO_PORT_ID(PA0), (BSP_GPIO_MASK(TPA2) | BSP_GPIO_MASK(TPA3) | BSP_GPIO_MASK(TPA4) | BSP_GPIO_MASK(TPA5) | BSP_GPIO_MASK(TPA6) | BSP_GPIO_MASK(TPA7)) },
-    { BSP_GPIO_PORT_ID(PB0), (BSP_GPIO_MASK(TPB3) | BSP_GPIO_MASK(TPB4) | BSP_GPIO_MASK(TPB5)) },
-    { BSP_GPIO_PORT_ID(PC0), (BSP_GPIO_MASK(TPC4) | BSP_GPIO_MASK(TPC5) | BSP_GPIO_MASK(TPC6) | BSP_GPIO_MASK(TPC7)) },
-    { BSP_GPIO_PORT_ID(PD0), (BSP_GPIO_MASK(TPD6) | BSP_GPIO_MASK(TPD7)) },
-    { BSP_GPIO_PORT_ID(PE0), (BSP_GPIO_MASK(TPE2) | BSP_GPIO_MASK(TPE3) | BSP_GPIO_MASK(TPE4)) },
-    { BSP_GPIO_PORT_ID(PF0), 0x00000000 }
-};
+    svc_MsgFwk_Hdr_t      hdr;
+    dev_Light_MeasLight_t light;
+} svc_LightEh_MeasInd_t;
+
+
+/*==============================================================================
+ *                                Globals
+ *============================================================================*/
+/*============================================================================*/
+extern const svc_Eh_Info_t svc_LightEh_info;
+
+#endif

@@ -66,8 +66,9 @@ typedef uint8_t bsp_I2c_Speed_t;
 typedef uint8_t bsp_I2c_Control_t;
 
 /*============================================================================*/
-#define BSP_I2C_TRANS_TYPE_WRITE ((bsp_I2c_TransType_t)0)
-#define BSP_I2C_TRANS_TYPE_READ  ((bsp_I2c_TransType_t)1)
+#define BSP_I2C_TRANS_TYPE_WRITE      ((bsp_I2c_TransType_t)0)
+#define BSP_I2C_TRANS_TYPE_READ       ((bsp_I2c_TransType_t)1)
+#define BSP_I2C_TRANS_TYPE_WRITE_READ ((bsp_I2c_TransType_t)2)
 typedef uint8_t bsp_I2c_TransType_t;
 
 /*============================================================================*/
