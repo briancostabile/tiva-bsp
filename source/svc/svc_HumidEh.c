@@ -34,7 +34,7 @@
 #include "dev_Temp.h"
 
 #ifndef SVC_LOG_LEVEL
-#define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
+#define SVC_LOG_LEVEL SVC_LOG_LEVEL_NONE
 #endif
 #include "svc_Log.h"
 

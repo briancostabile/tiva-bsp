@@ -98,8 +98,18 @@ static const bsp_I2c_Id_t bsp_I2c_idTable[] =
 };
 
 
+/*============================================================================*/
+// Global pointers to manage the pending transaction queue. The queue is used
+// when there's an active transaction 
 static bsp_I2c_MasterTrans_t* bsp_I2c_masterTransQueueHeadPtr;
 static bsp_I2c_MasterTrans_t* bsp_I2c_masterTransQueueTailPtr;
+
+
+/*============================================================================*/
+// Global containing a copy of the current active transaction. This is kept as
+// a copy to allow clients to reuse their own transaction globals as soon
+// as the transaction complete callback is called. If transactions queue up,
+// they are copied into this global before the transaction begins.
 static bsp_I2c_MasterTrans_t bsp_I2c_masterTransActive;
 
 /*==============================================================================

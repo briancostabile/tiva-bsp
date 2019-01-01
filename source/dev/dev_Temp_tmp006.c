@@ -40,7 +40,7 @@
 
 // Configuration defines
 #define DEV_TEMP_I2C_ADDR   ((bsp_I2c_Addr_t)0x41)
-#define DEV_TEMP_I2C_SPEED  BSP_I2C_SPEED_STANDARD
+#define DEV_TEMP_I2C_SPEED  BSP_I2C_SPEED_FAST
 
 #define DEV_TEMP_REG_VOLTAGE     ((bsp_Temp_I2cCmd_t)0x00)
 #define DEV_TEMP_REG_TEMPERATURE ((bsp_Temp_I2cCmd_t)0x01)
