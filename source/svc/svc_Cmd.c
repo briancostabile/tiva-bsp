@@ -267,7 +267,7 @@ svc_Cmd_bufferAddChar( char c )
                     SVC_CMD_BUFFER_IDX--;
                 }
             }
-            else if( isprint(c) )
+            else if( isprint((int)c) )
             {
                 SVC_CMD_BUFFER_ADD_CHAR( c );
                 putc(c, stdout);

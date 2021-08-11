@@ -25,7 +25,7 @@ $(info Including:$(FILENAME))
 PLATFORM        := sensorhub
 PROCESSOR       := tm4c123
 CPU             := cortex-m4
-CORE            := v7e-m
+CORE            := v7e-m+fp
 CORE_FLOAT      := fpv4-sp
 CORE_FLOAT_TYPE := hard
 

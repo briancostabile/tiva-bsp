@@ -83,7 +83,7 @@ BUILD_NEWLIB := 0  #override command line
 endif
 
 ifndef TOOLS_ROOT_DIR
-TOOLS_ROOT_DIR := /Applications/ti/ccsv7/tools/compiler
+TOOLS_ROOT_DIR := /Applications/ti/ccs1040/ccs/tools/compiler
 endif
 
 # Get the root dir where the makefile is
@@ -93,8 +93,8 @@ SRC_DIR         := $(ROOT_DIR)/source
 THIRD_PARTY_DIR := $(ROOT_DIR)/third_party
 
 # Pull from product config makefile
-include ./project/config/product/$(PRODUCT).mk 
-include ./project/config/toolchain/$(COMPILER).mk 
+include ./project/config/product/$(PRODUCT).mk
+include ./project/config/toolchain/$(COMPILER).mk
 
 CC  := $(TOOLCHAIN_CC)
 AR  := $(TOOLCHAIN_AR)
@@ -137,7 +137,7 @@ FREERTOS_SRC_DIRS := $(FREERTOS_SRC_DIR)
 FREERTOS_SRC_DIRS += $(FREERTOS_SRC_DIR)/portable/$(COMPILER_UPPER)/ARM_CM4F
 FREERTOS_LIB      := $(BUILD_DIR)/$(FREERTOS_NAME).a
 FREERTOS_IFLAGS   := $(FREERTOS_SRC_DIRS) $(FREERTOS_SRC_DIR)/include
-FREERTOS_DFLAGS   := 
+FREERTOS_DFLAGS   :=
 
 FREERTOS_CSRC     := $(foreach dir,$(FREERTOS_SRC_DIRS),$(wildcard $(dir)/*.c))
 FREERTOS_ASRC     := $(foreach dir,$(FREERTOS_SRC_DIRS),$(wildcard $(dir)/*.s)) \
@@ -170,7 +170,7 @@ DRIVERLIB_DIR      := $(TIVAWARE_DIR)/$(DRIVERLIB_NAME)
 DRIVERLIB_SRC_DIRS := $(DRIVERLIB_DIR)
 DRIVERLIB_LIB      := $(BUILD_DIR)/$(DRIVERLIB_NAME).a
 DRIVERLIB_IFLAGS   := $(DRIVERLIB_SRC_DIRS)
-DRIVERLIB_DFLAGS   := 
+DRIVERLIB_DFLAGS   :=
 DRIVERLIB_CSRC     := $(foreach dir,$(DRIVERLIB_SRC_DIRS),$(wildcard $(dir)/*.c))
 DRIVERLIB_ASRC     := $(foreach dir,$(DRIVERLIB_SRC_DIRS),$(wildcard $(dir)/*.s)) \
                       $(foreach dir,$(DRIVERLIB_SRC_DIRS),$(wildcard $(dir)/*.asm))
@@ -198,7 +198,7 @@ USBLIB_DIR      := $(TIVAWARE_DIR)/$(USBLIB_NAME)
 USBLIB_SRC_DIRS := $(USBLIB_DIR) $(USBLIB_DIR)/device $(USBLIB_DIR)/host
 USBLIB_LIB      := $(BUILD_DIR)/$(USBLIB_NAME).a
 USBLIB_IFLAGS   := $(USBLIB_SRC_DIRS)
-USBLIB_DFLAGS   := 
+USBLIB_DFLAGS   :=
 USBLIB_CSRC     := $(foreach dir,$(USBLIB_SRC_DIRS),$(wildcard $(dir)/*.c))
 USBLIB_ASRC     := $(foreach dir,$(USBLIB_SRC_DIRS),$(wildcard $(dir)/*.s)) \
                    $(foreach dir,$(USBLIB_SRC_DIRS),$(wildcard $(dir)/*.asm))
@@ -218,8 +218,8 @@ USBLIB_CFLAGS   := $(TOOLCHAIN_CFLAGS) \
 NEWLIB_NAME    := newlib
 NEWLIB_VER     := 3.0.0.20180831
 NEWLIB_DIR     := $(THIRD_PARTY_DIR)/$(NEWLIB_NAME)/$(NEWLIB_NAME)-$(NEWLIB_VER)
-NEWLIB_LIB_DIR := $(NEWLIB_DIR)/$(TOOLCHAIN)/thumb/$(CORE)/$(CORE_FLOAT)/$(CORE_FLOAT_TYPE)/$(NEWLIB_NAME)
-NEWLIB_LIBC    := c #libc is configured to be the nano version 
+NEWLIB_LIB_DIR := $(NEWLIB_DIR)/$(TOOLCHAIN)/thumb/$(CORE)/$(CORE_FLOAT_TYPE)/$(NEWLIB_NAME)
+NEWLIB_LIBC    := c #libc is configured to be the nano version
 NEWLIB_DFLAGS  := _GNU_SOURCE
 NEWLIB_CONFIG  := --target=arm-none-eabi \
                   --enable-newlib-reent-small \
@@ -348,5 +348,5 @@ clean:
 	$(Q)rm -rf $(BUILD_DIR)
 
 newlib:
-	$(shell cd $(NEWLIB_DIR);./configure $(NEWLIB_CONFIG);make -j)
+	$(shell cd $(NEWLIB_DIR);./configure $(NEWLIB_CONFIG))
 
