@@ -22,7 +22,7 @@
 /*============================================================================*/
 /**
  * @file bsp_Button.c
- * @brief Simple low-level interface to switch-style push buttons. 
+ * @brief Simple low-level interface to switch-style push buttons.
  */
 
 #include "bsp_Types.h"
@@ -101,11 +101,6 @@ bsp_Button_init( void )
         bsp_Button_infoTable[i].control = BSP_BUTTON_CONTROL_DISABLE;
         bsp_Button_infoTable[i].handler = NULL;
 
-        /* Disable any alternative function */
-        bsp_Gpio_configAltFunction( bsp_Button_ioInfoTable[i].portId,
-                                    bsp_Button_ioInfoTable[i].mask,
-                                    false, 0 );
-
         /* Configure as input */
         bsp_Gpio_configInput( bsp_Button_ioInfoTable[i].portId,
                               bsp_Button_ioInfoTable[i].mask,
@@ -125,7 +120,7 @@ bsp_Button_control( bsp_Button_Id_t      id,
     BSP_ASSERT( id < BSP_PLATFORM_IO_BUTTON_NUM );
 
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    if( (control == BSP_BUTTON_CONTROL_DISABLE) && 
+    if( (control == BSP_BUTTON_CONTROL_DISABLE) &&
         (bsp_Button_infoTable[id].control != BSP_BUTTON_CONTROL_DISABLE) )
     {
         bsp_Button_infoTable[id].control = control;
@@ -149,11 +144,11 @@ bsp_Button_control( bsp_Button_Id_t      id,
 
 /*============================================================================*/
 void
-bsp_Button_registerHandler( bsp_Button_Id_t           id, 
+bsp_Button_registerHandler( bsp_Button_Id_t           id,
                             bsp_Button_PressHandler_t handler )
 {
     BSP_ASSERT( id < BSP_PLATFORM_IO_BUTTON_NUM );
-    
+
     BSP_MCU_CRITICAL_SECTION_ENTER();
 
     bsp_Button_infoTable[id].handler = handler;

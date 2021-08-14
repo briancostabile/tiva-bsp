@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2018 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,12 +21,12 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Button_sensorhub.c
- * @brief Contains table of IOs used as simple switch-style buttons
+ * @file bsp_Trace_ektm4c123sensor.c
+ * @brief Contains table of available test point IOs
  */
 
 #include "bsp_Types.h"
-#include "bsp_Button.h"
+#include "bsp_Trace.h"
 #include "bsp_Gpio.h"
 
 /*==============================================================================
@@ -34,10 +34,12 @@
  *============================================================================*/
 /*============================================================================*/
 /* One entry for each IO port. */
-const bsp_Button_IoInfo_t bsp_Button_ioInfoTable[BSP_PLATFORM_IO_BUTTON_NUM]=
+const bsp_Trace_IoInfo_t bsp_Trace_ioInfoTable[BSP_GPIO_PORT_ID_NUM_PORTS]=
 {
-    { BSP_GPIO_PORT_ID(BUTTON_0), BSP_GPIO_MASK(BUTTON_0), BSP_BUTTON_PRESS_POLARITY_LOW },
-    { BSP_GPIO_PORT_ID(BUTTON_1), BSP_GPIO_MASK(BUTTON_1), BSP_BUTTON_PRESS_POLARITY_LOW },
-    { BSP_GPIO_PORT_ID(BUTTON_2), BSP_GPIO_MASK(BUTTON_2), BSP_BUTTON_PRESS_POLARITY_LOW },
-    { BSP_GPIO_PORT_ID(BUTTON_3), BSP_GPIO_MASK(BUTTON_3), BSP_BUTTON_PRESS_POLARITY_LOW }
+    { BSP_GPIO_PORT_ID(PA0), (BSP_GPIO_MASK(TPA2) | BSP_GPIO_MASK(TPA3) | BSP_GPIO_MASK(TPA4) | BSP_GPIO_MASK(TPA5) | BSP_GPIO_MASK(TPA6) | BSP_GPIO_MASK(TPA7)) },
+    { BSP_GPIO_PORT_ID(PB0), (BSP_GPIO_MASK(TPB3) | BSP_GPIO_MASK(TPB4) | BSP_GPIO_MASK(TPB5)) },
+    { BSP_GPIO_PORT_ID(PC0), (BSP_GPIO_MASK(TPC4) | BSP_GPIO_MASK(TPC5) | BSP_GPIO_MASK(TPC6) | BSP_GPIO_MASK(TPC7)) },
+    { BSP_GPIO_PORT_ID(PD0), (BSP_GPIO_MASK(TPD6) | BSP_GPIO_MASK(TPD7)) },
+    { BSP_GPIO_PORT_ID(PE0), (BSP_GPIO_MASK(TPE2) | BSP_GPIO_MASK(TPE3) | BSP_GPIO_MASK(TPE4)) },
+    { BSP_GPIO_PORT_ID(PF0), 0x00000000 }
 };

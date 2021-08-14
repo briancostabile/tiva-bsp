@@ -70,29 +70,30 @@ main(void)
     extern int remove_device( char* devName );
 
     bsp_Clk_init();
-	bsp_Reset_init();
-	bsp_Interrupt_init();
-	bsp_Gpio_init();
+    bsp_Reset_init();
+    bsp_Interrupt_init();
+    bsp_Gpio_init();
     bsp_Trace_init();
     bsp_Button_init();
     bsp_I2c_init();
-	bsp_Uart_init();
-	bsp_Io_init();
+    bsp_Uart_init();
+    bsp_Io_init();
     bsp_UsbIo_init();
     bsp_UartIo_init();
 
-    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_R),
-                           (BSP_GPIO_MASK(LED_R) | BSP_GPIO_MASK(LED_G) | BSP_GPIO_MASK(LED_B)),
-                           FALSE, BSP_GPIO_DRIVE_8MA );
+    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_R), BSP_GPIO_MASK(LED_R), FALSE, BSP_GPIO_DRIVE_2MA );
+    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_G), BSP_GPIO_MASK(LED_G), FALSE, BSP_GPIO_DRIVE_2MA );
+    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_B), BSP_GPIO_MASK(LED_B), FALSE, BSP_GPIO_DRIVE_2MA );
 
-    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_R),
-                    (BSP_GPIO_MASK(LED_R) | BSP_GPIO_MASK(LED_G) | BSP_GPIO_MASK(LED_B)),
-                    1 );
+    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_R), BSP_GPIO_MASK(LED_R), BSP_GPIO_MASK(LED_R) );
+    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_G), BSP_GPIO_MASK(LED_G), BSP_GPIO_MASK(LED_G) );
+    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_B), BSP_GPIO_MASK(LED_B), BSP_GPIO_MASK(LED_B) );
 
-    MAP_IntMasterEnable();
 
     // Initialize the OS
     osapi_init();
+
+    MAP_IntMasterEnable();
 
     // Run the Scheduler, No Return
     osapi_Scheduler_run();

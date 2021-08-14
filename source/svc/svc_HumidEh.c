@@ -38,6 +38,7 @@
 #endif
 #include "svc_Log.h"
 
+#if defined(SVC_EHID_HUMID)
 /*==============================================================================
  *                                Defines
  *============================================================================*/
@@ -190,3 +191,4 @@ const svc_Eh_Info_t svc_HumidEh_info =
     svc_HumidEh_init,
     NULL  // msgHandler
 };
+#endif

@@ -41,6 +41,7 @@
 
 #include "bsp_Trace.h"
 
+#if defined(SVC_EHID_LIGHT)
 /*==============================================================================
  *                                Defines
  *============================================================================*/
@@ -110,7 +111,7 @@ svc_LightEh_measHandlerIr( dev_Light_MeasLight_t light )
 void
 svc_LightEh_timerCallback( osapi_Timer_t   timer,
                            osapi_TimerId_t id )
-{   
+{
     static uint8_t i = 0;
 
     // Flip between measureing Als and Ir
@@ -151,3 +152,4 @@ const svc_Eh_Info_t svc_LightEh_info =
     svc_LightEh_init,
     NULL  // msgHandler
 };
+#endif

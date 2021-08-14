@@ -33,7 +33,7 @@
 #include "bsp_I2c.h"
 #include "dev_Humid.h"
 
-
+#if defined(BSP_PLATFORM_ENABLE_DEV_HUMID_SHT21)
 /*=============================================================================
  *                                   Defines
  *===========================================================================*/
@@ -420,4 +420,4 @@ dev_Humid_measReadTemperature( dev_Humid_MeasTemperature_t* measPtr )
     BSP_MCU_CRITICAL_SECTION_EXIT();
     return;
 }
-
+#endif

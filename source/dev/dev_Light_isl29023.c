@@ -34,6 +34,7 @@
 #include "dev_Light.h"
 
 
+#if defined(BSP_PLATFORM_ENABLE_DEV_LIGHT_ISL20023)
 /*=============================================================================
  *                                   Defines
  *===========================================================================*/
@@ -375,11 +376,6 @@ dev_Light_init( void )
                          BSP_GPIO_BIT_MASK_INT_LIGHT,
                          BSP_GPIO_INT_CONTROL_DISABLE );
 
-    /* Disable any alternative function */
-    bsp_Gpio_configAltFunction( BSP_GPIO_PORT_ID_INT_LIGHT,
-                                BSP_GPIO_BIT_MASK_INT_LIGHT,
-                                false, 0 );
-
     /* Configure as input */
     bsp_Gpio_configInput( BSP_GPIO_PORT_ID_INT_LIGHT,
                           BSP_GPIO_BIT_MASK_INT_LIGHT,
@@ -423,3 +419,4 @@ dev_Light_measTriggerIr( dev_Light_MeasCallback_t callback )
     dev_Light_measTriggerCommon( callback, DEV_LIGHT_REG_OP_MODE_ONCE_PER_CYCLE_IR );
     return;
 }
+#endif

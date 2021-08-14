@@ -61,12 +61,20 @@ uint32_t svc_Periph_stack[SVC_PERIPH_STACK_SIZE_32];
 void*    svc_Periph_queue[SVC_PERIPH_QUEUE_DEPTH];
 
 /*============================================================================*/
-static const svc_Eh_Info_t* svc_Periph_ehTable[] = 
+static const svc_Eh_Info_t* svc_Periph_ehTable[] =
 {
+#if defined(SVC_EHID_BUTTON)
     &svc_ButtonEh_info,
+#endif
+#if defined(SVC_EHID_TEMP)
     &svc_TempEh_info,
+#endif
+#if defined(SVC_EHID_HUMID)
     &svc_HumidEh_info,
+#endif
+#if defined(SVC_EHID_LIGHT)
     &svc_LightEh_info,
+#endif
     &svc_TestEh_info
 };
 

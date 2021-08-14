@@ -34,6 +34,7 @@
 #include "dev_Pressure.h"
 
 
+#if defined(BSP_PLATFORM_ENABLE_DEV_PRESSURE_BMP180)
 /*=============================================================================
  *                                   Defines
  *===========================================================================*/
@@ -153,7 +154,7 @@ dev_Pressure_i2cRegWrite( bsp_Pressure_RegId_t    regId,
 }
 
 /*===========================================================================*/
-// Wrapper to read 16-bit data from the BMP180. 
+// Wrapper to read 16-bit data from the BMP180.
 static void
 dev_Pressure_i2cRegRead( bsp_Pressure_RegId_t regId,
                          void*                usrData )
@@ -207,3 +208,4 @@ dev_Pressure_measTrigger( dev_Pressure_MeasCallback_t callback )
 {
     return;
 }
+#endif

@@ -540,17 +540,18 @@ bsp_UsbIo_init( void )
 {
     char filenameBuf[5] = "usb0";
 
-    /* Configure USB pins as input no pull */
-    bsp_Gpio_configInput(  BSP_GPIO_PORT_ID_USB_DP,
-                           (BSP_GPIO_BIT_MASK_USB_DP | BSP_GPIO_BIT_MASK_USB_DM),
-                           false, //openDrain
-                           BSP_GPIO_PULL_NONE );
+    /* Configure USB pins as input no pull analog */
+    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_USB_DP,
+                          BSP_GPIO_BIT_MASK_USB_DP,
+                          false, //openDrain
+                          BSP_GPIO_PULL_NONE );
+    bsp_Gpio_configAnalog( BSP_GPIO_PORT_ID_USB_DP, BSP_GPIO_BIT_MASK_USB_DP );
 
-    /* Configure USB pins to analog alternative function */
-    bsp_Gpio_configAltFunction( BSP_GPIO_PORT_ID_USB_DP,
-                                (BSP_GPIO_BIT_MASK_USB_DP | BSP_GPIO_BIT_MASK_USB_DM),
-                                true, //analog
-                                0 );
+    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_USB_DM,
+                          BSP_GPIO_BIT_MASK_USB_DM,
+                          false, //openDrain
+                          BSP_GPIO_PULL_NONE );
+    bsp_Gpio_configAnalog( BSP_GPIO_PORT_ID_USB_DM, BSP_GPIO_BIT_MASK_USB_DM );
 
     bsp_UsbIo_InternalInfo.deviceInfoPtr = &(bsp_UsbIo_deviceInfo);
     bsp_UsbIo_InternalInfo.dataAvailCallback = NULL;

@@ -40,6 +40,7 @@
 #include "svc_Log.h"
 
 
+#if defined(SVC_EHID_TEMP)
 /*==============================================================================
  *                                Defines
  *============================================================================*/
@@ -112,3 +113,4 @@ const svc_Eh_Info_t svc_TempEh_info =
     svc_TempEh_init,
     NULL  // msgHandler
 };
+#endif

@@ -21,7 +21,7 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Gpio_ektm4c123gxl.c
+ * @file bsp_Gpio_tm4c123.c
  * @brief Contains Functions for configuring and accessing the GPIOs
  */
 #include "bsp_Gpio.h"
@@ -30,8 +30,27 @@
 #include <string.h>
 
 #include "driverlib/rom.h"
+#include "driverlib/rom_map.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/gpio.h"
 #include "inc/hw_memmap.h"
+
+/*==============================================================================
+ *                              Global Data
+ *============================================================================*/
+/*============================================================================*/
+bsp_Gpio_InputHandler_t bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_NUM_PORTS][BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT];
+
+/*============================================================================*/
+const bsp_Gpio_PlatformPortInfo_t bsp_Gpio_platformPortInfoTable[ BSP_GPIO_PORT_ID_NUM_PORTS ] =
+{
+    { GPIO_PORTA_BASE, SYSCTL_PERIPH_GPIOA, BSP_INTERRUPT_ID_GPIOA, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_A][0]) },
+    { GPIO_PORTB_BASE, SYSCTL_PERIPH_GPIOB, BSP_INTERRUPT_ID_GPIOB, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_B][0]) },
+    { GPIO_PORTC_BASE, SYSCTL_PERIPH_GPIOC, BSP_INTERRUPT_ID_GPIOC, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_C][0]) },
+    { GPIO_PORTD_BASE, SYSCTL_PERIPH_GPIOD, BSP_INTERRUPT_ID_GPIOD, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_D][0]) },
+    { GPIO_PORTE_BASE, SYSCTL_PERIPH_GPIOE, BSP_INTERRUPT_ID_GPIOE, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_E][0]) },
+    { GPIO_PORTF_BASE, SYSCTL_PERIPH_GPIOF, BSP_INTERRUPT_ID_GPIOF, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_F][0]) }
+};
 
 /*==============================================================================
  *                            Public Functions
@@ -50,10 +69,10 @@ bsp_Gpio_isrCommon( bsp_Gpio_PortId_t portId )
     handlerTable = bsp_Gpio_platformPortInfoTable[ portId ].handlerTable;
 
     /* Read masked interrupt register */
-    tmpMis = BSP_GPIO_REG( portBaseAddr, MIS );
+    tmpMis = MAP_GPIOIntStatus( portBaseAddr, false );
 
     /* Clear interrupts */
-    BSP_GPIO_REG( portBaseAddr, ICR ) = tmpMis;
+    MAP_GPIOIntClear( portBaseAddr, tmpMis );
 
     bitOffset = 0;
     while( tmpMis != 0 )
@@ -83,7 +102,7 @@ bsp_Gpio_isrPinCommon( bsp_Gpio_PortId_t    portId,
     handlerTable = bsp_Gpio_platformPortInfoTable[ portId ].handlerTable;
 
     /* Read masked interrupt register */
-    tmpMis = BSP_GPIO_REG( portBaseAddr, MIS );
+    tmpMis = MAP_GPIOIntStatus( portBaseAddr, false );
 
     /* for P0/Q0 interrupts occur when any of the other pins generate an interrupt so make sure
      * this function only handles the expected interrupt
@@ -92,10 +111,13 @@ bsp_Gpio_isrPinCommon( bsp_Gpio_PortId_t    portId,
     if( (tmpMis & bitMask) != 0 )
     {
         /* Clear interrupt */
-        BSP_GPIO_REG( portBaseAddr, ICR ) = bitMask;
+        MAP_GPIOIntClear( portBaseAddr, bitMask );
 
         /* Call handler */
-        handlerTable[ bitOffset ]( portId, bitOffset );
+        if( handlerTable[ bitOffset ] != NULL )
+        {
+            handlerTable[ bitOffset ]( portId, bitOffset );
+        }
     }
 
     return;
@@ -106,7 +128,7 @@ void
 bsp_Gpio_interruptHandlerPortA( void )
 {
     bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_A );
-	return;
+    return;
 }
 
 /*============================================================================*/
@@ -114,7 +136,7 @@ void
 bsp_Gpio_interruptHandlerPortB( void )
 {
     bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_B );
-	return;
+    return;
 }
 
 /*============================================================================*/
@@ -122,7 +144,7 @@ void
 bsp_Gpio_interruptHandlerPortC( void )
 {
     bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_C );
-	return;
+    return;
 }
 
 /*============================================================================*/
@@ -130,7 +152,7 @@ void
 bsp_Gpio_interruptHandlerPortD( void )
 {
     bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_D );
-	return;
+    return;
 }
 
 /*============================================================================*/
@@ -138,7 +160,7 @@ void
 bsp_Gpio_interruptHandlerPortE( void )
 {
     bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_E );
-	return;
+    return;
 }
 
 /*============================================================================*/

@@ -21,13 +21,13 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Platform_ektm4c123gxl.h
+ * @file bsp_Platform_ektm4c123sensor.h
  */
-#ifndef BSP_PLATFORM_EKTM4C123GXL_H
-#define BSP_PLATFORM_EKTM4C123GXL_H
+#pragma once
 
 #include "inc/tm4c123gh6pm.h"
 
+#define BSP_PLATFORM_PROCESSOR_TM4C123
 
 /*==============================================================================
  *                            Clock related defines
@@ -77,8 +77,14 @@
 #define BSP_PLATFORM_IO_BIT_OFFSET_LED_2 BSP_GPIO_BIT_OFFSET_LED_G
 #define BSP_PLATFORM_IO_BIT_MASK_LED_2   BSP_GPIO_BIT_MASK_LED_G
 
-// List the I2C devices for this platform as a comma separated list of integers for example: 0, 1, 2
-#define BSP_PLATFORM_I2C_LIST   3
+#define BSP_PLATFORM_ENABLE_DEV_HUMID_SHT21
+#define BSP_PLATFORM_ENABLE_DEV_LIGHT_ISL20023
+#define BSP_PLATFORM_ENABLE_DEV_PRESSURE_BMP180
+#define BSP_PLATFORM_ENABLE_DEV_TEMP_TMP006
+
+// List the I2C devices for this platform as an array of structures
+// { <index-into-bsp_I2c_staticInfo>, <index-into-bsp_I2c_pinInfoTableSclX>, <index-into-bsp_I2c_pinInfoTableSdaX> }
+#define BSP_PLATFORM_I2C_LIST   { { 3, 0, 0 } }
 
 // Each I2C device must identify the I2C hardware block it is connected to
 #define BSP_PLATFORM_I2C_SHT21    3
@@ -104,5 +110,4 @@
 #define BSP_PLATFORM_IO_MAP_STDOUT "usb0"
 #define BSP_PLATFORM_IO_MAP_STDIN  "usb0"
 #define BSP_PLATFORM_IO_MAP_STDERR "usb0"
-#endif
 #endif

@@ -24,47 +24,19 @@
  * @file bsp_Uart.h
  * @brief Contains types and defines for the UART subsystem
  */
-#ifndef BSP_UART_H
-#define BSP_UART_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "inc/hw_uart.h"
 
 #include "bsp_Platform.h"
 
+#include BUILD_INCLUDE_STRING( bsp_Uart_, PLATFORM_CORE )
+
 /*==============================================================================
  *                                Defines
  *============================================================================*/
 #define BSP_UART_RX_FIFO_SIZE 16
-#define BSP_UART_PLATFORM_NUM_UARTS 8
-
-/*==============================================================================
- *                                 Types
- *============================================================================*/
-/*============================================================================*/
-#define BSP_UART_ID0 ((bsp_Uart_Id_t)0)
-#define BSP_UART_ID1 ((bsp_Uart_Id_t)1)
-#define BSP_UART_ID2 ((bsp_Uart_Id_t)2)
-#define BSP_UART_ID3 ((bsp_Uart_Id_t)3)
-#define BSP_UART_ID4 ((bsp_Uart_Id_t)4)
-#define BSP_UART_ID5 ((bsp_Uart_Id_t)5)
-#define BSP_UART_ID6 ((bsp_Uart_Id_t)6)
-#define BSP_UART_ID7 ((bsp_Uart_Id_t)7)
-typedef uint8_t bsp_Uart_Id_t;
-
-
-/*============================================================================*/
-#define BSP_UART_PIN_SEL_0    ((bsp_Uart_PinSel_t)0)
-#define BSP_UART_PIN_SEL_1    ((bsp_Uart_PinSel_t)1)
-#define BSP_UART_PIN_SEL_2    ((bsp_Uart_PinSel_t)2)
-#define BSP_UART_PIN_SEL_3    ((bsp_Uart_PinSel_t)3)
-#define BSP_UART_PIN_SEL_4    ((bsp_Uart_PinSel_t)4)
-#define BSP_UART_PIN_SEL_5    ((bsp_Uart_PinSel_t)5)
-#define BSP_UART_PIN_SEL_6    ((bsp_Uart_PinSel_t)6)
-#define BSP_UART_PIN_SEL_7    ((bsp_Uart_PinSel_t)7)
-#define BSP_UART_PIN_SEL_NONE ((bsp_Uart_PinSel_t)8)
-typedef uint8_t bsp_Uart_PinSel_t;
-
 
 /*============================================================================*/
 /**
@@ -240,17 +212,3 @@ bsp_Uart_rcv( bsp_Uart_Id_t         id,
               void*                 callbackArg,
               bsp_Uart_RxCallback_t callback );
 
-
-/*============================================================================*/
-void bsp_Uart_interruptHandler0( void );
-void bsp_Uart_interruptHandler1( void );
-void bsp_Uart_interruptHandler2( void );
-void bsp_Uart_interruptHandler3( void );
-void bsp_Uart_interruptHandler4( void );
-void bsp_Uart_interruptHandler5( void );
-void bsp_Uart_interruptHandler6( void );
-void bsp_Uart_interruptHandler7( void );
-
-
-
-#endif

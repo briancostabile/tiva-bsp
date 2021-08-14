@@ -21,11 +21,10 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Trace_sensorhub.h
+ * @file bsp_Trace_ektm4c123sensor.h
  * @brief Contains platform specific trace mappings to IO pins
  */
-#ifndef BSP_TRACE_SENSORHUB_H
-#define BSP_TRACE_SENSORHUB_H
+#pragma once
 
 #include "bsp_Gpio.h"
 
@@ -111,4 +110,3 @@
 /*============================================================================*/
 extern const bsp_Trace_IoInfo_t bsp_Trace_ioInfoTable[BSP_GPIO_PORT_ID_NUM_PORTS];
 
-#endif

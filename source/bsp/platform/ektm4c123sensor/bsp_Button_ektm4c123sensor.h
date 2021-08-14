@@ -21,11 +21,10 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Button_sensorhub.h
+ * @file bsp_Button_ektm4c123sensor.h
  * @brief Contains platform specific trace mappings to IO pins
  */
-#ifndef BSP_BUTTON_SENSORHUB_H
-#define BSP_BUTTON_SENSORHUB_H
+#pragma once
 
 #include "bsp_Gpio.h"
 
@@ -62,5 +61,3 @@
  *============================================================================*/
 /*============================================================================*/
 extern const bsp_Button_IoInfo_t bsp_Button_ioInfoTable[BSP_PLATFORM_IO_BUTTON_NUM];
-
-#endif

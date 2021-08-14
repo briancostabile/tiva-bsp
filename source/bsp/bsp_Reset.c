@@ -110,7 +110,8 @@ bsp_Reset_systemReset( bsp_Reset_SwReason_t reason )
     bsp_Reset_swReason = reason;
 
     /* No return from this */
-    MAP_SysCtlReset();
+    while(1);
+    //MAP_SysCtlReset();
 }
 
 /*===========================================================================*/
@@ -129,7 +130,8 @@ bsp_Reset_systemFault( uint32_t* stackRegs )
     bsp_Reset_swReason = BSP_RESET_SWREASON_FAULT;
 
     /* No return from this */
-    MAP_SysCtlReset();
+    while(1);
+    //MAP_SysCtlReset();
 }
 
 /*===========================================================================*/

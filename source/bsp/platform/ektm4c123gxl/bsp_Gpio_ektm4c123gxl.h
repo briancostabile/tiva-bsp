@@ -25,8 +25,7 @@
  * @brief Contains Macros and defines for the GPIO block specific
  *        to the extm4c123gxl platform.
  */
-#ifndef BSP_GPIO_EKTM4C123GXL_H
-#define BSP_GPIO_EKTM4C123GXL_H
+#pragma once
 
 #include "inc/hw_memmap.h"
 #include "inc/hw_Gpio.h"
@@ -34,8 +33,6 @@
 
 #include BUILD_INCLUDE_STRING( bsp_Gpio_, PLATFORM_CORE )
 
-
-#define BSP_GPIO_PORT_ID_NUM_PORTS 6
 
 /**
  * PA0 - VCP-RX
@@ -312,14 +309,3 @@
 #define BSP_GPIO_BIT_OFFSET_USR_SW1    BSP_GPIO_BIT_OFFSET_PF4
 #define BSP_GPIO_BIT_MASK_USR_SW1      BSP_GPIO_BIT_MASK_PF4
 
-
-
-/*==============================================================================
- *                                Globals
- *============================================================================*/
-/*============================================================================*/
-extern const bsp_Gpio_PlatformPortInfo_t bsp_Gpio_platformPortInfoTable[BSP_GPIO_PORT_ID_NUM_PORTS];
-
-
-
-#endif

@@ -21,21 +21,17 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Gpio_sensorhub.h
+ * @file bsp_Gpio_ektm4c123sensor.h
  * @brief Contains Macros and defines for the GPIO block specific
- *        to the extm4c123gxl platform.
+ *        to the ektm4c123sensor platform.
  */
-#ifndef BSP_GPIO_SENSORHUB_H
-#define BSP_GPIO_SENSORHUB_H
+#pragma once
 
 #include "inc/hw_memmap.h"
 #include "inc/hw_Gpio.h"
 #include "bsp_Platform.h"
 
 #include BUILD_INCLUDE_STRING( bsp_Gpio_, PLATFORM_CORE )
-
-
-#define BSP_GPIO_PORT_ID_NUM_PORTS 6
 
 /**
  * PA0 - VCP-RX
@@ -319,7 +315,3 @@
  *============================================================================*/
 /*============================================================================*/
 extern const bsp_Gpio_PlatformPortInfo_t bsp_Gpio_platformPortInfoTable[BSP_GPIO_PORT_ID_NUM_PORTS];
-
-
-
-#endif

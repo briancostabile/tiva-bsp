@@ -24,27 +24,17 @@
  * @file bsp_I2c.h
  * @brief Contains types and prototypes to access the I2C
  */
-#ifndef BSP_I2CMASTER_H
-#define BSP_I2CMASTER_H
+#pragma once
 
 #include "inc/hw_memmap.h"
 #include "inc/hw_i2c.h"
 
-/*==============================================================================
- *                                Defines
- *============================================================================*/
-#define BSP_I2C_PLATFORM_NUM 4
+#include BUILD_INCLUDE_STRING( bsp_I2c_, PLATFORM_CORE )
+
 
 /*==============================================================================
  *                                 Types
  *============================================================================*/
-/*============================================================================*/
-#define BSP_I2C_ID0 ((bsp_I2c_Id_t)0)
-#define BSP_I2C_ID1 ((bsp_I2c_Id_t)1)
-#define BSP_I2C_ID2 ((bsp_I2c_Id_t)2)
-#define BSP_I2C_ID3 ((bsp_I2c_Id_t)3)
-typedef uint8_t bsp_I2c_Id_t;
-
 /*============================================================================*/
 /**
  * @brief Enumerated value for clock Speed
@@ -129,20 +119,3 @@ void
 bsp_I2c_slaveControl( bsp_I2c_Id_t      id,
                       bsp_I2c_Control_t control );
 
-/*============================================================================*/
-void
-bsp_I2c_interruptHandler0( void );
-
-/*============================================================================*/
-void
-bsp_I2c_interruptHandler1( void );
-
-/*============================================================================*/
-void
-bsp_I2c_interruptHandler2( void );
-
-/*============================================================================*/
-void
-bsp_I2c_interruptHandler3( void );
-
-#endif

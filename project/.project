@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>TivaBspCore</name>
+	<name>TivaBsp</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -487,17 +487,27 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/platform/dktm4c129x</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/platform/ektm4c123gxl</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/platform/sensorhub</name>
+			<name>source/bsp/platform/ektm4c123sensor</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -547,6 +557,41 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/platform/dktm4c129x/bsp_Button_dktm4c129x.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Button_dktm4c129x.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/dktm4c129x/bsp_Button_dktm4c129x.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Button_dktm4c129x.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/dktm4c129x/bsp_Gpio_dktm4c129x.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Gpio_dktm4c129x.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/dktm4c129x/bsp_Gpio_dktm4c129x.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Gpio_dktm4c129x.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/dktm4c129x/bsp_Platform_dktm4c129x.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Platform_dktm4c129x.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/dktm4c129x/bsp_Trace_dktm4c129x.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Trace_dktm4c129x.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/dktm4c129x/bsp_Trace_dktm4c129x.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Trace_dktm4c129x.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/platform/ektm4c123gxl/bsp_Button_ektm4c123gxl.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123gxl/bsp_Button_ektm4c123gxl.c</locationURI>
@@ -582,59 +627,119 @@
 			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123gxl/bsp_Trace_ektm4c123gxl.h</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/platform/sensorhub/bsp_Button_sensorhub.c</name>
+			<name>source/bsp/platform/ektm4c123sensor/bsp_Button_ektm4c123sensor.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Button_sensorhub.c</locationURI>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Button_ektm4c123sensor.c</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/platform/sensorhub/bsp_Button_sensorhub.h</name>
+			<name>source/bsp/platform/ektm4c123sensor/bsp_Button_ektm4c123sensor.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Button_sensorhub.h</locationURI>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Button_ektm4c123sensor.h</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/platform/sensorhub/bsp_Gpio_sensorhub.c</name>
+			<name>source/bsp/platform/ektm4c123sensor/bsp_Gpio_ektm4c123sensor.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Gpio_sensorhub.c</locationURI>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Gpio_ektm4c123sensor.c</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/platform/sensorhub/bsp_Gpio_sensorhub.h</name>
+			<name>source/bsp/platform/ektm4c123sensor/bsp_Gpio_ektm4c123sensor.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Gpio_sensorhub.h</locationURI>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Gpio_ektm4c123sensor.h</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/platform/sensorhub/bsp_Platform_sensorhub.h</name>
+			<name>source/bsp/platform/ektm4c123sensor/bsp_Platform_ektm4c123sensor.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Platform_sensorhub.h</locationURI>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Platform_ektm4c123sensor.h</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/platform/sensorhub/bsp_Trace_sensorhub.c</name>
+			<name>source/bsp/platform/ektm4c123sensor/bsp_Trace_ektm4c123sensor.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Trace_sensorhub.c</locationURI>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Trace_ektm4c123sensor.c</locationURI>
 		</link>
 		<link>
-			<name>source/bsp/platform/sensorhub/bsp_Trace_sensorhub.h</name>
+			<name>source/bsp/platform/ektm4c123sensor/bsp_Trace_ektm4c123sensor.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/platform/sensorhub/bsp_Trace_sensorhub.h</locationURI>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Trace_ektm4c123sensor.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</locationURI>
+			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</location>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Gpio_tm4c123.h</locationURI>
+			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.h</location>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c123/bsp_I2c_tm4c123.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_I2c_tm4c123.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c123/bsp_I2c_tm4c123.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_I2c_tm4c123.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.c</locationURI>
+			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.c</location>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</locationURI>
+			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</location>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c123/bsp_Uart_tm4c123.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Uart_tm4c123.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c123/bsp_Uart_tm4c123.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Uart_tm4c123.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_Gpio_tm4c129.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Gpio_tm4c129.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_Gpio_tm4c129.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Gpio_tm4c129.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_I2c_tm4c129.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_I2c_tm4c129.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_I2c_tm4c129.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_I2c_tm4c129.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_Interrupt_tm4c129.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Interrupt_tm4c129.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_Interrupt_tm4c129.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Interrupt_tm4c129.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_Uart_tm4c129.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Uart_tm4c129.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_Uart_tm4c129.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Uart_tm4c129.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/toolchain/ccs/bsp_Io_ccs.c</name>

@@ -32,6 +32,7 @@
 #include "svc_MsgFwk.h"
 #include "osapi.h"
 
+#if defined(SVC_EHID_BUTTON)
 /*==============================================================================
  *                                Defines
  *============================================================================*/
@@ -186,7 +187,7 @@ svc_ButtonEh_buttonHandler( bsp_Button_Id_t id )
     BSP_MCU_CRITICAL_SECTION_ENTER();
     SVC_BUTTONEH_BUTTON_STATE_SET( id, DEBOUNCING );
     BSP_MCU_CRITICAL_SECTION_EXIT();
-    
+
     osapi_Timer_start( svc_ButtonEh_buttonInfoTable[id].timer );
     return;
 }
@@ -223,3 +224,4 @@ const svc_Eh_Info_t svc_ButtonEh_info =
     svc_ButtonEh_init,
     NULL  // msgHandler
 };
+#endif

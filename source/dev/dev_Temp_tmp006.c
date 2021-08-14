@@ -34,6 +34,7 @@
 #include "dev_Temp.h"
 
 
+#if defined(BSP_PLATFORM_ENABLE_DEV_TEMP_TMP006)
 /*=============================================================================
  *                                   Defines
  *===========================================================================*/
@@ -237,11 +238,6 @@ dev_Temp_init( void )
                          BSP_GPIO_BIT_MASK_INT_TEMP,
                          BSP_GPIO_INT_CONTROL_DISABLE );
 
-    /* Disable any alternative function */
-    bsp_Gpio_configAltFunction( BSP_GPIO_PORT_ID_INT_TEMP,
-                                BSP_GPIO_BIT_MASK_INT_TEMP,
-                                false, 0 );
-
     /* Configure as input */
     bsp_Gpio_configInput( BSP_GPIO_PORT_ID_INT_TEMP,
                           BSP_GPIO_BIT_MASK_INT_TEMP,
@@ -270,12 +266,12 @@ dev_Temp_init( void )
 
     // Enable the sensor
     dev_Temp_powerOn();
-	
-	// Wait for power on command to complete before sending the register selection
+
+    // Wait for power on command to complete before sending the register selection
     bsp_Clk_delayMs( 1 );
-	
-	// This will forever set the read address to be the temperature reading. This
-	// allows less i2c traffic during reads.
+
+    // This will forever set the read address to be the temperature reading. This
+    // allows less i2c traffic during reads.
     dev_Temp_regSelect( DEV_TEMP_REG_TEMPERATURE );
 
     return;
@@ -301,4 +297,4 @@ dev_Temp_measRead( dev_Temp_MeasTemperature_t* tempPtr )
     *tempPtr = dev_Temp_temperature;
     return;
 }
-
+#endif

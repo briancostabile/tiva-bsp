@@ -22,14 +22,8 @@
 FILENAME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 $(info Including:$(FILENAME))
 
-PLATFORM        := ektm4c123gxl
-PROCESSOR       := tm4c123
-CPU             := cortex-m4
-CORE            := v7e-m+fp
-CORE_FLOAT      := fpv4-sp
-CORE_FLOAT_TYPE := hard
-
+# Default platform for BspCore
+PLATFORM ?= ektm4c123gxl
 PRODUCT_DFLAGS += PRODUCT=$(PRODUCT)
-PRODUCT_DFLAGS += PLATFORM=$(PLATFORM)
-PRODUCT_DFLAGS += PLATFORM_CORE=$(PROCESSOR)
 PRODUCT_DFLAGS += PLATFORM_IO=uart
+include ./project/config/platform/$(PLATFORM).mk

@@ -28,6 +28,7 @@
 
 #include "inc/tm4c123gh6pm.h"
 
+#define BSP_PLATFORM_PROCESSOR_TM4C123
 
 /*==============================================================================
  *                            Clock related defines

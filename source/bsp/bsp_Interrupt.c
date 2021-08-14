@@ -55,28 +55,28 @@
 void
 bsp_Interrupt_init( void )
 {
-	uint8_t i;
-	volatile uint32_t *regPtr;
+    uint8_t i;
+    volatile uint32_t *regPtr;
 
-	/* Setup priority mode */
-	regPtr = BSP_INTERRUPT_REG_PTR_APINT;
-	*regPtr = 0x05FA0000 | ((*regPtr) & 0x00008007) | (BSP_INTERRUPT_PRIORITY_GROUP_MODE << 8);
+    /* Setup priority mode */
+    regPtr = BSP_INTERRUPT_REG_PTR_APINT;
+    *regPtr = 0x05FA0000 | ((*regPtr) & 0x00008007) | (BSP_INTERRUPT_PRIORITY_GROUP_MODE << 8);
 
-	/* Setup priorities for exceptions */
-	regPtr = BSP_INTERRUPT_REG_PTR_SYSPRI;
-	for( i=0; i<BSP_INTERRUPT_SYS_PRIORITY_REG_CNT; i++ )
-	{
-		*regPtr = bsp_Interrupt_groupPriorityTableExceptions[i];
-		regPtr++;
-	}
+    /* Setup priorities for exceptions */
+    regPtr = BSP_INTERRUPT_REG_PTR_SYSPRI;
+    for( i=0; i<BSP_INTERRUPT_SYS_PRIORITY_REG_CNT; i++ )
+    {
+        *regPtr = bsp_Interrupt_groupPriorityTableExceptions[i];
+        regPtr++;
+    }
 
-	/* Setup priorities for interrupts */
-	regPtr = BSP_INTERRUPT_REG_PTR_PRI;
-	for( i=0; i<BSP_INTERRUPT_INT_PRIORITY_REG_CNT; i++ )
-	{
-		*regPtr = bsp_Interrupt_groupPriorityTableInterrupts[i];
-		regPtr++;
-	}
+    /* Setup priorities for interrupts */
+    regPtr = BSP_INTERRUPT_REG_PTR_PRI;
+    for( i=0; i<BSP_INTERRUPT_INT_PRIORITY_REG_CNT; i++ )
+    {
+        *regPtr = bsp_Interrupt_groupPriorityTableInterrupts[i];
+        regPtr++;
+    }
 
     return;
 }
@@ -113,7 +113,7 @@ bsp_Interrupt_disable( bsp_Interrupt_Id_t intId )
 void
 bsp_Interrupt_clearPending( bsp_Interrupt_Id_t intId )
 {
-    MAP_IntEnable( intId );
+    MAP_IntPendClear( intId );
     return;
 }
 

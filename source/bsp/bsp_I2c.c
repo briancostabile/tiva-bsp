@@ -40,67 +40,23 @@
 #include "inc/hw_memmap.h"
 #include "inc/hw_i2c.h"
 
-
 /*============================================================================*/
 #define BSP_I2C_REG( _base, _name ) ADDR_TO_REG(((_base) + I2C_O_##_name))
 
 
 /*============================================================================*/
-/**
- * @brief Structure to hold Pin muxing info for I2C pins
- */
-typedef struct {
-    bsp_Gpio_PortId_t    portId;
-    bsp_Gpio_BitMask_t   mask;
-    bsp_Gpio_AltFuncId_t altFuncId;
-}bsp_I2c_PinInfo_t;
-
-
-/*============================================================================*/
-/**
- * @brief Structure to hold constant info about the I2C hardware
- */
-typedef struct {
-    uint32_t          baseAddr;
-    uint32_t          sysCtrlAddr;
-    uint32_t          intId;
-    bsp_I2c_PinInfo_t sclPinInfo;
-    bsp_I2c_PinInfo_t sdaPinInfo;
-}bsp_I2c_StaticInfo_t;
-
-
-/*============================================================================*/
-static const bsp_I2c_StaticInfo_t bsp_I2c_staticInfo[] =
+#if defined BSP_PLATFORM_I2C_LIST
+static const struct
 {
-   { I2C0_BASE, SYSCTL_PERIPH_I2C0, BSP_INTERRUPT_ID_I2C0,
-     {BSP_GPIO_PORT_ID(PB2), BSP_GPIO_MASK(PB2), BSP_GPIO_ALT_FUNC(PB2_I2C0SCL)}, // Pin 47
-     {BSP_GPIO_PORT_ID(PB3), BSP_GPIO_MASK(PB3), BSP_GPIO_ALT_FUNC(PB3_I2C0SDA)}  // Pin 48
-   },
-   { I2C1_BASE, SYSCTL_PERIPH_I2C1, BSP_INTERRUPT_ID_I2C1,
-     {BSP_GPIO_PORT_ID(PA6), BSP_GPIO_MASK(PA6), BSP_GPIO_ALT_FUNC(PA6_I2C1SCL)}, // Pin 23
-     {BSP_GPIO_PORT_ID(PA7), BSP_GPIO_MASK(PA7), BSP_GPIO_ALT_FUNC(PA7_I2C1SDA)}  // Pin 24
-   },
-   { I2C2_BASE, SYSCTL_PERIPH_I2C2, BSP_INTERRUPT_ID_I2C2,
-     {BSP_GPIO_PORT_ID(PE4), BSP_GPIO_MASK(PE4), BSP_GPIO_ALT_FUNC(PE4_I2C2SCL)}, // Pin 59
-     {BSP_GPIO_PORT_ID(PE5), BSP_GPIO_MASK(PE5), BSP_GPIO_ALT_FUNC(PE5_I2C2SDA)}  // Pin 60
-   },
-   { I2C3_BASE, SYSCTL_PERIPH_I2C3, BSP_INTERRUPT_ID_I2C3,
-     {BSP_GPIO_PORT_ID(PD0), BSP_GPIO_MASK(PD0), BSP_GPIO_ALT_FUNC(PD0_I2C3SCL)}, // Pin 61
-     {BSP_GPIO_PORT_ID(PD1), BSP_GPIO_MASK(PD1), BSP_GPIO_ALT_FUNC(PD1_I2C3SDA)}  // Pin 62
-   }
-};
-
-
-/*============================================================================*/
-static const bsp_I2c_Id_t bsp_I2c_idTable[] =
-{
-   BSP_PLATFORM_I2C_LIST
-};
-
+    bsp_I2c_Id_t     id;
+    bsp_I2c_PinSel_t selScl;
+    bsp_I2c_PinSel_t selSda;
+} bsp_I2c_idTable[] = BSP_PLATFORM_I2C_LIST;
+#endif
 
 /*============================================================================*/
 // Global pointers to manage the pending transaction queue. The queue is used
-// when there's an active transaction 
+// when there's an active transaction
 static bsp_I2c_MasterTrans_t* bsp_I2c_masterTransQueueHeadPtr;
 static bsp_I2c_MasterTrans_t* bsp_I2c_masterTransQueueTailPtr;
 
@@ -269,7 +225,7 @@ bsp_I2c_isrMasterCommon( uint32_t baseAddr,
 
 
 /*============================================================================*/
-static void
+void
 bsp_I2c_isrCommon( bsp_I2c_Id_t id )
 {
     uint32_t baseAddr = bsp_I2c_staticInfo[id].baseAddr;
@@ -312,11 +268,14 @@ bsp_I2c_init( void )
         MAP_SysCtlPeripheralDisable( bsp_I2c_staticInfo[i].sysCtrlAddr );
     }
 
+#if defined BSP_PLATFORM_I2C_LIST
     // Enable I2C devices platform requires
     for( size_t i=0; i<DIM(bsp_I2c_idTable); i++ )
     {
-        bsp_I2c_Id_t                     id = bsp_I2c_idTable[i];
+        bsp_I2c_Id_t                id = bsp_I2c_idTable[i].id;
         const bsp_I2c_StaticInfo_t* infoPtr = &bsp_I2c_staticInfo[id];
+        const bsp_I2c_PinInfo_t*    pinInfoPtrScl = &infoPtr->sclPinInfoTable[bsp_I2c_idTable[i].selScl];
+        const bsp_I2c_PinInfo_t*    pinInfoPtrSda = &infoPtr->sdaPinInfoTable[bsp_I2c_idTable[i].selSda];
 
         MAP_SysCtlPeripheralEnable( infoPtr->sysCtrlAddr );
         MAP_I2CMasterIntDisable( infoPtr->baseAddr );
@@ -324,30 +283,28 @@ bsp_I2c_init( void )
         MAP_I2CSlaveIntDisable( infoPtr->baseAddr );
         MAP_I2CSlaveIntClear( infoPtr->baseAddr );
 
-        bsp_Gpio_configInput( infoPtr->sclPinInfo.portId,
-                              infoPtr->sclPinInfo.mask,
+        bsp_Gpio_configInput( pinInfoPtrScl->portId,
+                              pinInfoPtrScl->mask,
                               FALSE,
                               BSP_GPIO_PULL_NONE );
 
-        bsp_Gpio_configAltFunction( infoPtr->sclPinInfo.portId,
-                                    infoPtr->sclPinInfo.mask,
-                                    FALSE,
-                                    infoPtr->sclPinInfo.altFuncId );
+        bsp_Gpio_configAltFunction( pinInfoPtrScl->portId,
+                                    pinInfoPtrScl->mask,
+                                    pinInfoPtrScl->altFuncId );
 
-        bsp_Gpio_configInput( infoPtr->sdaPinInfo.portId,
-                              infoPtr->sdaPinInfo.mask,
+        bsp_Gpio_configInput( pinInfoPtrSda->portId,
+                              pinInfoPtrSda->mask,
                               TRUE,
                               BSP_GPIO_PULL_UP );
 
-        bsp_Gpio_configAltFunction( infoPtr->sdaPinInfo.portId,
-                                    infoPtr->sdaPinInfo.mask,
-                                    FALSE,
-                                    infoPtr->sdaPinInfo.altFuncId );
+        bsp_Gpio_configAltFunction( pinInfoPtrSda->portId,
+                                    pinInfoPtrSda->mask,
+                                    pinInfoPtrSda->altFuncId );
 
-        /* Enable UART interrupt at the NVIC */
+        /* Enable I2C interrupt at the NVIC */
         bsp_Interrupt_enable( infoPtr->intId );
     }
-
+#endif
     return;
 }
 
@@ -427,44 +384,4 @@ bsp_I2c_masterTransQueue( bsp_I2c_Id_t           id,
     }
 
     BSP_MCU_CRITICAL_SECTION_EXIT();
-}
-
-
-/*============================================================================*/
-void
-bsp_I2c_interruptHandler0( void )
-{
-    bsp_I2c_isrCommon( BSP_I2C_ID0 );
-    bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C0 );
-    return;
-}
-
-
-/*============================================================================*/
-void
-bsp_I2c_interruptHandler1( void )
-{
-    bsp_I2c_isrCommon( BSP_I2C_ID1 );
-    bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C1 );
-    return;
-}
-
-
-/*============================================================================*/
-void
-bsp_I2c_interruptHandler2( void )
-{
-    bsp_I2c_isrCommon( BSP_I2C_ID2 );
-    bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C2 );
-    return;
-}
-
-
-/*============================================================================*/
-void
-bsp_I2c_interruptHandler3( void )
-{
-    bsp_I2c_isrCommon( BSP_I2C_ID3 );
-    bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C3 );
-    return;
 }

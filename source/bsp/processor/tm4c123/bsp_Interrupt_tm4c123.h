@@ -24,8 +24,7 @@
  * @file bsp_Interrupt_tm4c123.h
  * @brief Contains Interrupt defines common to the tm4c123 core.
  */
-#ifndef BSP_INTERRUPT_TM4C123_H
-#define BSP_INTERRUPT_TM4C123_H
+#pragma once
 
 #include "bsp_Platform.h"
 
@@ -151,5 +150,3 @@
  */
 extern const uint32_t bsp_Interrupt_groupPriorityTableExceptions[];
 extern const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[];
-
-#endif

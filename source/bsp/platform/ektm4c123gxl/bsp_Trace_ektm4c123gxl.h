@@ -37,6 +37,7 @@
 //#define BSP_TRACE_INT
 //#define BSP_TRACE_UARTS
 //#define BSP_TRACE_USBIO
+//#define BSP_TRACE_I2C
 
 #if defined(BSP_TRACE_ENABLE) && defined( BSP_TRACE_INT )
 #define BSP_TRACE_INT_ENTER()      {BSP_GPIO_OUT_SET_HIGH( TPA2 );}
@@ -90,6 +91,19 @@
 #define BSP_TRACE_USBIO_RX_AVAIL_EXIT()
 #endif
 
+#if defined(BSP_TRACE_ENABLE) && defined( BSP_TRACE_I2C )
+#define BSP_TRACE_I2C_ISR_MASTER_ENTER()      {BSP_GPIO_OUT_SET_HIGH( TPA5 );}
+#define BSP_TRACE_I2C_ISR_MASTER_EXIT()       {BSP_GPIO_OUT_SET_LOW( TPA5 );}
+#define BSP_TRACE_I2C_STATUS_IDLE()           {BSP_GPIO_OUT_SET_HIGH( TPA6 ); BSP_GPIO_OUT_SET_LOW( TPA6 );}
+#define BSP_TRACE_I2C_STATUS_BUS_BUSY()       {BSP_GPIO_OUT_SET_HIGH( TPA7 ); BSP_GPIO_OUT_SET_LOW( TPA7 );}
+#define BSP_TRACE_I2C_STATUS_OTHER()          {BSP_GPIO_OUT_SET_HIGH( TPA4 ); BSP_GPIO_OUT_SET_LOW( TPA4 );}
+#else
+#define BSP_TRACE_I2C_ISR_MASTER_ENTER()
+#define BSP_TRACE_I2C_ISR_MASTER_EXIT()
+#define BSP_TRACE_I2C_STATUS_IDLE()
+#define BSP_TRACE_I2C_STATUS_BUS_BUSY()
+#define BSP_TRACE_I2C_STATUS_OTHER()
+#endif
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
