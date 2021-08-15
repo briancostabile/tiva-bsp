@@ -24,8 +24,7 @@
  * @file bsp_Pragma.h
  * @brief Contains macros for compiler specific pragmas
  */
-#ifndef BSP_PRAGMA_H
-#define BSP_PRAGMA_H
+#pragma once
 
 /*==============================================================================
  *                                   Defines
@@ -159,6 +158,4 @@
                                            inline __attribute__(( always_inline))
 #elif defined(BSP_PRAGMA_COMPILER_GNU)
     #define BSP_PRAGMA_FORCE_INLINE(_func) inline __attribute__(( always_inline)) _func
-#endif
-
 #endif

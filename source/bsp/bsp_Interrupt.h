@@ -24,8 +24,7 @@
  * @file bsp_Interrupt.h
  * @brief Contains Macros and defines for the interrupt controller.
  */
-#ifndef BSP_INTERRUPT_H
-#define BSP_INTERRUPT_H
+#pragma once
 
 #include BUILD_INCLUDE_STRING( bsp_Interrupt_, PLATFORM_CORE )
 
@@ -123,6 +122,3 @@ bsp_Interrupt_clearPending( bsp_Interrupt_Id_t intId );
  */
 bsp_Interrupt_Id_t
 bsp_Interrupt_activeId( void );
-
-
-#endif

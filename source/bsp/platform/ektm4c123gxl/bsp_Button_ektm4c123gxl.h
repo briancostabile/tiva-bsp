@@ -24,8 +24,7 @@
  * @file bsp_Button_ektm4c123gxl.h
  * @brief Contains platform specific trace mappings to IO pins
  */
-#ifndef BSP_BUTTON_EKTM4C123GXL_H
-#define BSP_BUTTON_EKTM4C123GXL_H
+#pragma once
 
 #include "bsp_Gpio.h"
 
@@ -52,5 +51,3 @@
  *============================================================================*/
 /*============================================================================*/
 extern const bsp_Button_IoInfo_t bsp_Button_ioInfoTable[BSP_PLATFORM_IO_BUTTON_NUM];
-
-#endif

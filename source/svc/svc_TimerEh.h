@@ -24,8 +24,7 @@
  * @file svc_TimerEh.h
  * @brief Contains the message interface related to the timer service
  */
-#ifndef SVC_TIMER_EH_H
-#define SVC_TIMER_EH_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -67,5 +66,3 @@ void
 svc_TimerEh_timerStart( osapi_TimerId_t   data,
                         osapi_Timeout_t   timeout,
                         osapi_TimerType_t type );
-
-#endif

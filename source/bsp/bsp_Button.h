@@ -24,8 +24,7 @@
  * @file bsp_Button.h
  * @brief Contains a thin wrapper API around GPIOs for the switch-style buttons
  */
-#ifndef BSP_BUTTON_H
-#define BSP_BUTTON_H
+#pragma once
 
 #include "bsp_Gpio.h"
 
@@ -79,11 +78,9 @@ bsp_Button_control( bsp_Button_Id_t      id,
 
 /*============================================================================*/
 void
-bsp_Button_registerHandler( bsp_Button_Id_t           id, 
+bsp_Button_registerHandler( bsp_Button_Id_t           id,
                             bsp_Button_PressHandler_t handler );
 
 /*============================================================================*/
 bsp_Button_State_t
 bsp_Button_state( bsp_Button_Id_t id );
-
-#endif

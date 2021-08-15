@@ -202,6 +202,7 @@ typedef struct
  */
 typedef struct
 {
+    const char * const             name;
     bsp_Uart_Id_t                  uartId;
     bsp_Uart_PinSel_t              rxPinSel;
     bsp_Uart_PinSel_t              txPinSel;
@@ -225,7 +226,8 @@ uint8_t bsp_UartIo_txBuffer0[ BSP_PLATFORM_IO_UART0_TX_BUF_LEN ];
 
 /*============================================================================*/
 bsp_UartIo_InternalInfo_t bsp_UartIo_internalInfoTable[] = {
-    { BSP_PLATFORM_IO_UART0_ID,
+    { "uart0",
+      BSP_PLATFORM_IO_UART0_ID,
       BSP_PLATFORM_IO_UART0_RX_PIN_SEL,
       BSP_PLATFORM_IO_UART0_TX_PIN_SEL,
       BSP_PLATFORM_IO_UART0_BAUD,
@@ -523,10 +525,7 @@ bsp_UartIo_bufferRead( bsp_UartIo_InternalInfo_t* infoPtr,
 void
 bsp_UartIo_init( void )
 {
-    uint8_t i;
-    char filenameBuf[6] = "uartX";
-
-    for( i=0; i<DIM(bsp_UartIo_internalInfoTable); i++ )
+    for( uint8_t i=0; i<DIM(bsp_UartIo_internalInfoTable); i++ )
     {
         /* Initialize the buffer info */
         bsp_UartIo_internalInfoTable[i].rxBufInfo.writeIdx = 0;
@@ -558,9 +557,7 @@ bsp_UartIo_init( void )
                          BSP_UART_DATA_BIT_8,
                          BSP_UART_FLOW_NONE );
 
-        snprintf( filenameBuf, sizeof(filenameBuf), "uart%d", (uint8_t)bsp_UartIo_internalInfoTable[i].uartId );
-
-        bsp_Io_addDevice( filenameBuf,
+        bsp_Io_addDevice( bsp_UartIo_internalInfoTable[i].name,
                           &bsp_UartIo_internalInfoTable[i],
                           bsp_UartIo_open,
                           bsp_UartIo_close,

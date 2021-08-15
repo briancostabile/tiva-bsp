@@ -24,8 +24,7 @@
  * @file svc_Periph.h
  * @brief Contains the API for the Peripheral Service thread
  */
-#ifndef SVC_TEST_EH_H
-#define SVC_TEST_EH_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -37,5 +36,3 @@
  *============================================================================*/
 /*============================================================================*/
 extern const svc_Eh_Info_t svc_TestEh_info;
-
-#endif

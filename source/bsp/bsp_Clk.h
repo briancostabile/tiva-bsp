@@ -24,8 +24,7 @@
  * @file bsp_Clk.h
  * @brief Contains types and prototypes to access the Clock
  */
-#ifndef BSP_CLK_H
-#define BSP_CLK_H
+#pragma once
 
 #include "bsp_Platform.h"
 
@@ -55,5 +54,3 @@ bsp_Clk_delayUs( uint32_t us );
 /*============================================================================*/
 void
 bsp_Clk_delayMs( uint32_t ms );
-
-#endif

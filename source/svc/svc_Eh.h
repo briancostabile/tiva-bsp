@@ -25,8 +25,7 @@
  * @brief Contains the structures, definitions and functions common for all
  *        Event Handlers
  */
-#ifndef SVC_EH_H
-#define SVC_EH_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -57,9 +56,7 @@ typedef struct svc_Eh_Info_s
 
 /*============================================================================*/
 void
-svc_Eh_listRun( size_t                cnt, 
+svc_Eh_listRun( size_t                cnt,
                 const svc_Eh_Info_t** infoPtrList,
                 size_t                queueDepth,
                 void*                 queueMem );
-
-#endif

@@ -26,8 +26,7 @@
  *        in/out are relatively lightweight when compiled in. Generally, they
  *        should be disabled for release
  */
-#ifndef BSP_TRACE_H
-#define BSP_TRACE_H
+#pragma once
 
 #include "bsp_Gpio.h"
 
@@ -50,5 +49,3 @@ typedef struct {
 /*============================================================================*/
 void
 bsp_Trace_init( void );
-
-#endif

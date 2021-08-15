@@ -24,8 +24,7 @@
  * @file svc_LightEh.h
  * @brief Contains the message interface related to the Lighterature service
  */
-#ifndef SVC_LIGHT_EH_H
-#define SVC_LIGHT_EH_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -60,5 +59,3 @@ typedef struct BSP_ATTR_PACKED svc_LightEh_MeasInd_s
  *============================================================================*/
 /*============================================================================*/
 extern const svc_Eh_Info_t svc_LightEh_info;
-
-#endif

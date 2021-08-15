@@ -73,8 +73,8 @@
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/inc"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/driverlib"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/usblib"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/include"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv202107.00/FreeRTOS/Source/include"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv202107.00/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_LEVEL.release.1563051029" name="Optimization Level" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_LEVEL.release" value="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_LEVEL.3" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_FOR_SPACE.1268872251" name="Optimize for space rather than speed (-Os)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_FOR_SPACE" value="true" valueType="boolean"/>
@@ -119,7 +119,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="tm4c123gh6pm.lds|source/bsp/platform/dktm4c129x|source/bsp/processor/tm4c129|tm4c129xnczad.lds|tm4c129xnczad.cmd|tm4c123gh6pm.cmd|TivaBspSensor_tm4c123gh6pm_ccs.cmd|TivaBspCore_tm4c129xnczad_gcc.lds|TivaBspCore_tm4c129xnczad_ccs.cmd|TivaBspCore_tm4c123gh6pm_gcc.lds|TivaBspCore_tm4c123gh6pm_ccs.cmd|TivaBspCommon.lds|TivaBspCommon.cmd|source/bsp/platform/ektm4c123gxl|third_party/FreeRTOS/FreeRTOSv10.1.1/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="tm4c123gh6pm.lds|source/bsp/platform/dktm4c129x|source/bsp/processor/tm4c129|tm4c129xnczad.lds|tm4c129xnczad.cmd|tm4c123gh6pm.cmd|TivaBspSensor_tm4c123gh6pm_ccs.cmd|TivaBspCore_tm4c129xnczad_gcc.lds|TivaBspCore_tm4c129xnczad_ccs.cmd|TivaBspCore_tm4c123gh6pm_gcc.lds|TivaBspCore_tm4c123gh6pm_ccs.cmd|TivaBspCommon.lds|TivaBspCommon.cmd|source/bsp/platform/ektm4c123gxl|third_party/FreeRTOS/FreeRTOSv202107.00/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -195,8 +195,8 @@
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/inc"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/driverlib"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/usblib"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/include"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/portable/CCS/ARM_CM4F"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv202107.00/FreeRTOS/Source/include"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv202107.00/FreeRTOS/Source/portable/CCS/ARM_CM4F"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_18.9.compilerID.C_DIALECT.904292520" name="C Dialect" superClass="com.ti.ccstudio.buildDefinitions.TMS470_18.9.compilerID.C_DIALECT" value="com.ti.ccstudio.buildDefinitions.TMS470_18.9.compilerID.C_DIALECT.C99" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_18.9.compilerID.LANGUAGE_MODE.82830733" name="Language mode" superClass="com.ti.ccstudio.buildDefinitions.TMS470_18.9.compilerID.LANGUAGE_MODE" value="com.ti.ccstudio.buildDefinitions.TMS470_18.9.compilerID.LANGUAGE_MODE.RELAXED_ANSI" valueType="enumerated"/>
@@ -251,7 +251,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="tm4c123gh6pm.lds|TivaBspSensor_tm4c123gh6pm_gcc.lds|TivaBspSensor_tm4c123gh6pm_ccs.cmd|tm4c123gh6pm.cmd|TivaBspCore_tm4c123gh6pm_gcc.lds|tm4c129xnczad.lds|tm4c129xnczad.cmd|TivaBspCore_tm4c129xnczad_gcc.lds|TivaBspCore_tm4c129xnczad_ccs.cmd|TivaBspCommon.cmd|TivaBspCommon.lds|source/bsp/processor/tm4c129|source/bsp/toolchain/gcc|source/bsp/platform/dktm4c129x|source/bsp/platform/ektm4c123sensor|source/bsp/toolchain/gcc/bsp_Io_gcc.c|source/bsp/toolchain/gcc/bsp_Mcu_gcc.s|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|third_party/FreeRTOS/FreeRTOSv10.1.1/Source/portable/GCC/ARM_CM4F/port.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="tm4c123gh6pm.lds|TivaBspSensor_tm4c123gh6pm_gcc.lds|TivaBspSensor_tm4c123gh6pm_ccs.cmd|tm4c123gh6pm.cmd|TivaBspCore_tm4c123gh6pm_gcc.lds|tm4c129xnczad.lds|tm4c129xnczad.cmd|TivaBspCore_tm4c129xnczad_gcc.lds|TivaBspCore_tm4c129xnczad_ccs.cmd|TivaBspCommon.cmd|TivaBspCommon.lds|source/bsp/processor/tm4c129|source/bsp/toolchain/gcc|source/bsp/platform/dktm4c129x|source/bsp/platform/ektm4c123sensor|source/bsp/toolchain/gcc/bsp_Io_gcc.c|source/bsp/toolchain/gcc/bsp_Mcu_gcc.s|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|third_party/FreeRTOS/FreeRTOSv202107.00/Source/portable/GCC/ARM_CM4F/port.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -329,8 +329,8 @@
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/inc"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/driverlib"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/usblib"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/include"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv202107.00/FreeRTOS/Source/include"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv202107.00/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_LEVEL.release.178468916" name="Optimization Level" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_LEVEL.release" value="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_LEVEL.3" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_FOR_SPACE.1645950668" name="Optimize for space rather than speed (-Os)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_FOR_SPACE" value="true" valueType="boolean"/>
@@ -375,7 +375,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="tm4c123gh6pm.lds|TivaBspSensor_tm4c123gh6pm_gcc.lds|TivaBspSensor_tm4c123gh6pm_ccs.cmd|tm4c123gh6pm.cmd|TivaBspCore_tm4c123gh6pm_gcc.lds|TivaBspCore_tm4c123gh6pm_ccs.cmd|tm4c129xnczad.lds|tm4c129xnczad.cmd|TivaBspCore_tm4c129xnczad_ccs.cmd|TivaBspCommon.cmd|TivaBspCommon.lds|source/bsp/platform/ektm4c123sensor|source/bsp/processor/tm4c123|source/bsp/platform/ektm4c123gxl|third_party/FreeRTOS/FreeRTOSv10.1.1/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="tm4c123gh6pm.lds|TivaBspSensor_tm4c123gh6pm_gcc.lds|TivaBspSensor_tm4c123gh6pm_ccs.cmd|tm4c123gh6pm.cmd|TivaBspCore_tm4c123gh6pm_gcc.lds|TivaBspCore_tm4c123gh6pm_ccs.cmd|tm4c129xnczad.lds|tm4c129xnczad.cmd|TivaBspCore_tm4c129xnczad_ccs.cmd|TivaBspCommon.cmd|TivaBspCommon.lds|source/bsp/platform/ektm4c123sensor|source/bsp/processor/tm4c123|source/bsp/platform/ektm4c123gxl|third_party/FreeRTOS/FreeRTOSv202107.00/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -453,8 +453,8 @@
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/inc"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/driverlib"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/usblib"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/include"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv202107.00/FreeRTOS/Source/include"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv202107.00/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 								</option>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_LEVEL.release.480910729" name="Optimization Level" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_LEVEL.release" value="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_LEVEL.3" valueType="enumerated"/>
 								<option id="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_FOR_SPACE.1438188353" name="Optimize for space rather than speed (-Os)" superClass="com.ti.ccstudio.buildDefinitions.TMS470_GNU_8.0.compilerID.OPT_FOR_SPACE" value="true" valueType="boolean"/>
@@ -499,7 +499,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="tm4c123gh6pm.lds|TivaBspSensor_tm4c123gh6pm_gcc.lds|TivaBspSensor_tm4c123gh6pm_ccs.cmd|tm4c123gh6pm.cmd|TivaBspCore_tm4c129xnczad_gcc.lds|TivaBspCore_tm4c123gh6pm_ccs.cmd|tm4c129xnczad.lds|tm4c129xnczad.cmd|TivaBspCore_tm4c129xnczad_ccs.cmd|TivaBspCommon.cmd|TivaBspCommon.lds|source/bsp/platform/ektm4c123sensor|source/bsp/platform/dktm4c129x|source/bsp/processor/tm4c129|third_party/FreeRTOS/FreeRTOSv10.1.1/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="tm4c123gh6pm.lds|TivaBspSensor_tm4c123gh6pm_gcc.lds|TivaBspSensor_tm4c123gh6pm_ccs.cmd|tm4c123gh6pm.cmd|TivaBspCore_tm4c129xnczad_gcc.lds|TivaBspCore_tm4c123gh6pm_ccs.cmd|tm4c129xnczad.lds|tm4c129xnczad.cmd|TivaBspCore_tm4c129xnczad_ccs.cmd|TivaBspCommon.cmd|TivaBspCommon.lds|source/bsp/platform/ektm4c123sensor|source/bsp/platform/dktm4c129x|source/bsp/processor/tm4c129|third_party/FreeRTOS/FreeRTOSv202107.00/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

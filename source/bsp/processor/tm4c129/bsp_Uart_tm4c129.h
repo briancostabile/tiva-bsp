@@ -21,8 +21,8 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Uart_tm4c123.h
- * @brief Contains the tm4c123 core UART defines.
+ * @file bsp_Uart_tm4c129.h
+ * @brief Contains the tm4c129 core UART defines.
  */
 #pragma once
 

@@ -24,8 +24,7 @@
  * @file bsp_Types.h
  * @brief Contains base types and defines.
  */
-#ifndef BSP_TYPES_H
-#define BSP_TYPES_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -146,5 +145,3 @@ typedef uint8_t bool_t;
  *   This macro is used to define a string and place it into a specified section
  */
 #define STRING(_name, _str, _sect) const char BSP_ATTR_SECTION(_sect) _name[] = _str
-
-#endif

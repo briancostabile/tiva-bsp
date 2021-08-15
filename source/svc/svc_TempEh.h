@@ -24,8 +24,7 @@
  * @file svc_TempEh.h
  * @brief Contains the message interface related to the Temperature service
  */
-#ifndef SVC_TEMP_EH_H
-#define SVC_TEMP_EH_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -59,5 +58,3 @@ typedef struct BSP_ATTR_PACKED svc_TempEh_MeasInd_s
  *============================================================================*/
 /*============================================================================*/
 extern const svc_Eh_Info_t svc_TempEh_info;
-
-#endif

@@ -24,8 +24,7 @@
  * @file svc_HumidEh.h
  * @brief Contains the message interface related to the Humidity service
  */
-#ifndef SVC_HUMID_EH_H
-#define SVC_HUMID_EH_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -74,5 +73,3 @@ typedef struct BSP_ATTR_PACKED svc_HumidEh_MeasComboInd_s
  *============================================================================*/
 /*============================================================================*/
 extern const svc_Eh_Info_t svc_HumidEh_info;
-
-#endif

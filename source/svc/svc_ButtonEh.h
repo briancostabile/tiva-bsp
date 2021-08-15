@@ -24,8 +24,7 @@
  * @file svc_ButtonEh.h
  * @brief Contains the message interface related to the button service
  */
-#ifndef SVC_BUTTON_EH_H
-#define SVC_BUTTON_EH_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -65,5 +64,3 @@ typedef svc_ButtonEh_PressInd_t svc_ButtonEh_ReleaseInd_t;
  *============================================================================*/
 /*============================================================================*/
 extern const svc_Eh_Info_t svc_ButtonEh_info;
-
-#endif

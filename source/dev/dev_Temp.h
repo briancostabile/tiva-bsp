@@ -24,8 +24,7 @@
  * @file dev_Temp.h
  * @brief Contains Macros, defines, and prototypes for the Temperature/Humidity sensor.
  */
-#ifndef DEV_TEMP_H
-#define DEV_TEMP_H
+#pragma once
 
 #include "bsp_Types.h"
 
@@ -51,5 +50,3 @@ dev_Temp_measTrigger( dev_Temp_MeasCallback_t callback );
 /*===========================================================================*/
 void
 dev_Temp_measRead( dev_Temp_MeasTemperature_t* measPtr );
-
-#endif

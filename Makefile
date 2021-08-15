@@ -131,7 +131,7 @@ endef
 ################
 # FreeRTOS
 FREERTOS_NAME     := FreeRTOS
-FREERTOS_VER      := v10.1.1
+FREERTOS_VER      := v202107.00
 FREERTOS_DIR      := $(THIRD_PARTY_DIR)/$(FREERTOS_NAME)/$(FREERTOS_NAME)$(FREERTOS_VER)/$(FREERTOS_NAME)
 FREERTOS_SRC_DIR  := $(FREERTOS_DIR)/Source
 FREERTOS_SRC_DIRS := $(FREERTOS_SRC_DIR)
@@ -353,6 +353,9 @@ $(BUILD_DIR)/%.o: %.c
 .PHONY: clean
 clean:
 	$(Q)rm -rf $(BUILD_DIR)
+
+distclean:
+	$(Q)rm -rf $(ROOT_DIR)/build
 
 newlib:
 	$(shell cd $(NEWLIB_DIR);./configure $(NEWLIB_CONFIG))

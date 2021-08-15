@@ -24,8 +24,7 @@
  * @file bsp_Assert.h
  * @brief Contains macro for assert
  */
-#ifndef BSP_ASSERT_H
-#define BSP_ASSERT_H
+#pragma once
 
 #include "bsp_Reset.h"
 
@@ -95,5 +94,3 @@ bsp_Assert_halt( const char* funcName,
 void
 bsp_Assert_reset( const char* funcName,
                   uint16_t    lineNum );
-
-#endif

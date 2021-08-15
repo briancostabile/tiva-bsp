@@ -24,9 +24,7 @@
  * @file tst_Mem.h
  * @brief Contains root menu for the Memory test commands
  */
-#ifndef TST_MEM_H
-#define TST_MEM_H
-
+#pragma once
 
 #include "tst.h"
 
@@ -34,5 +32,3 @@
  *                                Globals
  *============================================================================*/
 extern const tst_TableElement_t tst_Mem_menu[];
-
-#endif

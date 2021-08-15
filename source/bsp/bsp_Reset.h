@@ -24,8 +24,7 @@
  * @file bsp_Reset.h
  * @brief Contains Macros and defines for the reset reason.
  */
-#ifndef BSP_RESET_H
-#define BSP_RESET_H
+#pragma once
 
 #include "bsp_Types.h"
 
@@ -109,5 +108,3 @@ bsp_Reset_systemFault( uint32_t* stackRegs );
 /*===========================================================================*/
 uint32_t *
 bsp_Reset_getFaultRegs( void );
-
-#endif

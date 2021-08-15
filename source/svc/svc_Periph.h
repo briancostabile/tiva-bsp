@@ -24,12 +24,8 @@
  * @file svc_Periph.h
  * @brief Contains the API for the Peripheral Service thread
  */
-#ifndef SVC_PERIPH_H
-#define SVC_PERIPH_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
 #include <stdint.h>
-
-
-#endif

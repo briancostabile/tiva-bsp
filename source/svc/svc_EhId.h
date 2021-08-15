@@ -24,8 +24,7 @@
  * @file svc_EhId.h
  * @brief Contains Event Handler Ids and types
  */
-#ifndef SVC_EH_ID_H
-#define SVC_EH_ID_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -40,5 +39,3 @@
 
 /*============================================================================*/
 typedef uint8_t svc_EhId_t;
-
-#endif

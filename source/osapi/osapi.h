@@ -24,8 +24,7 @@
  * @file osapi.h
  * @brief Contains types and defines for the OS service
  */
-#ifndef OSAPI_H
-#define OSAPI_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -194,6 +193,3 @@ osapi_Timer_stop( osapi_Timer_t timer );
 /*============================================================================*/
 bool
 osapi_Timer_resume( osapi_Timer_t timer );
-
-
-#endif

@@ -23,8 +23,7 @@
 /**
  * @file bsp_Platform_ektm4c123gxl.h
  */
-#ifndef BSP_PLATFORM_EKTM4C123GXL_H
-#define BSP_PLATFORM_EKTM4C123GXL_H
+#pragma once
 
 #include "inc/tm4c123gh6pm.h"
 
@@ -92,5 +91,4 @@
 #define BSP_PLATFORM_IO_MAP_STDOUT "usb0"
 #define BSP_PLATFORM_IO_MAP_STDIN  "usb0"
 #define BSP_PLATFORM_IO_MAP_STDERR "usb0"
-#endif
 #endif

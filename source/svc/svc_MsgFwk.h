@@ -25,8 +25,7 @@
  * @brief Contains a message passing framework API to abstract the concept of
  *        an event handler from the underlying thread
  */
-#ifndef SVC_MSG_FWK_H
-#define SVC_MSG_FWK_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Pragma.h"
@@ -116,5 +115,3 @@ svc_MsgFwk_registerMsg( svc_EhId_t         eh,
 void
 svc_MsgFwk_registerEh( svc_EhId_t    eh,
                        osapi_Queue_t queue );
-
-#endif

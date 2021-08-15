@@ -24,8 +24,7 @@
  * @file svc_Cmd.h
  * @brief Contains wrapper APIs and defines for OS services
  */
-#ifndef SVC_CMD_H
-#define SVC_CMD_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -43,6 +42,3 @@
 // Prototypes for functions that must be supplied by client
 int32_t svc_Cmd_handlerText( int argc, char** argv );
 int32_t svc_Cmd_handlerBinary( uint8_t* buf, uint16_t len );
-
-
-#endif

@@ -24,8 +24,7 @@
  * @file svc_Log.h
  * @brief Contains Simple macro wrapper for printing messages
  */
-#ifndef SVC_LOG_H
-#define SVC_LOG_H
+#pragma once
 
 #include <stdio.h>
 
@@ -61,5 +60,3 @@
 
 #define ENDLINE "\n"
 #define NL "\n"
-
-#endif

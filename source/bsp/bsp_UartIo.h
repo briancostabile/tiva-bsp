@@ -25,8 +25,7 @@
  * @brief Contains types and prototypes for stdin/stdout interface on top of
  *        UART or USB
  */
-#ifndef BSP_UARTIO_H
-#define BSP_UARTIO_H
+#pragma once
 
 #include "bsp_Types.h"
 
@@ -93,7 +92,3 @@ bsp_UartIo_unlink( const char* path );
 int
 bsp_UartIo_rename( const char* old_name,
                    const char* new_name );
-
-
-
-#endif

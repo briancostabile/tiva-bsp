@@ -24,8 +24,7 @@
  * @file dev_Pressure.h
  * @brief Contains Macros, defines, and prototypes for the Pressure sensor.
  */
-#ifndef DEV_PRESSURE_H
-#define DEV_PRESSURE_H
+#pragma once
 
 #include "bsp_Types.h"
 
@@ -47,5 +46,3 @@ dev_Pressure_init( void );
 /*===========================================================================*/
 void
 dev_Pressure_measTrigger( dev_Pressure_MeasCallback_t callback );
-
-#endif

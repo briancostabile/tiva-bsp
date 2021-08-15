@@ -24,13 +24,10 @@
  * @file svc_EhId_TivaBspCore.h
  * @brief Contains the product specific list of Event handler Ids
  */
-#ifndef SVC_EHID_TIVA_BSP_CORE_H
-#define SVC_EHID_TIVA_BSP_CORE_H
+#pragma once
 
 #define SVC_EHID_BROADCAST 0
 #define SVC_EHID_BUTTON    1
 #define SVC_EHID_TIMER     2
 #define SVC_EHID_TEST      3
 #define SVC_EHID_NUM_EHIDS 4
-
-#endif

@@ -41,15 +41,15 @@ assert ep_in is not None
 print(ep_in)
 
 #send in command to trigger a response
-# msg = bytearray([0x03,0x12,0x13,0xFF])
-# ep_out.write(msg, 100)
+msg = bytearray([0x03,0x12,0x13,0xFF])
+ep_out.write(msg, 100)
 
-# while len(msg) is not 51:
-#     try:
-#         msg = ep_in.read(8192, 100)
-#     except usb.core.USBTimeoutError as err:
-#         pass
-#     else:
-#         print(len(msg))
-#         print(msg)
+while len(msg) is not 51:
+    try:
+        msg = ep_in.read(8192, 100)
+    except usb.core.USBTimeoutError as err:
+        pass
+    else:
+        print(len(msg))
+        print(msg)
 

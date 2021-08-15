@@ -31,8 +31,7 @@
  *    header file called main_Platform_<platformName>.h will be included by this
  *    header file.
  */
-#ifndef BSP_PLATFORM_H
-#define BSP_PLATFORM_H
+#pragma once
 
 #include "bsp_Types.h"
 
@@ -41,6 +40,4 @@
 #include BUILD_INCLUDE_STRING(bsp_Platform_, PLATFORM)
 #else
 # error "PLATFORM must be defined on command line"
-#endif
-
 #endif

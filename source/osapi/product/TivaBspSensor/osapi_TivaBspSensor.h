@@ -24,8 +24,7 @@
  * @file osapi_TivaBspSensor.h
  * @brief Contains the product specific OS configuration
  */
-#ifndef OSAPI_TIVA_BSP_SENSOR_H
-#define OSAPI_TIVA_BSP_SENSOR_H
+#pragma once
 
 #include "bsp_Platform.h"
 
@@ -49,6 +48,3 @@ OSAPI_MEMORY_POOL_DEFINE( 128, 2 )
     OSAPI_MEMORY_POOL_INFO_ELEMENT(  32 ), \
     OSAPI_MEMORY_POOL_INFO_ELEMENT(  64 ), \
     OSAPI_MEMORY_POOL_INFO_ELEMENT( 128 )
-
-
-#endif

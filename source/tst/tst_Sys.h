@@ -24,9 +24,7 @@
  * @file tst_Sys.h
  * @brief Contains root menu for the System test commands
  */
-#ifndef TST_SYS_H
-#define TST_SYS_H
-
+#pragma once
 
 #include "tst.h"
 
@@ -34,5 +32,3 @@
  *                                Globals
  *============================================================================*/
 extern const tst_TableElement_t tst_Sys_menu[];
-
-#endif

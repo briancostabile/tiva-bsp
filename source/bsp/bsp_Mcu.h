@@ -24,8 +24,7 @@
  * @file bsp_Mcu.h
  * @brief Contains Macros and defines for MCU specific operations.
  */
-#ifndef BSP_MCU_H
-#define BSP_MCU_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Pragma.h"
@@ -126,5 +125,3 @@ bsp_Mcu_basePriorityGet( void );
 /*============================================================================*/
 void
 bsp_Mcu_basePrioritySet( bsp_Mcu_BasePriority_t priority );
-
-#endif

@@ -24,8 +24,7 @@
  * @file bsp_Gpio.h
  * @brief Contains types and prototypes to access the GPIO
  */
-#ifndef BSP_GPIO_H
-#define BSP_GPIO_H
+#pragma once
 
 #include "bsp_Platform.h"
 
@@ -203,5 +202,3 @@ bsp_Gpio_intConfig( bsp_Gpio_PortId_t       portId,
                     bool_t                  adcTriggerEnable,
                     bsp_Gpio_IntType_t      type,
                     bsp_Gpio_InputHandler_t callback );
-
-#endif

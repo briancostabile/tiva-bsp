@@ -158,8 +158,8 @@ static tst_Status_t
 tst_Usb_status( int argc, char** argv )
 {
     printf("USB Stats\n");
-    printf("\tNum Tx Bytes: %d\n", tst_Usb_txCnt);
-    printf("\tNum Rx Bytes: %d\n", tst_Usb_rxCnt);
+    printf("\tNum Tx Bytes: %ld\n", tst_Usb_txCnt);
+    printf("\tNum Rx Bytes: %ld\n", tst_Usb_rxCnt);
     return( TST_STATUS_OK );
 }
 

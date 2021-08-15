@@ -29,8 +29,7 @@
  *    line to specify a product -DPRODUCT=<productName>. This component
  *    defines all of the OSAPI defines for each supported <productName>.
  */
-#ifndef OSAPI_PRODUCT_H
-#define OSAPI_PRODUCT_H
+#pragma once
 
 /*==============================================================================
  *                                 Defines
@@ -51,6 +50,4 @@ uint32_t* osapi_MemoryPoolFree##_size;
 #include BUILD_INCLUDE_STRING(osapi_, PRODUCT)
 #else
 # error "PRODUCT must be defined on command line"
-#endif
-
 #endif

@@ -24,8 +24,7 @@
  * @file dev_Light.h
  * @brief Contains Macros, defines, and prototypes for the Ambient Light sensor.
  */
-#ifndef DEV_LIGHT_H
-#define DEV_LIGHT_H
+#pragma once
 
 #include "bsp_Types.h"
 
@@ -51,5 +50,3 @@ dev_Light_measTriggerAls( dev_Light_MeasCallback_t callback );
 /*===========================================================================*/
 void
 dev_Light_measTriggerIr( dev_Light_MeasCallback_t callback );
-
-#endif

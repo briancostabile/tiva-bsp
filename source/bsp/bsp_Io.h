@@ -24,8 +24,7 @@
  * @file bsp_Io.h
  * @brief Contains function prototypes for connecting up libc with serial devices
  */
-#ifndef BSP_IO_H
-#define BSP_IO_H
+#pragma once
 
 #include "bsp_Types.h"
 
@@ -85,5 +84,3 @@ bsp_Io_addDevice( const char*     path,
                   bsp_Io_Lseek_t  lseek,
                   bsp_Io_Unlink_t unlink,
                   bsp_Io_Rename_t rename );
-
-#endif
