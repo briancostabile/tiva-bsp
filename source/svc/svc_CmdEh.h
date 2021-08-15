@@ -21,11 +21,17 @@
  */
 /*============================================================================*/
 /**
- * @file svc_Periph.h
- * @brief Contains the API for the Peripheral Service thread
+ * @file svc_CmdEh.h
+ * @brief Contains wrapper APIs and defines for OS services
  */
 #pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
-#include <stdint.h>
+#include "svc_Eh.h"
+
+/*==============================================================================
+ *                                 Globals
+ *============================================================================*/
+/*============================================================================*/
+extern const svc_Eh_Info_t svc_CmdEh_info;

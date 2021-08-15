@@ -27,7 +27,9 @@
 #pragma once
 
 #define SVC_EHID_BROADCAST 0
-#define SVC_EHID_BUTTON    1
-#define SVC_EHID_TIMER     2
-#define SVC_EHID_TEST      3
-#define SVC_EHID_NUM_EHIDS 4
+#define SVC_EHID_SERIO     1
+#define SVC_EHID_CMD       2
+#define SVC_EHID_BUTTON    3
+#define SVC_EHID_TIMER     4
+#define SVC_EHID_TEST      5
+#define SVC_EHID_NUM_EHIDS 6

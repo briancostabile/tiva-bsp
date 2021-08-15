@@ -21,85 +21,70 @@
  */
 /*============================================================================*/
 /**
- * @file svc_Periph.c
+ * @file svc_ThreadUi.c
  * @brief
  */
-
 #include "bsp_Types.h"
 #include "bsp_Pragma.h"
-#include "svc_Periph.h"
-#include "svc_ButtonEh.h"
+#include "svc_ThreadUi.h"
+#include "svc_CmdEh.h"
 #include "svc_TestEh.h"
-#include "svc_TempEh.h"
-#include "svc_HumidEh.h"
-#include "svc_LightEh.h"
+#include "svc_ButtonEh.h"
 #include "svc_Eh.h"
 #include "osapi.h"
-
 
 #ifndef SVC_LOG_LEVEL
 #define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
 #endif
 #include "svc_Log.h"
 
-#include <stdio.h>
-
 
 /*==============================================================================
  *                                  Defines
  *============================================================================*/
-#define SVC_PERIPH_STACK_SIZE    2048
-#define SVC_PERIPH_STACK_SIZE_32 (SVC_PERIPH_STACK_SIZE / 4)
+#define SVC_THREADUI_STACK_SIZE    2048
+#define SVC_THREADUI_STACK_SIZE_32 (SVC_THREADUI_STACK_SIZE / 4)
 
-#define SVC_PERIPH_QUEUE_DEPTH 10
+#define SVC_THREADUI_QUEUE_DEPTH 32
 
 /*==============================================================================
  *                                 Globals
  *============================================================================*/
-// Total stack needed for the Peripheral thread
-uint32_t svc_Periph_stack[SVC_PERIPH_STACK_SIZE_32];
-void*    svc_Periph_queue[SVC_PERIPH_QUEUE_DEPTH];
+// Total stack needed for the UI thread
+uint32_t svc_ThreadUi_stack[SVC_THREADUI_STACK_SIZE_32];
+void*    svc_ThreadUi_queue[SVC_THREADUI_QUEUE_DEPTH];
+
 
 /*============================================================================*/
-static const svc_Eh_Info_t* svc_Periph_ehTable[] =
+static const svc_Eh_Info_t* svc_ThreadUi_ehTable[] =
 {
+    &svc_CmdEh_info,
+#if defined(SVC_EHID_TEST)
+    &svc_TestEh_info,
+#endif
 #if defined(SVC_EHID_BUTTON)
     &svc_ButtonEh_info,
 #endif
-#if defined(SVC_EHID_TEMP)
-    &svc_TempEh_info,
-#endif
-#if defined(SVC_EHID_HUMID)
-    &svc_HumidEh_info,
-#endif
-#if defined(SVC_EHID_LIGHT)
-    &svc_LightEh_info,
-#endif
-    &svc_TestEh_info
 };
 
-/*==============================================================================
- *                            Public Functions
- *============================================================================*/
 /*============================================================================*/
-void
-svc_Periph_threadMain( osapi_ThreadArg_t arg )
+static void
+svc_ThreadUi_threadMain( osapi_ThreadArg_t arg )
 {
-    svc_Eh_listRun( DIM(svc_Periph_ehTable),
-                    svc_Periph_ehTable,
-                    SVC_PERIPH_QUEUE_DEPTH,
-                    svc_Periph_queue );
-    return;
+    svc_Eh_listRun( DIM(svc_ThreadUi_ehTable),
+                    svc_ThreadUi_ehTable,
+                    SVC_THREADUI_QUEUE_DEPTH,
+                    svc_ThreadUi_queue );
 }
 
 /*============================================================================*/
-const osapi_ThreadInitInfo_t BSP_ATTR_USED BSP_ATTR_SECTION(".tinit") svc_Periph_threadInitInfo =
+const osapi_ThreadInitInfo_t BSP_ATTR_USED BSP_ATTR_SECTION(".tinit") svc_ThreadUi_threadInitInfo =
 {
-  .name        = "Periph",
-  .handler     = svc_Periph_threadMain,
+  .name        = "UI",
+  .handler     = svc_ThreadUi_threadMain,
   .arg         = NULL,
   .priority    = 3,
-  .stackSize32 = SVC_PERIPH_STACK_SIZE_32,
-  .stackPtr    = &svc_Periph_stack[0]
+  .stackSize32 = SVC_THREADUI_STACK_SIZE_32,
+  .stackPtr    = &svc_ThreadUi_stack[0]
 };
-BSP_PRAGMA_DATA_REQUIRED(svc_Periph_threadInitInfo)
+BSP_PRAGMA_DATA_REQUIRED(svc_ThreadUi_threadInitInfo)

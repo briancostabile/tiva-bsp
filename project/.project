@@ -387,14 +387,14 @@
 			<locationURI>SOURCE_ROOT/svc/svc_ButtonEh.h</locationURI>
 		</link>
 		<link>
-			<name>source/svc/svc_Cmd.c</name>
+			<name>source/svc/svc_CmdEh.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_Cmd.c</locationURI>
+			<locationURI>SOURCE_ROOT/svc/svc_CmdEh.c</locationURI>
 		</link>
 		<link>
-			<name>source/svc/svc_Cmd.h</name>
+			<name>source/svc/svc_CmdEh.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_Cmd.h</locationURI>
+			<locationURI>SOURCE_ROOT/svc/svc_CmdEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_Eh.c</name>
@@ -442,14 +442,9 @@
 			<locationURI>SOURCE_ROOT/svc/svc_MsgFwk.h</locationURI>
 		</link>
 		<link>
-			<name>source/svc/svc_Periph.c</name>
+			<name>source/svc/svc_SerIoEh.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_Periph.c</locationURI>
-		</link>
-		<link>
-			<name>source/svc/svc_Periph.h</name>
-			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_Periph.h</locationURI>
+			<locationURI>SOURCE_ROOT/svc/svc_SerIoEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_TempEh.c</name>
@@ -470,6 +465,26 @@
 			<name>source/svc/svc_TestEh.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_TestEh.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_ThreadSensor.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_ThreadSensor.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_ThreadSensor.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_ThreadSensor.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_ThreadUi.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_ThreadUi.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_ThreadUi.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_ThreadUi.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_TimerEh.h</name>

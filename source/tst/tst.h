@@ -30,8 +30,6 @@
 #include "bsp_Platform.h"
 #include "bsp_Pragma.h"
 #include <stdint.h>
-#include "svc_Cmd.h"
-#include "svc_Log.h"
 
 /*==============================================================================
  *                                Defines
@@ -53,6 +51,10 @@ typedef int32_t tst_Status_t;
 #define TST_STR_HLP(_name, _str) STRING(_name, _str, ".tst_str_hlp")
 #define TST_STR_OUT(_name, _str) STRING(_name, _str, ".tst_str_out")
 
+#ifndef NL
+#define NL "\n"
+#endif
+
 /*==============================================================================
  *                                 Types
  *============================================================================*/
@@ -69,3 +71,5 @@ typedef struct tst_TableElement_s {
     };
     bool_t is_menu;
 } tst_TableElement_t;
+
+extern const tst_TableElement_t tst_MenuTable[];
