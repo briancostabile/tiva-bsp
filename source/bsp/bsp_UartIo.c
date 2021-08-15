@@ -1,3 +1,24 @@
+/**
+ * Copyright 2017 Brian Costabile
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 /*============================================================================*/
 /**
  * @file bsp_UartConsole.c
@@ -11,11 +32,13 @@
 #include "bsp_Gpio.h"
 #include "bsp_Mcu.h"
 #include "bsp_Assert.h"
+#include "bsp_Io.h"
 #include "driverlib/rom.h"
 #include "driverlib/sysctl.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_uart.h"
 #include <string.h>
+#include "stdio.h"
 
 
 /*==============================================================================
@@ -175,10 +198,11 @@ typedef struct
  *
  * Global used to track the amount of tx data dropped due to buffer overflows
  *
- * Global to hold hte read callback function pointer.
+ * Global to hold the read callback function pointer.
  */
 typedef struct
 {
+    const char * const             name;
     bsp_Uart_Id_t                  uartId;
     bsp_Uart_PinSel_t              rxPinSel;
     bsp_Uart_PinSel_t              txPinSel;
@@ -190,7 +214,6 @@ typedef struct
     uint32_t                       txDataCount;
     uint32_t                       txDataDroppedCount;
     bsp_UartIo_DataAvailCallback_t dataAvailCallback;
-    FILE                           file;
 } bsp_UartIo_InternalInfo_t;
 
 
@@ -203,7 +226,8 @@ uint8_t bsp_UartIo_txBuffer0[ BSP_PLATFORM_IO_UART0_TX_BUF_LEN ];
 
 /*============================================================================*/
 bsp_UartIo_InternalInfo_t bsp_UartIo_internalInfoTable[] = {
-    { BSP_PLATFORM_IO_UART0_ID,
+    { "uart0",
+      BSP_PLATFORM_IO_UART0_ID,
       BSP_PLATFORM_IO_UART0_RX_PIN_SEL,
       BSP_PLATFORM_IO_UART0_TX_PIN_SEL,
       BSP_PLATFORM_IO_UART0_BAUD,
@@ -501,10 +525,7 @@ bsp_UartIo_bufferRead( bsp_UartIo_InternalInfo_t* infoPtr,
 void
 bsp_UartIo_init( void )
 {
-    uint8_t i;
-    char filenameBuf[6] = "uartX";
-
-    for( i=0; i<DIM(bsp_UartIo_internalInfoTable); i++ )
+    for( uint8_t i=0; i<DIM(bsp_UartIo_internalInfoTable); i++ )
     {
         /* Initialize the buffer info */
         bsp_UartIo_internalInfoTable[i].rxBufInfo.writeIdx = 0;
@@ -536,27 +557,15 @@ bsp_UartIo_init( void )
                          BSP_UART_DATA_BIT_8,
                          BSP_UART_FLOW_NONE );
 
-        snprintf( filenameBuf, sizeof(filenameBuf), "uart%d", bsp_UartIo_internalInfoTable[i].uartId );
-
-        /* Add IO device to be used in stdio */
-        add_device( filenameBuf,
-                    _MSA, /* Single stream open at a time (_MSA is for multiple) */
-                    bsp_UartIo_open,
-                    bsp_UartIo_close,
-                    bsp_UartIo_read,
-                    bsp_UartIo_write,
-                    bsp_UartIo_lseek,
-                    bsp_UartIo_unlink,
-                    bsp_UartIo_rename );
-
-        bsp_UartIo_internalInfoTable[i].file.fd        = (int)&(bsp_UartIo_internalInfoTable[i]);
-        bsp_UartIo_internalInfoTable[i].file.pos       = NULL;
-        bsp_UartIo_internalInfoTable[i].file.bufend    = NULL;
-        bsp_UartIo_internalInfoTable[i].file.buff_stop = NULL;
-        bsp_UartIo_internalInfoTable[i].file.flags     = 0;
-
-        /* Open the file for reading/writing */
-        fopen( filenameBuf, "rw" );
+        bsp_Io_addDevice( bsp_UartIo_internalInfoTable[i].name,
+                          &bsp_UartIo_internalInfoTable[i],
+                          bsp_UartIo_open,
+                          bsp_UartIo_close,
+                          bsp_UartIo_read,
+                          bsp_UartIo_write,
+                          bsp_UartIo_lseek,
+                          bsp_UartIo_unlink,
+                          bsp_UartIo_rename );
 
         /* Ready to receive */
         bsp_Uart_rcv( bsp_UartIo_internalInfoTable[i].uartId,
@@ -592,7 +601,7 @@ bsp_UartIo_open( const char*  path,
     pathLen = strlen(path);
 
     /* Todo: Do something smarter here */
-    if( path[(pathLen-1)] == '0' )
+    if( path[(pathLen-2)] == '0' )
     {
         ret = (int)&(bsp_UartIo_internalInfoTable[0]);
     }

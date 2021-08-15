@@ -1,0 +1,47 @@
+X Point to latest Gnu tools
+X Build newlib-nano from source and point to it from project
+X Create makefiles for build
+- Switch to vscode for building and source browsing
+- Add syslog style logging
+- Complete port of newlib (exit)
+X Build out command interpreter
+  X Binary mode
+- Python test harness
+- HW test menu
+  X read/write registers
+  - external peripheral tests
+X Add Sys menu
+  X Reset reason (HW/SW)
+  X assert string
+  - version string
+X Exception handling
+  X Register dump
+X Strings in sections
+- Build message passing framework
+  - Event handler
+  - pre-allocated messages
+  - reference counting
+  - forwarding with zero-copy
+  - injection from serial interface
+- Build out OSAPI
+  X Add mem-block interface
+  X Add queue interface
+  X Add timer interface
+  - Add Mac/linux support for OSAPI
+X Drivers for Push-Buttons
+- Driver for LED (3 Separate colors)
+- I2C transaction driver
+- Add Sensorhub to platform/build
+  - Temp
+  - Pressure
+  - Motion
+  - Light
+  - Humidity 
+  - LED
+  - Push Buttons
+  - Sensor Thread
+  - Event Handlers for Temp
+- Service Peripheral Thread
+  - Event handler for Buttons
+  - Event handler for Temp
+  - Event handelr for Pressure

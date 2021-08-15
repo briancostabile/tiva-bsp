@@ -1,0 +1,106 @@
+; /**
+;  * Copyright 2018 Brian Costabile
+;  *
+;  * Permission is hereby granted, free of charge, to any person obtaining a copy
+;  * of this software and associated documentation files (the "Software"), to deal
+;  * in the Software without restriction, including without limitation the rights
+;  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+;  * copies of the Software, and to permit persons to whom the Software is
+;  * furnished to do so, subject to the following conditions:
+;  *
+;  * The above copyright notice and this permission notice shall be included in
+;  * all copies or substantial portions of the Software.
+;  *
+;  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+;  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+;  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+;  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+;  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+;  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+;  * THE SOFTWARE.
+;  */
+; /*============================================================================*/
+; /**
+;  * @file bsp_Mcu_ccs.s
+;  * @brief Contains CCS specific assembly functions for interrupt management
+;  */
+
+    .thumb
+
+; /*==============================================================================
+;  *                            Exported Symbols
+;  *============================================================================*/
+    .def bsp_Mcu_intEnable
+    .def bsp_Mcu_intDisable
+    .def bsp_Mcu_intStateGet
+    .def bsp_Mcu_intStateSet
+    .def bsp_Mcu_waitForInt
+    .def bsp_Mcu_basePriorityGet
+    .def bsp_Mcu_basePrioritySet
+
+
+; /*==============================================================================
+;  *                               Functions
+;  *============================================================================*/
+; /*============================================================================*/
+
+; /*============================================================================*/
+    .align 4
+bsp_Mcu_intEnable: .asmfunc
+    mrs     r0, PRIMASK
+    cpsie   i
+    bx      lr
+          .endasmfunc
+
+
+; /*============================================================================*/
+    .align 4
+bsp_Mcu_intDisable: .asmfunc
+    mrs     r0, PRIMASK
+    cpsid   i
+    bx      lr
+    .endasmfunc
+
+
+; /*============================================================================*/
+    .align 4
+bsp_Mcu_intStateGet: .asmfunc
+    mrs     r0, PRIMASK
+    bx      lr
+    .endasmfunc
+
+
+; /*============================================================================*/
+    .align 4
+bsp_Mcu_intStateSet: .asmfunc
+    cbnz    r0, _disable
+    mrs     r0, PRIMASK
+    cpsie   i
+    bx      lr
+_disable:
+    mrs     r0, PRIMASK
+    cpsid   i
+    bx      lr
+    .endasmfunc
+
+
+; /*============================================================================*/
+    .align 4
+bsp_Mcu_waitForInt: .asmfunc
+    wfi
+    .endasmfunc
+
+
+; /*============================================================================*/
+    .align 4
+bsp_Mcu_basePriorityGet: .asmfunc
+    mrs     r0, BASEPRI
+    bx      lr
+    .endasmfunc
+
+
+; /*============================================================================*/
+    .align 4
+bsp_Mcu_basePrioritySet: .asmfunc
+    msr     BASEPRI, r0
+    .endasmfunc

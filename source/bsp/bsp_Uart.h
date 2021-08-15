@@ -1,49 +1,42 @@
+/**
+ * Copyright 2017 Brian Costabile
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 /*============================================================================*/
 /**
  * @file bsp_Uart.h
  * @brief Contains types and defines for the UART subsystem
  */
-#ifndef BSP_UART_H
-#define BSP_UART_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "inc/hw_uart.h"
 
 #include "bsp_Platform.h"
 
+#include BUILD_INCLUDE_STRING( bsp_Uart_, PLATFORM_CORE )
+
 /*==============================================================================
  *                                Defines
  *============================================================================*/
 #define BSP_UART_RX_FIFO_SIZE 16
-#define BSP_UART_PLATFORM_NUM_UARTS 8
-
-/*==============================================================================
- *                                 Types
- *============================================================================*/
-/*============================================================================*/
-#define BSP_UART_ID0 ((bsp_Uart_Id_t)0)
-#define BSP_UART_ID1 ((bsp_Uart_Id_t)1)
-#define BSP_UART_ID2 ((bsp_Uart_Id_t)2)
-#define BSP_UART_ID3 ((bsp_Uart_Id_t)3)
-#define BSP_UART_ID4 ((bsp_Uart_Id_t)4)
-#define BSP_UART_ID5 ((bsp_Uart_Id_t)5)
-#define BSP_UART_ID6 ((bsp_Uart_Id_t)6)
-#define BSP_UART_ID7 ((bsp_Uart_Id_t)7)
-typedef uint8_t bsp_Uart_Id_t;
-
-
-/*============================================================================*/
-#define BSP_UART_PIN_SEL_0    ((bsp_Uart_PinSel_t)0)
-#define BSP_UART_PIN_SEL_1    ((bsp_Uart_PinSel_t)1)
-#define BSP_UART_PIN_SEL_2    ((bsp_Uart_PinSel_t)2)
-#define BSP_UART_PIN_SEL_3    ((bsp_Uart_PinSel_t)3)
-#define BSP_UART_PIN_SEL_4    ((bsp_Uart_PinSel_t)4)
-#define BSP_UART_PIN_SEL_5    ((bsp_Uart_PinSel_t)5)
-#define BSP_UART_PIN_SEL_6    ((bsp_Uart_PinSel_t)6)
-#define BSP_UART_PIN_SEL_7    ((bsp_Uart_PinSel_t)7)
-#define BSP_UART_PIN_SEL_NONE ((bsp_Uart_PinSel_t)8)
-typedef uint8_t bsp_Uart_PinSel_t;
-
 
 /*============================================================================*/
 /**
@@ -132,9 +125,9 @@ bsp_Uart_init( void );
 
 /*============================================================================*/
 /**
- * @brief This function is used to do the basic setup of a USART.
+ * @brief This function is used to do the basic setup of a UART.
  *
- * This function selects the port to use for the USART and the mode (SPI or UART)
+ * This function selects the port to use for the UART
  *
  * @param id - The enumerated USART Id to setup.
  * @param port - The enumerated port to use for the selected USART
@@ -219,17 +212,3 @@ bsp_Uart_rcv( bsp_Uart_Id_t         id,
               void*                 callbackArg,
               bsp_Uart_RxCallback_t callback );
 
-
-/*============================================================================*/
-void bsp_Uart_interruptHandler0( void );
-void bsp_Uart_interruptHandler1( void );
-void bsp_Uart_interruptHandler2( void );
-void bsp_Uart_interruptHandler3( void );
-void bsp_Uart_interruptHandler4( void );
-void bsp_Uart_interruptHandler5( void );
-void bsp_Uart_interruptHandler6( void );
-void bsp_Uart_interruptHandler7( void );
-
-
-
-#endif

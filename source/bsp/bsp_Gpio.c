@@ -1,9 +1,29 @@
+/**
+ * Copyright 2017 Brian Costabile
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 /*============================================================================*/
 /**
  * @file bsp_Gpio.c
  * @brief Contains Functions for configuring and accessing the GPIOs
  */
-
 #include "bsp_Types.h"
 #include "bsp_Gpio.h"
 #include "bsp_Mcu.h"
@@ -11,6 +31,7 @@
 #include "driverlib/rom.h"
 #include "driverlib/rom_map.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/gpio.h"
 
 #include <string.h>
 
@@ -21,7 +42,7 @@
 void
 bsp_Gpio_init( void )
 {
-    bsp_Gpio_PortId_t portId;
+    bsp_Gpio_PortId_t    portId;
     bsp_Gpio_PinOffset_t numInts;
     bsp_Gpio_PinOffset_t i;
 
@@ -50,11 +71,19 @@ bsp_Gpio_init( void )
         /* Clear the callback table */
         memset( bsp_Gpio_platformPortInfoTable[portId].handlerTable,
                 0,
-                sizeof(bsp_Gpio_platformPortInfoTable[portId].handlerTable) );
+                BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT );
+
+        /* Re-Enable all interrupts */
+        for( i=0; i<numInts; i++ )
+        {
+            bsp_Interrupt_enable( (bsp_Gpio_platformPortInfoTable[portId].intId + i) );
+        }
 
         /* Wait for the peripheral to be ready in the system controller before moving on */
         while( MAP_SysCtlPeripheralReady( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr ) == FALSE );
     }
+
+    bsp_Gpio_initPlatform();
 
     return;
 }
@@ -63,34 +92,34 @@ bsp_Gpio_init( void )
 /*============================================================================*/
 void
 bsp_Gpio_write( bsp_Gpio_PortId_t  portId,
-		        bsp_Gpio_BitMask_t mask,
-		        bsp_Gpio_BitMask_t val )
+                bsp_Gpio_BitMask_t mask,
+                bsp_Gpio_BitMask_t val )
 {
-    uint32_t portAddr;
-
-    portAddr = bsp_Gpio_platformPortInfoTable[portId].baseAddr;
-
-    /* Convert to pointer first then add mask so it adds in increments of 32-bits */
-	*((ADDR_TO_PTR(portAddr + BSP_GPIO_BASE_ADDR_OFFSET_DATA)) + mask) = val;
-
-	return;
+    MAP_GPIOPinWrite( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, val );
+    return;
 }
 
 
 /*============================================================================*/
 bsp_Gpio_BitMask_t
 bsp_Gpio_read( bsp_Gpio_PortId_t  portId,
-		       bsp_Gpio_BitMask_t mask )
+               bsp_Gpio_BitMask_t mask )
 {
-	bsp_Gpio_BitMask_t returnVal = 0x00;
-	uint32_t portAddr;
+    bsp_Gpio_BitMask_t returnVal;
+    returnVal = MAP_GPIOPinRead( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
+    return( returnVal );
+}
 
-	portAddr = bsp_Gpio_platformPortInfoTable[portId].baseAddr;
 
-    /* Convert to pointer first then add mask so it adds in increments of 32-bits */
-	returnVal = (bsp_Gpio_BitMask_t)*((ADDR_TO_PTR(portAddr + BSP_GPIO_BASE_ADDR_OFFSET_DATA)) + mask);
-
-	return( returnVal );
+/*============================================================================*/
+void
+bsp_Gpio_configAnalog( bsp_Gpio_PortId_t    portId,
+                       bsp_Gpio_BitMask_t   mask )
+{
+    BSP_MCU_CRITICAL_SECTION_ENTER();
+    MAP_GPIOPinTypeADC( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
+    BSP_MCU_CRITICAL_SECTION_EXIT();
+    return;
 }
 
 
@@ -98,57 +127,12 @@ bsp_Gpio_read( bsp_Gpio_PortId_t  portId,
 void
 bsp_Gpio_configAltFunction( bsp_Gpio_PortId_t    portId,
                             bsp_Gpio_BitMask_t   mask,
-                            bool_t               analog,
                             bsp_Gpio_AltFuncId_t altFuncId )
 {
-    uint32_t portAddr;
-    uint32_t regMask;
-    uint32_t regVal;
-    bsp_Gpio_BitMask_t tmpMask;
-    uint8_t bit;
-
-    portAddr = bsp_Gpio_platformPortInfoTable[portId].baseAddr;
-
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    if( analog == TRUE )
-    {
-        /* Disable the digital select bit */
-        BSP_GPIO_REG(portAddr, DEN) &= ~mask;
-        BSP_GPIO_REG(portAddr, AMSEL) |= mask;
-    }
-    else
-    {
-        /* Each IO pin has a 4 bit selector in the Port Control register */
-        /* Build a mask and new value to apply in place of the mask bits */
-        regMask = 0x00000000;
-        regVal  = 0x00000000;
-        tmpMask = mask;
-        bit = 0;
-        while( tmpMask != 0x00 )
-        {
-            regMask <<= 4;
-            regVal <<= 4;
-            if( (tmpMask & 0x01) == 0x01 )
-            {
-                regMask |= (0x0000000F << (bit * 4));
-                regVal  |= (altFuncId << (bit * 4));
-            }
-            tmpMask >>= 1;
-            bit++;
-        }
-
-        BSP_GPIO_REG(portAddr, PCTL) &= ~regMask;
-        BSP_GPIO_REG(portAddr, PCTL) |= regVal;
-
-        /* Make sure the digital select bit is chosen */
-        BSP_GPIO_REG(portAddr, DEN) |= mask;
-        BSP_GPIO_REG(portAddr, AFSEL) |= mask;
-    }
-
-    BSP_GPIO_COMMIT( portAddr, mask );
-
+    GPIODirModeSet( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, GPIO_DIR_MODE_HW );
+    MAP_GPIOPinConfigure( altFuncId );
     BSP_MCU_CRITICAL_SECTION_EXIT();
-
     return;
 }
 
@@ -159,52 +143,46 @@ bsp_Gpio_configOutput( bsp_Gpio_PortId_t  portId,
                        bool_t             openDrain,
                        bsp_Gpio_Drive_t   drive )
 {
-    uint32_t portAddr;
-
-    portAddr = bsp_Gpio_platformPortInfoTable[portId].baseAddr;
-
+    uint32_t pinType = GPIO_PIN_TYPE_STD;
+    uint32_t strength = GPIO_STRENGTH_2MA;
+    if( openDrain == true )
+    {
+        pinType = GPIO_PIN_TYPE_OD;
+    }
+    else
+    {
+        if( drive == BSP_GPIO_DRIVE_2MA )
+        {
+            strength = GPIO_STRENGTH_2MA;
+        }
+        else if( drive == BSP_GPIO_DRIVE_4MA )
+        {
+            strength = GPIO_STRENGTH_4MA;
+        }
+        else if( drive == BSP_GPIO_DRIVE_8MA )
+        {
+            strength = GPIO_STRENGTH_8MA;
+        }
+        else if( drive == BSP_GPIO_DRIVE_8MA_SC )
+        {
+            strength = GPIO_STRENGTH_8MA_SC;
+        }
+        else if( drive == BSP_GPIO_DRIVE_6MA )
+        {
+            strength = GPIO_STRENGTH_6MA;
+        }
+        else if( drive == BSP_GPIO_DRIVE_10MA )
+        {
+            strength = GPIO_STRENGTH_10MA;
+        }
+        else
+        {
+            strength = GPIO_STRENGTH_12MA;
+        }
+    }
     BSP_MCU_CRITICAL_SECTION_ENTER();
-
-    BSP_GPIO_REG(portAddr, DEN) |= mask;
-    BSP_GPIO_REG(portAddr, DIR) |= mask;
-
-    /* Disable Pull Up/Down resistors */
-    BSP_GPIO_REG(portAddr, PUR) &= ~mask;
-    BSP_GPIO_REG(portAddr, PDR) &= ~mask;
-
-    /* Select main IO function */
-    BSP_GPIO_REG(portAddr, AFSEL) &= ~mask;
-
-    if( openDrain == TRUE )
-    {
-        BSP_GPIO_REG(portAddr, ODR) |= mask;
-    }
-    else
-    {
-        BSP_GPIO_REG(portAddr, ODR) &= ~mask;
-    }
-
-    if( drive == BSP_GPIO_DRIVE_2MA )
-    {
-        BSP_GPIO_REG(portAddr, DR2D) |= mask;
-    }
-    else if( drive == BSP_GPIO_DRIVE_4MA )
-    {
-        BSP_GPIO_REG(portAddr, DR4D) |= mask;
-    }
-    else if( drive == BSP_GPIO_DRIVE_8MA )
-    {
-        BSP_GPIO_REG(portAddr, DR8D) |= mask;
-        BSP_GPIO_REG(portAddr, SLR)  &= ~mask;
-    }
-    else
-    {
-        BSP_GPIO_REG(portAddr, DR8D) |= mask;
-        BSP_GPIO_REG(portAddr, SLR)  |= mask;
-    }
-
-    BSP_GPIO_COMMIT( portAddr, mask );
-
+    MAP_GPIOPinTypeGPIOOutput( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
+    MAP_GPIOPadConfigSet( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, strength, pinType );
     BSP_MCU_CRITICAL_SECTION_EXIT();
 
     return;
@@ -217,44 +195,23 @@ bsp_Gpio_configInput( bsp_Gpio_PortId_t  portId,
                       bool_t             openDrain,
                       bsp_Gpio_Pull_t    pull )
 {
-    uint32_t portAddr;
-
-    portAddr = bsp_Gpio_platformPortInfoTable[portId].baseAddr;
-
-    BSP_MCU_CRITICAL_SECTION_ENTER();
-
-    BSP_GPIO_REG(portAddr, DEN) |= mask;
-    BSP_GPIO_REG(portAddr, DIR) &= ~mask;
-
-    if( openDrain == TRUE )
+    uint32_t pinType = GPIO_PIN_TYPE_STD;
+    if( openDrain == true )
     {
-        BSP_GPIO_REG(portAddr, ODR) |= mask;
-    }
-    else
-    {
-        BSP_GPIO_REG(portAddr, ODR) &= ~mask;
-    }
-
-    if( pull == BSP_GPIO_PULL_NONE )
-    {
-        BSP_GPIO_REG(portAddr, PUR) &= ~mask;
-        BSP_GPIO_REG(portAddr, PDR) &= ~mask;
+        pinType = GPIO_PIN_TYPE_OD;
     }
     else if( pull == BSP_GPIO_PULL_UP )
     {
-        BSP_GPIO_REG(portAddr, PUR) |= mask;
-        BSP_GPIO_REG(portAddr, PDR) &= ~mask;
+        pinType = GPIO_PIN_TYPE_STD_WPU;
     }
     else if( pull == BSP_GPIO_PULL_DOWN )
     {
-        BSP_GPIO_REG(portAddr, PUR) &= ~mask;
-        BSP_GPIO_REG(portAddr, PDR) |= mask;
+        pinType = GPIO_PIN_TYPE_STD_WPD;
     }
-
-    BSP_GPIO_COMMIT( portAddr, mask );
-
+    BSP_MCU_CRITICAL_SECTION_ENTER();
+    MAP_GPIOPadConfigSet( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, BSP_GPIO_DRIVE_2MA, pinType );
+    MAP_GPIOPinTypeGPIOInput( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
     BSP_MCU_CRITICAL_SECTION_EXIT();
-
     return;
 }
 
@@ -264,23 +221,16 @@ bsp_Gpio_intControl( bsp_Gpio_PortId_t     portId,
                      bsp_Gpio_BitMask_t    mask,
                      bsp_Gpio_IntControl_t control )
 {
-    uint32_t portAddr;
-
-    portAddr = bsp_Gpio_platformPortInfoTable[portId].baseAddr;
-
     BSP_MCU_CRITICAL_SECTION_ENTER();
-
     if( control == BSP_GPIO_INT_CONTROL_ENABLE )
     {
-        BSP_GPIO_REG(portAddr, IM) |= mask;
+        MAP_GPIOIntEnable( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
     }
     else
     {
-        BSP_GPIO_REG(portAddr, IM) &= ~mask;
+        MAP_GPIOIntDisable( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
     }
-
     BSP_MCU_CRITICAL_SECTION_EXIT();
-
     return;
 }
 
@@ -301,41 +251,55 @@ bsp_Gpio_intConfig( bsp_Gpio_PortId_t       portId,
 
     if( dmaTriggerEnable == TRUE )
     {
-        BSP_GPIO_REG(portAddr, DMACTL) |= mask;
+        MAP_GPIODMATriggerEnable( portAddr, mask );
+    }
+    else
+    {
+        MAP_GPIODMATriggerDisable( portAddr, mask );
     }
 
     if( adcTriggerEnable == TRUE )
     {
-        BSP_GPIO_REG(portAddr, ADCCTL) |= mask;
+        MAP_GPIOADCTriggerEnable( portAddr, mask );
+    }
+    else
+    {
+        MAP_GPIOADCTriggerDisable( portAddr, mask );
     }
 
+    uint32_t intType = (bsp_Gpio_platformPortInfoTable[portId].bitInterruptable) ? GPIO_DISCRETE_INT : 0;;
     if( type == BSP_GPIO_INT_TYPE_EDGE_RISING )
     {
-        BSP_GPIO_REG(portAddr, IS)  &= ~mask;
-        BSP_GPIO_REG(portAddr, IBE) &= ~mask;
-        BSP_GPIO_REG(portAddr, IEV) |= mask;
+        intType |= GPIO_RISING_EDGE;
     }
     else if( type == BSP_GPIO_INT_TYPE_EDGE_FALLING )
     {
-        BSP_GPIO_REG(portAddr, IS)  &= ~mask;
-        BSP_GPIO_REG(portAddr, IBE) &= ~mask;
-        BSP_GPIO_REG(portAddr, IEV) &= ~mask;
+        intType |= GPIO_FALLING_EDGE;
     }
     else if( type == BSP_GPIO_INT_TYPE_EDGE_BOTH )
     {
-        BSP_GPIO_REG(portAddr, IS)  &= ~mask;
-        BSP_GPIO_REG(portAddr, IBE) |= mask;
+        intType |= GPIO_BOTH_EDGES;
     }
     else if( type == BSP_GPIO_INT_TYPE_LEVEL_LOW )
     {
-        BSP_GPIO_REG(portAddr, IS)  |= mask;
-        BSP_GPIO_REG(portAddr, IEV) |= mask;
+        intType |= GPIO_LOW_LEVEL;
     }
     else if( type == BSP_GPIO_INT_TYPE_LEVEL_HIGH )
     {
-        BSP_GPIO_REG(portAddr, IS)  |= mask;
-        BSP_GPIO_REG(portAddr, IEV) &= ~mask;
+        intType |= GPIO_HIGH_LEVEL;
     }
+    MAP_GPIOIntTypeSet( portAddr, mask, intType );
+
+    /* Register handler for each masked bit passed in */
+    for( uint8_t pin=0; pin<BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT; pin++ )
+    {
+        if( ((1 << pin) & mask) != 0 )
+        {
+            bsp_Gpio_platformPortInfoTable[portId].handlerTable[pin] = callback;
+        }
+    }
+
+    MAP_GPIOIntClear( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
 
     BSP_MCU_CRITICAL_SECTION_EXIT();
 

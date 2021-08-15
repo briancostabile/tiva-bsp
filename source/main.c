@@ -1,3 +1,24 @@
+/**
+ * Copyright 2017 Brian Costabile
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 //*****************************************************************************
 
 
@@ -8,11 +29,16 @@
 #include "bsp_Clk.h"
 #include "bsp_Uart.h"
 #include "bsp_UartIo.h"
+#include "bsp_Usb.h"
 #include "bsp_UsbIo.h"
+#include "bsp_UsbBulk.h"
 #include "bsp_Gpio.h"
 #include "bsp_Trace.h"
-#include "bsp_I2CMaster.h"
+#include "bsp_Button.h"
+#include "bsp_I2c.h"
+#include "bsp_Io.h"
 
+#include "osapi.h"
 
 #include "inc/hw_memmap.h"
 #include "driverlib/debug.h"
@@ -23,7 +49,7 @@
 #include "driverlib/interrupt.h"
 
 #include <string.h>
-#include <_lock.h>
+//#include <_lock.h>
 
 
 //*****************************************************************************
@@ -43,50 +69,35 @@ __error__(char *pcFilename, uint32_t ui32Line)
 int
 main(void)
 {
-    int i;
     extern int remove_device( char* devName );
 
-
-	bsp_Clk_init();
-	bsp_Reset_init();
-	bsp_Interrupt_init();
-	bsp_Gpio_init();
+    bsp_Clk_init();
+    bsp_Reset_init();
+    bsp_Interrupt_init();
+    bsp_Gpio_init();
     bsp_Trace_init();
-    bsp_I2cMaster_init();
-	bsp_Uart_init();
+    bsp_Button_init();
+    bsp_I2c_init();
+    bsp_Uart_init();
+    bsp_Usb_init();
+    bsp_Io_init();
     bsp_UsbIo_init();
     bsp_UartIo_init();
 
-    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_R),
-                           (BSP_GPIO_MASK(LED_R) | BSP_GPIO_MASK(LED_G) | BSP_GPIO_MASK(LED_B)),
-                           FALSE, BSP_GPIO_DRIVE_8MA );
+    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_R), BSP_GPIO_MASK(LED_R), FALSE, BSP_GPIO_DRIVE_2MA );
+    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_G), BSP_GPIO_MASK(LED_G), FALSE, BSP_GPIO_DRIVE_2MA );
+    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_B), BSP_GPIO_MASK(LED_B), FALSE, BSP_GPIO_DRIVE_2MA );
 
-    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_R),
-                    (BSP_GPIO_MASK(LED_R) | BSP_GPIO_MASK(LED_G) | BSP_GPIO_MASK(LED_B)),
-                    1 );
+    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_R), BSP_GPIO_MASK(LED_R), BSP_GPIO_MASK(LED_R) );
+    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_G), BSP_GPIO_MASK(LED_G), BSP_GPIO_MASK(LED_G) );
+    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_B), BSP_GPIO_MASK(LED_B), BSP_GPIO_MASK(LED_B) );
+
+
+    // Initialize the OS
+    osapi_init();
 
     MAP_IntMasterEnable();
 
-    /* Redirect stdout,stderr,stdin to/from usb file-io */
-    freopen( BSP_PLATFORM_STDOUT_MAPPING":"BSP_PLATFORM_STDOUT_MAPPING, "w", stdout ); // redirect stdout to usb
-    freopen( BSP_PLATFORM_STDERR_MAPPING":"BSP_PLATFORM_STDERR_MAPPING, "w", stderr ); // redirect stderr to usb
-    freopen( BSP_PLATFORM_STDIN_MAPPING":"BSP_PLATFORM_STDIN_MAPPING, "r", stdin );  // redirect stdin from usb
-    setvbuf( stdout, NULL, _IONBF, 0); // turn off buffering for stdout
-    setvbuf( stderr, NULL, _IONBF, 0); // turn off buffering for stderr
-    setvbuf( stdin, NULL, _IONBF, 0);  // turn off buffering for stdin
-
-    //
-    // Loop forever.
-    //
-    i = 1;
-    int ch;
-    while(1)
-    {
-        ch = getchar();
-        if( ch != EOF )
-        {
-            printf( "stdout: received %c %d!\r\n", (char)ch, i++ );
-            fprintf( stderr, "stderr: received %c %d!\r\n", (char)ch, i++ );
-        }
-    }
+    // Run the Scheduler, No Return
+    osapi_Scheduler_run();
 }
