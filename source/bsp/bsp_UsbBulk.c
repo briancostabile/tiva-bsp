@@ -43,7 +43,6 @@
 #include "driverlib/gpio.h"
 #include "driverlib/usb.h"
 #include "usblib/usblib.h"
-#include "usblib/usbcdc.h"
 #include "usblib/usb-ids.h"
 #include "usblib/device/usbdevice.h"
 #include "usblib/device/usbdcomp.h"
@@ -51,7 +50,6 @@
 
 #include <stdio.h>
 
-#define BSP_USBBULK_DESCRIPTOR_DATA_SIZE    (COMPOSITE_DBULK_SIZE)
 
 /*==============================================================================
  *                                  Types
@@ -65,7 +63,6 @@ typedef struct
     bsp_UsbBulk_TxDoneCallback_t        txDoneCallback;
 } bsp_UsbBulk_InternalInfo_t;
 
-#if defined( BSP_PLATFORM_USB_BULK )
 /*==============================================================================
  *                                Globals
  *============================================================================*/
@@ -193,13 +190,13 @@ bsp_UsbBulk_InternalInfo_t bsp_UsbBulk_InternalInfo;
  * instance data. The buffer, in turn, has its callback set to the application
  * function and the callback data set to our Bulk instance structure.
  */
-extern const tUSBBuffer bsp_UsbBulk_txBufferInfo;
-extern const tUSBBuffer bsp_UsbBulk_rxBufferInfo;
+extern tUSBBuffer bsp_UsbBulk_txBufferInfo;
+extern tUSBBuffer bsp_UsbBulk_rxBufferInfo;
 
 tUSBDBulkDevice bsp_UsbBulk_deviceInfo =
 {
     USB_VID_TI_1CBE,                     // VendorId
-    USB_PID_SERIAL,                      // PID
+    USB_PID_BULK,                        // PID
     500,                                 // maxPower in mA
     USB_CONF_ATTR_SELF_PWR,              // power attributes
     USBBufferEventCallback,              // rx event handler
@@ -217,13 +214,13 @@ tUSBDBulkDevice bsp_UsbBulk_deviceInfo =
  * Receive buffer structure (from the USB perspective).
  */
 uint8_t bsp_UsbBulk_usbRxBuffer0[BSP_PLATFORM_IO_USB0_RX_BUF_LEN];
-const tUSBBuffer bsp_UsbBulk_rxBufferInfo =
+tUSBBuffer bsp_UsbBulk_rxBufferInfo =
 {
-    false,                             // This is a receive buffer.
+    false,                               // This is a receive buffer.
     bsp_UsbBulk_rxHandler,               // pfnCallback
     (void *)&(bsp_UsbBulk_InternalInfo), // Callback data is our device pointer.
-    USBDBulkPacketRead,                // pfnTransfer
-    USBDBulkRxPacketAvailable,         // pfnAvailable
+    USBDBulkPacketRead,                  // pfnTransfer
+    USBDBulkRxPacketAvailable,           // pfnAvailable
     (void *)&(bsp_UsbBulk_deviceInfo),   // pvHandle
     bsp_UsbBulk_usbRxBuffer0,            // pui8Buffer
     sizeof(bsp_UsbBulk_usbRxBuffer0),    // ui32BufferSize
@@ -235,7 +232,7 @@ const tUSBBuffer bsp_UsbBulk_rxBufferInfo =
  * Transmit buffer structure (from the USB perspective).
  */
 uint8_t bsp_UsbBulk_usbTxBuffer0[BSP_PLATFORM_IO_USB0_TX_BUF_LEN];
-const tUSBBuffer bsp_UsbBulk_txBufferInfo =
+tUSBBuffer bsp_UsbBulk_txBufferInfo =
 {
     true,                                // This is a transmit buffer.
     bsp_UsbBulk_txHandler,               // pfnCallback
@@ -248,20 +245,10 @@ const tUSBBuffer bsp_UsbBulk_txBufferInfo =
 };
 
 
-#endif
-//****************************************************************************
-//
-// The memory allocated to hold the composite descriptor that is created by
-// the call to USBDCompositeInit().
-//
-//****************************************************************************
-//uint8_t bsp_UsbData_descriptorData[ BSP_USBBULK_DESCRIPTOR_DATA_SIZE ];
-
 /* Flag to track whether USB is connected or not */
 bool bsp_UsbBulk_connected = false;
 
 
-#if defined( BSP_PLATFORM_USB_BULK )
 /*==============================================================================
  *                                Local Functions
  *============================================================================*/
@@ -398,90 +385,76 @@ uint32_t bsp_UsbBulk_rxHandler( void*    pvCBData,
     return(retVal);
 }
 
-#endif
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_UsbBulk_init( void )
+void*
+bsp_UsbBulk_init( void* compositeEntry )
 {
-#if defined( BSP_PLATFORM_USB_BULK )
-    /* Configure USB pins as input no pull analog */
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_USB_DP,
-                          BSP_GPIO_BIT_MASK_USB_DP,
-                          false, //openDrain
-                          BSP_GPIO_PULL_NONE );
-    bsp_Gpio_configAnalog( BSP_GPIO_PORT_ID_USB_DP, BSP_GPIO_BIT_MASK_USB_DP );
-
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_USB_DM,
-                          BSP_GPIO_BIT_MASK_USB_DM,
-                          false, //openDrain
-                          BSP_GPIO_PULL_NONE );
-    bsp_Gpio_configAnalog( BSP_GPIO_PORT_ID_USB_DM, BSP_GPIO_BIT_MASK_USB_DM );
-
-
-    /* Set the USB stack mode to Device mode with no VBUS monitoring. */
-    USBStackModeSet( 0, eUSBModeForceDevice, NULL );
-
-    /* Tell the USB library the CPU clock and the PLL frequency. */
-#if defined( BSP_PLATFORM_PROCESSOR_TM4C129 )
-    uint32_t feature = bsp_Clk_sysClkGet();
-    USBDCDFeatureSet( 0, USBLIB_FEATURE_CPUCLK, &feature );
-    feature = bsp_Clk_vcoFreqGet();
-    USBDCDFeatureSet( 0, USBLIB_FEATURE_USBPLL, &feature );
-#endif
+    bsp_UsbBulk_InternalInfo.deviceInfoPtr = &(bsp_UsbBulk_deviceInfo);
+    bsp_UsbBulk_InternalInfo.dataAvailCallback = NULL;
+    bsp_UsbBulk_InternalInfo.connectionCallback = NULL;
+    bsp_UsbBulk_InternalInfo.txDoneCallback = NULL;
 
     /* Initialize the transmit and receive buffers. */
-    USBBufferInit( (tUSBBuffer*)&(bsp_UsbBulk_txBufferInfo) );
-    USBBufferInit( (tUSBBuffer*)&(bsp_UsbBulk_rxBufferInfo) );
+    USBBufferInit( &(bsp_UsbBulk_txBufferInfo) );
+    USBBufferInit( &(bsp_UsbBulk_rxBufferInfo) );
 
     /* Initialize the device */
-    USBDBulkInit( 0, &(bsp_UsbBulk_deviceInfo) );
-#endif
-    return;
+    return( USBDBulkCompositeInit( 0, &(bsp_UsbBulk_deviceInfo), (tCompositeEntry *)compositeEntry ) );
 }
 
 
 /*============================================================================*/
-void
+bsp_UsbBulk_DataAvailableCallback_t
 bsp_UsbBulk_registerCallbackDataAvailable( int fd, bsp_UsbBulk_DataAvailableCallback_t callback )
 {
+    bsp_UsbBulk_DataAvailableCallback_t oldCb;
+    BSP_MCU_CRITICAL_SECTION_ENTER();
+    oldCb = ((bsp_UsbBulk_InternalInfo_t*)fd)->dataAvailCallback;
     ((bsp_UsbBulk_InternalInfo_t*)fd)->dataAvailCallback = callback;
-    return;
+    BSP_MCU_CRITICAL_SECTION_EXIT();
+    return( oldCb );
 }
 
 
 /*============================================================================*/
-bool
+bsp_UsbBulk_ConnectionCallback_t
 bsp_UsbBulk_registerCallbackConnection( int fd, bsp_UsbBulk_ConnectionCallback_t callback )
 {
+    bsp_UsbBulk_ConnectionCallback_t oldCb;
+    BSP_MCU_CRITICAL_SECTION_ENTER();
+    oldCb = ((bsp_UsbBulk_InternalInfo_t*)fd)->connectionCallback;
     ((bsp_UsbBulk_InternalInfo_t*)fd)->connectionCallback = callback;
-    return( bsp_UsbBulk_connected );
+    if( callback != NULL )
+    {
+        callback( bsp_UsbBulk_connected );
+    }
+    BSP_MCU_CRITICAL_SECTION_EXIT();
+    return( oldCb );
 }
 
 
 /*============================================================================*/
-void
-bsp_UsbBulk_registerTxDoneCallback( int fd, bsp_UsbBulk_TxDoneCallback_t callback )
+bsp_UsbBulk_TxDoneCallback_t
+bsp_UsbBulk_registerCallbackTxDone( int fd, bsp_UsbBulk_TxDoneCallback_t callback )
 {
+    bsp_UsbBulk_TxDoneCallback_t oldCb;
+    BSP_MCU_CRITICAL_SECTION_ENTER();
+    oldCb = ((bsp_UsbBulk_InternalInfo_t*)fd)->txDoneCallback;
     ((bsp_UsbBulk_InternalInfo_t*)fd)->txDoneCallback = callback;
-    return;
+    BSP_MCU_CRITICAL_SECTION_EXIT();
+    return( oldCb );
 }
 
 
 /*============================================================================*/
 int
-bsp_UsbBulk_open( const char*  path,
-                  unsigned int flags,
-                  int          llv_fd )
+bsp_UsbBulk_open( void )
 {
-#if defined( BSP_PLATFORM_USB_BULK )
     return( (int)&(bsp_UsbBulk_InternalInfo) );
-#else
-    return( 0 );
-#endif
 }
 
 
@@ -496,7 +469,7 @@ bsp_UsbBulk_close( int fd )
 /*============================================================================*/
 int
 bsp_UsbBulk_read( int    fd,
-                  char*  buffer,
+                  void*  buffer,
                   size_t count )
 {
     bsp_UsbBulk_InternalInfo_t* internalInfoPtr;
@@ -508,24 +481,10 @@ bsp_UsbBulk_read( int    fd,
 /*============================================================================*/
 int
 bsp_UsbBulk_write( int         fd,
-                   const char* buffer,
+                   const void* buffer,
                    size_t      count )
 {
     bsp_UsbBulk_InternalInfo_t* internalInfoPtr;
     internalInfoPtr = (bsp_UsbBulk_InternalInfo_t*)fd;
     return( USBBufferWrite( (tUSBBuffer *)(internalInfoPtr->deviceInfoPtr->pvTxCBData), (uint8_t*)buffer, count ) );
 }
-
-
-/*============================================================================*/
-void
-bsp_UsbBulk_interruptHandler( void )
-{
-    extern void USB0DeviceIntHandler(void);
-    BSP_TRACE_USBIO_INT_ENTER();
-    USB0DeviceIntHandler();
-    BSP_TRACE_USBIO_INT_EXIT();
-    return;
-}
-
-
