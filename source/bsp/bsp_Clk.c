@@ -48,6 +48,12 @@
 #define BSP_CLK_DELAY_NS( _ns ) { MAP_SysCtlDelay( (BSP_CLK_TICKS_PER_NS( _ns ) / 3) ); }
 
 /*==============================================================================
+ *                              Globals
+ *============================================================================*/
+/*============================================================================*/
+uint32_t bsp_Clk_sysClk = 0;
+
+/*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
@@ -58,11 +64,18 @@ bsp_Clk_init( void )
 
     MAP_SysCtlMOSCConfigSet( (SYSCTL_MOSC_VALIDATE | SYSCTL_MOSC_INTERRUPT) );
 
-#if defined(BSP_PLATFORM_PROCESSOR_TM4C123)
-    MAP_SysCtlClockSet( (BSP_CLK_SYSCTL_SYSDIV | SYSCTL_USE_PLL | BSP_CLK_SYSCTL_XTAL | SYSCTL_OSC_MAIN) );
+#if defined( BSP_PLATFORM_PROCESSOR_TM4C123 )
+    MAP_SysCtlClockSet( (BSP_CLK_SYSCTL_SYSDIV |
+                         SYSCTL_USE_PLL |
+                         BSP_CLK_SYSCTL_XTAL |
+                         SYSCTL_OSC_MAIN) );
+    bsp_Clk_sysClk = MAP_SysCtlClockGet();
 #else
-    MAP_SysCtlClockFreqSet((BSP_CLK_SYSCTL_XTAL | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
-                            BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ);
+    bsp_Clk_sysClk = MAP_SysCtlClockFreqSet((BSP_CLK_SYSCTL_XTAL |
+                                             SYSCTL_OSC_MAIN |
+                                             SYSCTL_USE_PLL |
+                                             SYSCTL_CFG_VCO_480),
+                                            BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ);
 #endif
     /* Wait for PLL to lock */
     while( SYSCTL_PLLSTAT_R == 0 );
@@ -71,11 +84,26 @@ bsp_Clk_init( void )
 }
 
 /*============================================================================*/
+uint32_t
+bsp_Clk_vcoFreqGet( void )
+{
+    uint32_t vcoFreq;
+    MAP_SysCtlVCOGet( BSP_CLK_SYSCTL_XTAL, &vcoFreq );
+    return( vcoFreq );
+}
+
+/*============================================================================*/
+uint32_t
+bsp_Clk_sysClkGet( void )
+{
+    return( bsp_Clk_sysClk );
+}
+
+/*============================================================================*/
 void
 bsp_Clk_delayNs( uint32_t ns )
 {
     BSP_CLK_DELAY_NS( ns );
-
     return;
 }
 

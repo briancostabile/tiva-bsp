@@ -29,7 +29,9 @@
 #include "bsp_Clk.h"
 #include "bsp_Uart.h"
 #include "bsp_UartIo.h"
+#include "bsp_Usb.h"
 #include "bsp_UsbIo.h"
+#include "bsp_UsbBulk.h"
 #include "bsp_Gpio.h"
 #include "bsp_Trace.h"
 #include "bsp_Button.h"
@@ -77,6 +79,7 @@ main(void)
     bsp_Button_init();
     bsp_I2c_init();
     bsp_Uart_init();
+    bsp_Usb_init();
     bsp_Io_init();
     bsp_UsbIo_init();
     bsp_UartIo_init();

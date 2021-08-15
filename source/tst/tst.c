@@ -29,6 +29,7 @@
 #include "tst.h"
 #include "tst_Mem.h"
 #include "tst_Sys.h"
+#include "tst_Usb.h"
 
 
 /*==============================================================================
@@ -39,6 +40,7 @@ tst_TableElement_t tst_MenuTable[] =
 {
     TST_SUBMENU_ELEMENT( "mem", "Memory commands", tst_Mem_menu ),
     TST_SUBMENU_ELEMENT( "sys", "System commands", tst_Sys_menu ),
+    TST_SUBMENU_ELEMENT( "usb", "USB commands", tst_Usb_menu ),
     TST_END_ELEMENT
 };
 

@@ -21,8 +21,8 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_UsbIo.h
- * @brief Contains types and defines for the USB CDC driver
+ * @file bsp_UsbBulk.h
+ * @brief Contains types and defines for the USB Bulk driver
  */
 #pragma once
 
@@ -31,20 +31,25 @@
 /*==================================================================================================
  *                                           Types
  *================================================================================================*/
-typedef void (* bsp_UsbIo_DataAvailableCallback_t)( size_t cnt );
+typedef void (* bsp_UsbBulk_DataAvailableCallback_t)( size_t cnt );
+typedef void (* bsp_UsbBulk_ConnectionCallback_t)( bool connected );
+typedef void (* bsp_UsbBulk_TxDoneCallback_t)( size_t cnt );
 
 
 /*==================================================================================================
  *                                        Public Functions
  *================================================================================================*/
-/*============================================================================*/
-void bsp_UsbIo_registerDataAvailableCallback( int fd, bsp_UsbIo_DataAvailableCallback_t callback );
+extern void bsp_UsbBulk_init( void );
+extern void bsp_UsbBulk_registerCallbackDataAvailable( int fd, bsp_UsbBulk_DataAvailableCallback_t callback );
+extern bool bsp_UsbBulk_registerCallbackConnection( int fd, bsp_UsbBulk_ConnectionCallback_t callback );
+extern void bsp_UsbBulk_registerCallbackTxDone( int fd, bsp_UsbBulk_TxDoneCallback_t callback );
 
-void bsp_UsbIo_init( void );
-int bsp_UsbIo_open( const char* path, unsigned int flags, int llv_fd );
-int bsp_UsbIo_close( int fd );
-int bsp_UsbIo_read( int fd, char* buffer, size_t count );
-int bsp_UsbIo_write( int fd, const char* buffer, size_t count );
-off_t bsp_UsbIo_lseek( int fd, off_t offset, int origin );
-int bsp_UsbIo_unlink( const char* path );
-int bsp_UsbIo_rename( const char* old_name, const char* new_name );
+extern int bsp_UsbBulk_open( const char* path, unsigned int flags, int llv_fd );
+extern int bsp_UsbBulk_close( int fd );
+extern int bsp_UsbBulk_read( int fd, char* buffer, size_t count );
+extern int bsp_UsbBulk_write( int fd, const char* buffer, size_t count );
+
+
+/*============================================================================*/
+void bsp_UsbBulk_interruptHandler( void );
+

@@ -34,7 +34,7 @@
 #include "bsp_Gpio.h"
 #include "bsp_I2c.h"
 #include "bsp_Uart.h"
-#include "bsp_UsbIo.h"
+#include "bsp_Usb.h"
 
 
 /*==============================================================================
@@ -152,7 +152,7 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
     bsp_Interrupt_defaultHandler,             // CAN2
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
     bsp_Interrupt_defaultHandler,             // Hibernate
-    bsp_UsbIo_interruptHandler,              // USB0
+    bsp_Usb_interruptHandler,                 // USB0
     bsp_Interrupt_defaultHandler,             // PWM Generator 3
     bsp_Interrupt_defaultHandler,             // uDMA Software Transfer
     bsp_Interrupt_defaultHandler,             // uDMA Error

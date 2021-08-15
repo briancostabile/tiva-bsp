@@ -21,31 +21,28 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Gpio_ektm4c123gxl.c
- * @brief Contains Configuration table for the supported IO ports on this platform
+ * @file bsp_UsbCdc.h
+ * @brief Contains types and defines for the USB CDC driver
  */
-#include "bsp_Gpio.h"
-#include "bsp_Clk.h"
-#include "bsp_Interrupt.h"
+#pragma once
 
-#include "driverlib/sysctl.h"
-#include "inc/hw_memmap.h"
+#include "bsp_Types.h"
 
-/*==============================================================================
- *                               Public functions
- *============================================================================*/
+/*==================================================================================================
+ *                                           Types
+ *================================================================================================*/
+typedef void (* bsp_UsbCdc_DataAvailableCallback_t)( size_t cnt );
+
+
+/*==================================================================================================
+ *                                        Public Functions
+ *================================================================================================*/
 /*============================================================================*/
-// Platform specific initializations
-void
-bsp_Gpio_initPlatform( void )
-{
-    /* Configure No Connect pins as no-pull inputs */
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_NCPB6,
-                          BSP_GPIO_BIT_MASK_NCPB6,
-                          FALSE, BSP_GPIO_PULL_NONE );
+bsp_UsbCdc_DataAvailableCallback_t
+bsp_UsbCdc_registerCallbackDataAvailable( int fd, bsp_UsbCdc_DataAvailableCallback_t callback );
 
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_NCPB7,
-                          BSP_GPIO_BIT_MASK_NCPB7,
-                          FALSE, BSP_GPIO_PULL_NONE );
-    return;
-}
+void* bsp_UsbCdc_init( void* compositeEntry );
+int bsp_UsbCdc_open( void );
+int bsp_UsbCdc_close( int fd );
+int bsp_UsbCdc_read( int fd, char* buffer, size_t count );
+int bsp_UsbCdc_write( int fd, const char* buffer, size_t count );

@@ -390,4 +390,3 @@ bsp_Gpio_interruptHandlerPortT( void )
     bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_T );
     return;
 }
-

@@ -69,10 +69,10 @@
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/tst"/>
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/osapi"/>
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/osapi/product/${PRODUCT}"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/inc"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/driverlib"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/usblib"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/inc"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/driverlib"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/usblib"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/include"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="SOURCE_ROOT/bsp/processor/tm4c129"/>
@@ -119,7 +119,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="source/bsp/platform/ektm4c123gxl|TivaBspSensor_ccs.cmd|TivaBspCore_gcc.lds|TivaBspCore_ccs.cmd|tm4c123gh6pm.lds|third_party/FreeRTOS/FreeRTOSv10.1.1/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="source/bsp/platform/ektm4c123gxl|TivaBspSensor_ccs.cmd|TivaBspCore_gcc.lds|TivaBspCore_ccs.cmd|tm4c123gh6pm.lds|third_party/FreeRTOS/FreeRTOSv10.1.1/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -191,10 +191,10 @@
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/tst"/>
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/osapi"/>
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/osapi/product/${PRODUCT}"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/inc"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/driverlib"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/usblib"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/inc"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/driverlib"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/usblib"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/include"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/portable/CCS/ARM_CM4F"/>
 								</option>
@@ -324,10 +324,10 @@
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/tst"/>
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/osapi"/>
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/osapi/product/${PRODUCT}"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/inc"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/driverlib"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/usblib"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/inc"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/driverlib"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/usblib"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/include"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 								</option>
@@ -373,7 +373,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="source/bsp/platform/ektm4c123sensor|TivaBspSensor_gcc.lds|source/bsp/processor/tm4c123|source/bsp/platform/ektm4c123gxl|TivaBspSensor_ccs.cmd|TivaBspCore_ccs.cmd|tm4c123gh6pm.lds|third_party/FreeRTOS/FreeRTOSv10.1.1/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="source/bsp/platform/ektm4c123sensor|TivaBspSensor_gcc.lds|source/bsp/processor/tm4c123|source/bsp/platform/ektm4c123gxl|TivaBspSensor_ccs.cmd|TivaBspCore_ccs.cmd|tm4c123gh6pm.lds|third_party/FreeRTOS/FreeRTOSv10.1.1/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -447,10 +447,10 @@
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/tst"/>
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/osapi"/>
 									<listOptionValue builtIn="false" value="${SOURCE_ROOT}/osapi/product/${PRODUCT}"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/inc"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/driverlib"/>
-									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.1.0.12573/usblib"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/inc"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/driverlib"/>
+									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/TI/TivaWare_C_Series-2.2.0.295/usblib"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/include"/>
 									<listOptionValue builtIn="false" value="${THIRD_PARTY_ROOT}/FreeRTOS/FreeRTOSv10.1.1/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 								</option>
@@ -496,7 +496,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="source/bsp/platform/ektm4c123sensor|source/bsp/platform/dktm4c129x|source/bsp/processor/tm4c129|TivaBspSensor_gcc.lds|TivaBspSensor_ccs.cmd|TivaBspCore_ccs.cmd|tm4c123gh6pm.lds|third_party/FreeRTOS/FreeRTOSv10.1.1/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.1.0.12573/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="source/bsp/platform/ektm4c123sensor|source/bsp/platform/dktm4c129x|source/bsp/processor/tm4c129|TivaBspSensor_gcc.lds|TivaBspSensor_ccs.cmd|TivaBspCore_ccs.cmd|tm4c123gh6pm.lds|third_party/FreeRTOS/FreeRTOSv10.1.1/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

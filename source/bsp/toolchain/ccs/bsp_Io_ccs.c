@@ -108,4 +108,3 @@ bsp_Io_fileToDfd( FILE* file )
 {
     return( _stream[(file)->fd].dfd );
 }
-

@@ -256,4 +256,3 @@ bsp_Io_fileToDfd( FILE* file )
     }
     return( ret );
 }
-

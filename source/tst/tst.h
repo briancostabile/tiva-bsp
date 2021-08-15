@@ -24,8 +24,7 @@
  * @file tst.h
  * @brief Contains the root of the test menu
  */
-#ifndef TST_H
-#define TST_H
+#pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
@@ -70,4 +69,3 @@ typedef struct tst_TableElement_s {
     };
     bool_t is_menu;
 } tst_TableElement_t;
-#endif
