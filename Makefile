@@ -90,6 +90,7 @@ endif
 ROOT_DIR        := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 BUILD_DIR       := $(ROOT_DIR)/build/$(PRODUCT)/$(COMPILER)
 SRC_DIR         := $(ROOT_DIR)/source
+PRJ_DIR         := $(ROOT_DIR)/project
 THIRD_PARTY_DIR := $(ROOT_DIR)/third_party
 
 # Pull from product config makefile
@@ -157,13 +158,13 @@ FREERTOS_CFLAGS   := $(TOOLCHAIN_CFLAGS) \
 TIVAWARE_NAME   := TivaWare_C_Series
 TIVAWARE_VER    := 2.2.0.295
 TIVAWARE_DIR    := $(THIRD_PARTY_DIR)/TI/$(TIVAWARE_NAME)-$(TIVAWARE_VER)
-ifeq ($(PROCESSOR), tm4c123)
-TIVAWARE_DFLAGS := PART_TM4C123GH6PM
-TIVAWARE_DFLAGS += TARGET_IS_TM4C123_RB1
-else
-TIVAWARE_DFLAGS := PART_TM4C129XNCZAD
-TIVAWARE_DFLAGS += TARGET_IS_TM4C129_RA0
-endif
+
+PROCESSOR_UPPER := $(shell echo $(PROCESSOR) | tr a-z A-Z)
+VARIANT_UPPER   := $(shell echo $(VARIANT) | tr a-z A-Z)
+REVISION_UPPER  := $(shell echo $(REVISION) | tr a-z A-Z)
+
+TIVAWARE_DFLAGS := PART_$(PROCESSOR_UPPER)$(VARIANT_UPPER)
+TIVAWARE_DFLAGS += TARGET_IS_$(PROCESSOR_UPPER)_$(REVISION_UPPER)
 TIVAWARE_DFLAGS += $(COMPILER)
 TIVAWARE_IFLAGS := $(TIVAWARE_DIR) $(TIVAWARE_DIR)/inc
 
@@ -284,7 +285,8 @@ CFLAGS := $(TOOLCHAIN_CFLAGS) \
 
 # Setup Linker flags
 LFLAGS := $(TOOLCHAIN_LFLAGS)
-LFLAGS += $(call toolchain_cmd_file,project/$(PRODUCT)_$(COMPILER).$(TOOLCHAIN_LINK_CMD_EXT))
+LFLAGS += $(call toolchain_cmd_file,project/$(PRODUCT)_$(PROCESSOR)$(VARIANT)_$(COMPILER).$(TOOLCHAIN_LINK_CMD_EXT))
+LFLAGS += $(call toolchain_lib_paths,$(PRJ_DIR))
 
 # Select the right library path based on whether we're using a precompiled
 # newlib or not

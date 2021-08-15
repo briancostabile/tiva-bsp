@@ -1,19 +1,6 @@
 /******************************************************************************
- *
- * Default Linker script for the Texas Instruments TM4C123GH6PM
- *
- * This is derived from revision 15071 of the TivaWare Library.
- *
+ *   Common section placement for TivaBsp projects
  *****************************************************************************/
-
-MEMORY
-{
-    /* FLASH (RX) : ORIGIN = 0x00000000, LENGTH = 0x00040000 */
-    /*SRAM (WX)  : ORIGIN = 0x20000000, LENGTH = 0x00008000 */
-    FLASH (RX) : ORIGIN = 0x00000000, LENGTH = 0x00100000
-    SRAM (WX)  : ORIGIN = 0x20000000, LENGTH = 0x00040000
-    SRAM_PHANTOM (WX)  : ORIGIN = 0x40000000, LENGTH = 0x00008000
-}
 
 REGION_ALIAS("REGION_TEXT", FLASH);
 REGION_ALIAS("REGION_BSS", SRAM);

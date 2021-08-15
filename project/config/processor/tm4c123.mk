@@ -23,10 +23,13 @@ FILENAME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 $(info Including:$(FILENAME))
 
 PROCESSOR       := tm4c123
+VARIANT         := gh6pm
+REVISION        := rb1
 CPU             := cortex-m4
 CORE            := v7e-m+fp
 CORE_FLOAT      := fpv4-sp
 CORE_FLOAT_TYPE := hard
 
+PRODUCT_DFLAGS += PLATFORM_VARIANT=$(PROCESSOR)
 PRODUCT_DFLAGS += PLATFORM_CORE=$(PROCESSOR)
 PRODUCT_DFLAGS += PLATFORM_PROCESSOR=$(PROCESSOR)
