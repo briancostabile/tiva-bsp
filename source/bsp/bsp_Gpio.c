@@ -81,6 +81,9 @@ bsp_Gpio_init( void )
 
         /* Wait for the peripheral to be ready in the system controller before moving on */
         while( MAP_SysCtlPeripheralReady( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr ) == FALSE );
+
+        /* Unlock All pins */
+        MAP_GPIOUnlockPin( bsp_Gpio_platformPortInfoTable[portId].baseAddr, 0xFF );
     }
 
     bsp_Gpio_initPlatform();

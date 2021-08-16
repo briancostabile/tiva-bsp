@@ -21,14 +21,16 @@
  */
 /*============================================================================*/
 /**
- * @file svc_TestEh.c
+ * @file svc_ThreadSensor.c
  * @brief
  */
 
 #include "bsp_Types.h"
 #include "bsp_Pragma.h"
-#include "svc_TestEh.h"
-#include "svc_ButtonEh.h"
+#include "svc_ThreadSensor.h"
+#include "svc_TempEh.h"
+#include "svc_HumidEh.h"
+#include "svc_LightEh.h"
 #include "svc_Eh.h"
 #include "osapi.h"
 
@@ -38,72 +40,60 @@
 #endif
 #include "svc_Log.h"
 
-
 #include <stdio.h>
+
+
 /*==============================================================================
  *                                  Defines
  *============================================================================*/
+#define SVC_THREADSENSOR_STACK_SIZE    2048
+#define SVC_THREADSENSOR_STACK_SIZE_32 (SVC_THREADSENSOR_STACK_SIZE / 4)
 
+#define SVC_THREADSENSOR_QUEUE_DEPTH 10
 
 /*==============================================================================
  *                                 Globals
  *============================================================================*/
+// Total stack needed for the Peripheral thread
+uint32_t svc_ThreadSensor_stack[SVC_THREADSENSOR_STACK_SIZE_32];
+void*    svc_ThreadSensor_queue[SVC_THREADSENSOR_QUEUE_DEPTH];
+
 /*============================================================================*/
-const svc_MsgFwk_MsgId_t svc_TestEh_bcastMsgIds[] =
+static const svc_Eh_Info_t* svc_ThreadSensor_ehTable[] =
 {
-    SVC_BUTTONEH_PRESS_IND,
-    SVC_BUTTONEH_RELEASE_IND,
-    SVC_BUTTONEH_LONG_PRESS_IND
+#if defined(SVC_EHID_TEMP)
+    &svc_TempEh_info,
+#endif
+#if defined(SVC_EHID_HUMID)
+    &svc_HumidEh_info,
+#endif
+#if defined(SVC_EHID_LIGHT)
+    &svc_LightEh_info,
+#endif
 };
-
-/*==============================================================================
- *                              Local Functions
- *============================================================================*/
-
-/*============================================================================*/
-static void
-svc_TestEh_msgHandler( svc_MsgFwk_Hdr_t* msgPtr )
-{
-    switch( msgPtr->id )
-    {
-        case SVC_BUTTONEH_PRESS_IND:
-        {
-            printf("0x%04X pressed"NL, msgPtr->id);
-        }
-        break;
-
-        case SVC_BUTTONEH_RELEASE_IND:
-        {
-            printf("0x%04X released"NL, msgPtr->id);
-        }
-        break;
-
-        case SVC_BUTTONEH_LONG_PRESS_IND:
-        {
-            printf("0x%04X long pressed"NL, msgPtr->id);
-        }
-        break;
-    }
-    return;
-}
-
-/*============================================================================*/
-static void
-svc_TestEh_init( void )
-{
-    return;
-}
-
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-const svc_Eh_Info_t svc_TestEh_info =
+void
+svc_ThreadSensor_threadMain( osapi_ThreadArg_t arg )
 {
-    SVC_EHID_TEST,
-    DIM(svc_TestEh_bcastMsgIds),
-    svc_TestEh_bcastMsgIds,
-    svc_TestEh_init,
-    svc_TestEh_msgHandler
+    svc_Eh_listRun( DIM(svc_ThreadSensor_ehTable),
+                    svc_ThreadSensor_ehTable,
+                    SVC_THREADSENSOR_QUEUE_DEPTH,
+                    svc_ThreadSensor_queue );
+    return;
+}
+
+/*============================================================================*/
+const osapi_ThreadInitInfo_t BSP_ATTR_USED BSP_ATTR_SECTION(".tinit") svc_ThreadSensor_threadInitInfo =
+{
+  .name        = "SENSOR",
+  .handler     = svc_ThreadSensor_threadMain,
+  .arg         = NULL,
+  .priority    = 2,
+  .stackSize32 = SVC_THREADSENSOR_STACK_SIZE_32,
+  .stackPtr    = &svc_ThreadSensor_stack[0]
 };
+BSP_PRAGMA_DATA_REQUIRED(svc_ThreadSensor_threadInitInfo)

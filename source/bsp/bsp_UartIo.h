@@ -46,7 +46,7 @@ bsp_UartIo_init( void );
 
 /*============================================================================*/
 void
-bsp_UartIo_registerDataAvailableCallback( int                            file_descriptor,
+bsp_UartIo_registerDataAvailableCallback( int                            fd,
                                           bsp_UartIo_DataAvailCallback_t callback );
 
 
@@ -64,21 +64,21 @@ bsp_UartIo_close( int file_descriptor );
 
 /*============================================================================*/
 int
-bsp_UartIo_read( int    file_descriptor,
+bsp_UartIo_read( int    fd,
                  char*  buffer,
                  size_t count );
 
 
 /*============================================================================*/
 int
-bsp_UartIo_write( int         file_descriptor,
+bsp_UartIo_write( int         fd,
                   const char* buffer,
                   size_t      count );
 
 
 /*============================================================================*/
 off_t
-bsp_UartIo_lseek( int   file_descriptor,
+bsp_UartIo_lseek( int   fd,
                   off_t offset,
                   int   origin );
 

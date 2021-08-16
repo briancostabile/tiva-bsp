@@ -387,7 +387,6 @@
 					<stringMacro name="PLATFORM" type="VALUE_TEXT" value="ektm4c123gxl"/>
 					<stringMacro name="SW_ROOT" type="VALUE_PATH_DIR" value="${ORIGINAL_PROJECT_ROOT}/../../.."/>
 					<stringMacro name="PROCESSOR" type="VALUE_TEXT" value="tm4c123"/>
-					<stringMacro name="CG_TOOL_SEARCH_PATH" type="VALUE_PATH_DIR" value="/Users/briancostabile/GitHub/tiva-bsp/third_party/newlib/newlib-3.0.0.20180831/arm-none-eabi/thumb/v7e-m/fpv4-sp/hard/newlib"/>
 					<stringMacro name="PRODUCT" type="VALUE_TEXT" value="TivaBspCore"/>
 				</macros>
 				<externalSettings/>

@@ -57,12 +57,12 @@ endif
 
 # Product and Build options typically passed in on command line
 ifndef PRODUCT
-PRODUCT := TivaBspSensor
+PRODUCT := TivaBspCore
 endif
 
 # gcc or ccs
 ifndef COMPILER
-COMPILER := ccs
+COMPILER := gcc
 endif
 COMPILER_UPPER := $(shell echo $(COMPILER) | tr a-z A-Z)
 
@@ -76,7 +76,7 @@ endif
 # note: newlib is only used for gcc build
 ifeq ($(COMPILER),gcc)
 ifndef BUILD_NEWLIB
-BUILD_NEWLIB := 1
+BUILD_NEWLIB := 0
 endif
 else
 BUILD_NEWLIB := 0  #override command line

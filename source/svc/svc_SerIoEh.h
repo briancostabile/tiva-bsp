@@ -21,25 +21,32 @@
  */
 /*============================================================================*/
 /**
- * @file tst_Menu.c
- * @brief
+ * @file svc_SerIoEh.h
+ * @brief Contains the message interface related to the Serial IO service
  */
+#pragma once
 
 #include "bsp_Types.h"
-#include "tst.h"
-#include "tst_Mem.h"
-#include "tst_Sys.h"
-#include "tst_Usb.h"
+#include "bsp_Platform.h"
+#include "bsp_Io.h"
+#include <stdint.h>
+#include "svc_Eh.h"
+#include "svc_MsgFwk.h"
+
+/*==============================================================================
+ *                               Defines
+ *============================================================================*/
+/*============================================================================*/
+// Event handler message IDs
+#define SVC_SERIOEH_DATA_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_SERIO, 0 )
 
 
 /*==============================================================================
- *                                 Globals
+ *                                Types
  *============================================================================*/
-const tst_TableElement_t tst_MenuTable[] =
+/*============================================================================*/
+// Event handler message structures
+typedef struct BSP_ATTR_PACKED svc_SerIoEh_DataInd_s
 {
-    TST_SUBMENU_ELEMENT( "mem", "Memory commands", tst_Mem_menu ),
-    TST_SUBMENU_ELEMENT( "sys", "System commands", tst_Sys_menu ),
-    TST_SUBMENU_ELEMENT( "usb", "USB commands", tst_Usb_menu ),
-    TST_END_ELEMENT
-};
-
+    svc_MsgFwk_Hdr_t hdr;
+} svc_SerIoEh_DataInd_t;

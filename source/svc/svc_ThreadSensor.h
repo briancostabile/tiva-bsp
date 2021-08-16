@@ -21,24 +21,11 @@
  */
 /*============================================================================*/
 /**
- * @file svc_Cmd.h
- * @brief Contains wrapper APIs and defines for OS services
+ * @file svc_ThreadSensor.h
+ * @brief Contains the API for the Sensor Service thread
  */
 #pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
 #include <stdint.h>
-
-/*==============================================================================
- *                                Defines
- *============================================================================*/
-
-/*==============================================================================
- *                                 Types
- *============================================================================*/
-
-/*============================================================================*/
-// Prototypes for functions that must be supplied by client
-int32_t svc_Cmd_handlerText( int argc, char** argv );
-int32_t svc_Cmd_handlerBinary( uint8_t* buf, uint16_t len );

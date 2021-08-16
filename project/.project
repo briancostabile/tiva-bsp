@@ -387,14 +387,14 @@
 			<locationURI>SOURCE_ROOT/svc/svc_ButtonEh.h</locationURI>
 		</link>
 		<link>
-			<name>source/svc/svc_Cmd.c</name>
+			<name>source/svc/svc_CmdEh.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_Cmd.c</locationURI>
+			<locationURI>SOURCE_ROOT/svc/svc_CmdEh.c</locationURI>
 		</link>
 		<link>
-			<name>source/svc/svc_Cmd.h</name>
+			<name>source/svc/svc_CmdEh.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_Cmd.h</locationURI>
+			<locationURI>SOURCE_ROOT/svc/svc_CmdEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_Eh.c</name>
@@ -442,14 +442,9 @@
 			<locationURI>SOURCE_ROOT/svc/svc_MsgFwk.h</locationURI>
 		</link>
 		<link>
-			<name>source/svc/svc_Periph.c</name>
+			<name>source/svc/svc_SerIoEh.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_Periph.c</locationURI>
-		</link>
-		<link>
-			<name>source/svc/svc_Periph.h</name>
-			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_Periph.h</locationURI>
+			<locationURI>SOURCE_ROOT/svc/svc_SerIoEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_TempEh.c</name>
@@ -470,6 +465,26 @@
 			<name>source/svc/svc_TestEh.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_TestEh.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_ThreadSensor.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_ThreadSensor.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_ThreadSensor.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_ThreadSensor.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_ThreadUi.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_ThreadUi.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_ThreadUi.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_ThreadUi.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_TimerEh.h</name>
@@ -704,12 +719,12 @@
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</name>
 			<type>1</type>
-			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</location>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.h</name>
 			<type>1</type>
-			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.h</location>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Gpio_tm4c123.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_I2c_tm4c123.c</name>
@@ -724,12 +739,12 @@
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.c</name>
 			<type>1</type>
-			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.c</location>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.c</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</name>
 			<type>1</type>
-			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</location>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Uart_tm4c123.c</name>
@@ -1643,10 +1658,6 @@
 		</link>
 	</linkedResources>
 	<variableList>
-		<variable>
-			<name>CG_TOOL_SEARCH_PATH</name>
-			<value>file:/Users/briancostabile/GitHub/tiva-bsp/third_party/newlib/newlib-3.0.0.20180831/arm-none-eabi/thumb/v7e-m/newlib</value>
-		</variable>
 		<variable>
 			<name>SOURCE_ROOT</name>
 			<value>$%7BPARENT-1-PROJECT_LOC%7D/source</value>
