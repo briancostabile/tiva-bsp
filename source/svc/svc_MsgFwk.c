@@ -102,6 +102,7 @@ svc_MsgFwk_msgAlloc( svc_EhId_t          eh,
         msgPtr->eh = eh;
         msgPtr->id = id;
         msgPtr->len = len;
+        msgPtr->cnt = 0;
     }
     BSP_ASSERT( msgPtr );
     return msgPtr;
@@ -191,7 +192,7 @@ svc_MsgFwk_registerMsg( svc_EhId_t         eh,
 {
     BSP_MCU_CRITICAL_SECTION_ENTER();
     bool saveMapping = true;
-    
+
     // Make sure message isn't already registered to go to underlying queue
     for( size_t i=0; i<svc_MsgFwk_bcastTableIdx; i++ )
     {
@@ -199,11 +200,13 @@ svc_MsgFwk_registerMsg( svc_EhId_t         eh,
             (svc_MsgFwk_queueTable[eh] == svc_MsgFwk_queueTable[svc_MsgFwk_bcastTable[i].eh]) )
         {
             saveMapping = false;
+            break;
         }
     }
 
     if( saveMapping == true )
     {
+        BSP_ASSERT( svc_MsgFwk_bcastTableIdx < DIM(svc_MsgFwk_bcastTable) );
         svc_MsgFwk_bcastTable[svc_MsgFwk_bcastTableIdx].id = id;
         svc_MsgFwk_bcastTable[svc_MsgFwk_bcastTableIdx].eh = eh;
         svc_MsgFwk_bcastTableIdx++;

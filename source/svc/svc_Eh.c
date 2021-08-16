@@ -89,7 +89,6 @@ svc_Eh_msgHandler( const svc_Eh_Info_t* infoPtr,
 
         if( (dstEh == SVC_EHID_BROADCAST) || (dstEh == infoPtr->eh) )
         {
-            svc_MsgFwk_msgZeroCopy( msgPtr );
             infoPtr->msgHandler( msgPtr );
         }
     }

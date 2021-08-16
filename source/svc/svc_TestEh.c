@@ -84,8 +84,6 @@ svc_TestEh_msgHandler( svc_MsgFwk_Hdr_t* msgPtr )
         }
         break;
     }
-
-    svc_MsgFwk_msgRelease( msgPtr );
     return;
 }
 
