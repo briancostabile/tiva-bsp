@@ -719,12 +719,12 @@
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</name>
 			<type>1</type>
-			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</location>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.h</name>
 			<type>1</type>
-			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.h</location>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Gpio_tm4c123.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_I2c_tm4c123.c</name>
@@ -739,12 +739,12 @@
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.c</name>
 			<type>1</type>
-			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.c</location>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.c</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</name>
 			<type>1</type>
-			<location>/Users/bcostabile/projects/tiva-bsp/source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</location>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Uart_tm4c123.c</name>
@@ -1658,10 +1658,6 @@
 		</link>
 	</linkedResources>
 	<variableList>
-		<variable>
-			<name>CG_TOOL_SEARCH_PATH</name>
-			<value>file:/Users/briancostabile/GitHub/tiva-bsp/third_party/newlib/newlib-3.0.0.20180831/arm-none-eabi/thumb/v7e-m/newlib</value>
-		</variable>
 		<variable>
 			<name>SOURCE_ROOT</name>
 			<value>$%7BPARENT-1-PROJECT_LOC%7D/source</value>

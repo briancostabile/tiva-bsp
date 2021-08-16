@@ -695,7 +695,7 @@
 typedef uint8_t bsp_Gpio_PortId_t;
 
 /*============================================================================*/
-#define BSP_GPIO_PORT_ID_NUM_PORTS 15
+#define BSP_GPIO_PORT_ID_NUM_PORTS 6 // Depends on Chip version
 
 /*============================================================================*/
 #define BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT 8
