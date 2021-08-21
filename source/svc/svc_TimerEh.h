@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@
 typedef struct BSP_ATTR_PACKED svc_TimerEh_TimeoutInd_s
 {
     svc_MsgFwk_Hdr_t hdr;
-    osapi_TimerId_t  id;
+    osapi_TimerName_t  id;
 } svc_TimerEh_TimeoutInd_t;
 
 
@@ -59,10 +59,10 @@ typedef struct BSP_ATTR_PACKED svc_TimerEh_TimeoutInd_s
  *============================================================================*/
 /*============================================================================*/
 void
-svc_TimerEh_buildAndSendTimeoutInd( osapi_TimerId_t id );
+svc_TimerEh_buildAndSendTimeoutInd( osapi_TimerName_t name );
 
 /*============================================================================*/
 void
-svc_TimerEh_timerStart( osapi_TimerId_t   data,
+svc_TimerEh_timerStart( osapi_TimerName_t   data,
                         osapi_Timeout_t   timeout,
                         osapi_TimerType_t type );

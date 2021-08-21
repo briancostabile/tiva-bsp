@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,7 @@ svc_Eh_init( const svc_Eh_Info_t* infoPtr,
 
 /*============================================================================*/
 static void
-svc_Eh_listInit( size_t                cnt, 
+svc_Eh_listInit( size_t                cnt,
                  const svc_Eh_Info_t** infoPtrList,
                  osapi_Queue_t         eventQueue )
 {
@@ -98,7 +98,7 @@ svc_Eh_msgHandler( const svc_Eh_Info_t* infoPtr,
 
 /*============================================================================*/
 static void
-svc_Eh_listMsgHandler( size_t                 cnt, 
+svc_Eh_listMsgHandler( size_t                 cnt,
                        const svc_Eh_Info_t**  infoPtrList,
                        svc_MsgFwk_Hdr_t*      msgPtr )
 {
@@ -119,7 +119,7 @@ svc_Eh_listMsgHandler( size_t                 cnt,
  *============================================================================*/
 /*============================================================================*/
 void
-svc_Eh_listRun( size_t                cnt, 
+svc_Eh_listRun( size_t                cnt,
                 const svc_Eh_Info_t** infoPtrList,
                 size_t                queueDepth,
                 void*                 queueMem )

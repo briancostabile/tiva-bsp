@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -106,7 +106,7 @@ bsp_Button_init( void )
                               bsp_Button_ioInfoTable[i].mask,
                               FALSE,
                               (bsp_Button_ioInfoTable[i].pressPolarity == BSP_BUTTON_PRESS_POLARITY_LOW) ?
-                                      BSP_GPIO_PULL_UP : BSP_GPIO_PULL_DOWN );
+                                  BSP_GPIO_PULL_UP : BSP_GPIO_PULL_DOWN );
     }
 
     return;

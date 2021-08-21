@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,6 @@
 /* One entry for each IO port. */
 const bsp_Button_IoInfo_t bsp_Button_ioInfoTable[BSP_PLATFORM_IO_BUTTON_NUM]=
 {
-    { BSP_GPIO_PORT_ID(BUTTON_0), BSP_GPIO_MASK(BUTTON_0), BSP_BUTTON_PRESS_POLARITY_LOW },
-    { BSP_GPIO_PORT_ID(BUTTON_1), BSP_GPIO_MASK(BUTTON_1), BSP_BUTTON_PRESS_POLARITY_LOW }
+ { BSP_GPIO_PORT_ID(BUTTON_0), BSP_GPIO_MASK(BUTTON_0), BSP_BUTTON_PRESS_POLARITY_LOW },
+ { BSP_GPIO_PORT_ID(BUTTON_1), BSP_GPIO_MASK(BUTTON_1), BSP_BUTTON_PRESS_POLARITY_LOW }
 };

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@
 #include "svc_CmdEh.h"
 #include "svc_TestEh.h"
 #include "svc_ButtonEh.h"
+#include "svc_LedEh.h"
 #include "svc_Eh.h"
 #include "osapi.h"
 
@@ -64,6 +65,9 @@ static const svc_Eh_Info_t* svc_ThreadUi_ehTable[] =
 #endif
 #if defined(SVC_EHID_BUTTON)
     &svc_ButtonEh_info,
+#endif
+#if defined(SVC_EHID_LED)
+    &svc_LedEh_info,
 #endif
 };
 

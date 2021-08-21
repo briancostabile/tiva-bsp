@@ -1,5 +1,5 @@
 #/**
-# * Copyright 2017 Brian Costabile
+# * Copyright 2021 Brian Costabile
 # *
 # * Permission is hereby granted, free of charge, to any person obtaining a copy
 # * of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ endif
 
 # Product and Build options typically passed in on command line
 ifndef PRODUCT
-PRODUCT := TivaBspCore
+PRODUCT := TivaBspSensor
 endif
 
 # gcc or ccs

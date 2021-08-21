@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -58,7 +58,7 @@
 #define SVC_CMDEH_TXT_UP_ARROW "\x1B\x5B\x41"
 
 // Define a header to dump out the serial console at boot
-#define SVC_CMDEH_TXT_HDR    "\nCopyright 2017 Brian Costabile\n"\
+#define SVC_CMDEH_TXT_HDR    "\nCopyright 2021 Brian Costabile\n"\
                              "Test Command Console\n%c"
 
 // Define a single character Prompt

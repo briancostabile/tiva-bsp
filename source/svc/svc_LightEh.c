@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,14 +47,12 @@
  *============================================================================*/
 /*============================================================================*/
 #define SVC_LIGHTEH_MEAS_POLLING_PERIOD_MS 250
-#define SVC_LIGHTEH_MEAS_POLLING_TIMER_ID  0
+#define SVC_LIGHTEH_MEAS_POLLING_TIMER_ID  "LIGHTEH"
 
 
 /*==============================================================================
  *                                Types
  *============================================================================*/
-/*============================================================================*/
-
 /*==============================================================================
  *                                Globals
  *============================================================================*/
@@ -109,8 +107,8 @@ svc_LightEh_measHandlerIr( dev_Light_MeasLight_t light )
 
 /*============================================================================*/
 void
-svc_LightEh_timerCallback( osapi_Timer_t   timer,
-                           osapi_TimerId_t id )
+svc_LightEh_timerCallback( osapi_Timer_t     timer,
+                           osapi_TimerName_t name )
 {
     static uint8_t i = 0;
 
@@ -132,11 +130,10 @@ static void
 svc_LightEh_init( void )
 {
     dev_Light_init();
-    svc_LightEh_timer = osapi_Timer_create( SVC_LIGHTEH_MEAS_POLLING_TIMER_ID,
-                                            SVC_LIGHTEH_MEAS_POLLING_PERIOD_MS,
-                                            OSAPI_TIMER_TYPE_PERIODIC,
-                                            svc_LightEh_timerCallback );
-    osapi_Timer_start( svc_LightEh_timer );
+    svc_LightEh_timer = osapi_Timer_periodicCreate( SVC_LIGHTEH_MEAS_POLLING_TIMER_ID,
+                                                    SVC_LIGHTEH_MEAS_POLLING_PERIOD_MS,
+                                                    svc_LightEh_timerCallback );
+    osapi_Timer_periodicStart( svc_LightEh_timer );
 }
 
 

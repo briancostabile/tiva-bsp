@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -212,8 +212,8 @@ bsp_Gpio_configInput( bsp_Gpio_PortId_t  portId,
         pinType = GPIO_PIN_TYPE_STD_WPD;
     }
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    MAP_GPIOPadConfigSet( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, BSP_GPIO_DRIVE_2MA, pinType );
     MAP_GPIOPinTypeGPIOInput( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
+    MAP_GPIOPadConfigSet( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, BSP_GPIO_DRIVE_2MA, pinType );
     BSP_MCU_CRITICAL_SECTION_EXIT();
     return;
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
 #define OSAPI_THREAD_MAX_CNT 4
 #define OSAPI_SEMAPHORE_MAX_CNT 4
 #define OSAPI_QUEUE_MAX_CNT 4
-#define OSAPI_TIMER_MAX_CNT 6
+#define OSAPI_TIMER_MAX_CNT 8
 #define OSAPI_MS_PER_TICK 1
 
 // Define the memory pools (byte-size, count)

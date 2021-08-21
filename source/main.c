@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@
 #include "bsp_Reset.h"
 #include "bsp_Interrupt.h"
 #include "bsp_Clk.h"
+#include "bsp_Led.h"
 #include "bsp_Uart.h"
 #include "bsp_UartIo.h"
 #include "bsp_Usb.h"
@@ -76,6 +77,7 @@ main(void)
     bsp_Interrupt_init();
     bsp_Gpio_init();
     bsp_Trace_init();
+    bsp_Led_init();
     bsp_Button_init();
     bsp_I2c_init();
     bsp_Uart_init();
@@ -83,15 +85,6 @@ main(void)
     bsp_Io_init();
     bsp_UsbIo_init();
     bsp_UartIo_init();
-
-    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_R), BSP_GPIO_MASK(LED_R), FALSE, BSP_GPIO_DRIVE_2MA );
-    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_G), BSP_GPIO_MASK(LED_G), FALSE, BSP_GPIO_DRIVE_2MA );
-    bsp_Gpio_configOutput( BSP_GPIO_PORT_ID(LED_B), BSP_GPIO_MASK(LED_B), FALSE, BSP_GPIO_DRIVE_2MA );
-
-    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_R), BSP_GPIO_MASK(LED_R), BSP_GPIO_MASK(LED_R) );
-    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_G), BSP_GPIO_MASK(LED_G), BSP_GPIO_MASK(LED_G) );
-    bsp_Gpio_write( BSP_GPIO_PORT_ID(LED_B), BSP_GPIO_MASK(LED_B), BSP_GPIO_MASK(LED_B) );
-
 
     // Initialize the OS
     osapi_init();

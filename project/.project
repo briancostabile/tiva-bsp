@@ -207,6 +207,16 @@
 			<locationURI>SOURCE_ROOT/bsp/bsp_Io.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/bsp_Led.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Led.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_Led.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Led.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/bsp_Mcu.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/bsp_Mcu.h</locationURI>
@@ -417,6 +427,16 @@
 			<locationURI>SOURCE_ROOT/svc/svc_HumidEh.h</locationURI>
 		</link>
 		<link>
+			<name>source/svc/svc_LedEh.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_LedEh.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_LedEh.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_LedEh.h</locationURI>
+		</link>
+		<link>
 			<name>source/svc/svc_LightEh.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_LightEh.c</locationURI>
@@ -500,6 +520,16 @@
 			<name>source/tst/tst.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/tst/tst.h</locationURI>
+		</link>
+		<link>
+			<name>source/tst/tst_Led.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/tst/tst_Led.c</locationURI>
+		</link>
+		<link>
+			<name>source/tst/tst_Led.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/tst/tst_Led.h</locationURI>
 		</link>
 		<link>
 			<name>source/tst/tst_Mem.c</name>
@@ -700,6 +730,16 @@
 			<name>source/bsp/platform/ektm4c123sensor/bsp_Gpio_ektm4c123sensor.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Gpio_ektm4c123sensor.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/ektm4c123sensor/bsp_Led_ektm4c123sensor.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Led_ektm4c123sensor.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/ektm4c123sensor/bsp_Led_ektm4c123sensor.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Led_ektm4c123sensor.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/platform/ektm4c123sensor/bsp_Platform_ektm4c123sensor.h</name>

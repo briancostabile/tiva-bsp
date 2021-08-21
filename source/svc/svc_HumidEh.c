@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,7 +44,7 @@
  *============================================================================*/
 /*============================================================================*/
 #define SVC_HUMIDEH_MEAS_POLLING_PERIOD_MS 500
-#define SVC_HUMIDEH_MEAS_POLLING_TIMER_ID  0
+#define SVC_HUMIDEH_MEAS_POLLING_TIMER_ID  "HUMIDEH"
 
 /*==============================================================================
  *                                Types
@@ -160,7 +160,7 @@ svc_HumidEh_measHandlerCombo( dev_Humid_MeasHumidity_t    humidity,
 /*============================================================================*/
 void
 svc_HumidEh_timerCallback( osapi_Timer_t   timer,
-                           osapi_TimerId_t id )
+                           osapi_TimerName_t name )
 {
     dev_Humid_measTrigger( svc_HumidEh_measHandlerCombo );
     return;
@@ -171,11 +171,10 @@ static void
 svc_HumidEh_init( void )
 {
     dev_Humid_init();
-    svc_HumidEh_timer = osapi_Timer_create( SVC_HUMIDEH_MEAS_POLLING_TIMER_ID,
-                                            SVC_HUMIDEH_MEAS_POLLING_PERIOD_MS,
-                                            OSAPI_TIMER_TYPE_PERIODIC,
-                                            svc_HumidEh_timerCallback );
-    osapi_Timer_start( svc_HumidEh_timer );
+    svc_HumidEh_timer = osapi_Timer_periodicCreate( SVC_HUMIDEH_MEAS_POLLING_TIMER_ID,
+                                                    SVC_HUMIDEH_MEAS_POLLING_PERIOD_MS,
+                                                    svc_HumidEh_timerCallback );
+    osapi_Timer_periodicStart( svc_HumidEh_timer );
 }
 
 

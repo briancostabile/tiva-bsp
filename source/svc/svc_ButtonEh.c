@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,7 @@
  *                                Defines
  *============================================================================*/
 /*============================================================================*/
+#define SVC_BUTTONEH_BUTTON_NAME              "%d_BUTTONEH"
 #define SVC_BUTTONEH_BUTTON_POLLING_PERIOD_MS 100
 #define SVC_BUTTONEH_BUTTON_LONG_PRESS_MS     2000
 #define SVC_BUTTONEH_BUTTON_LONG_PRESS_POLL_COUNT   (SVC_BUTTONEH_BUTTON_LONG_PRESS_MS / SVC_BUTTONEH_BUTTON_POLLING_PERIOD_MS)
@@ -61,6 +62,7 @@ typedef enum {
 
 typedef struct BSP_ATTR_PACKED svc_ButtonEh_ButtonInfo_s
 {
+    char                       name[12];
     int8_t                     count : 8;
     svc_ButtonEh_ButtonState_t state : 8;
     osapi_Timer_t              timer;
@@ -109,11 +111,14 @@ svc_ButtonEh_buildAndSendLongPressInd( bsp_Button_Id_t id )
 
 /*============================================================================*/
 void
-svc_ButtonEh_timerCallback( osapi_Timer_t   timer,
-                            osapi_TimerId_t id )
+svc_ButtonEh_timerCallback( osapi_Timer_t     timer,
+                            osapi_TimerName_t name )
 {
     // check state of button and possibly continue the timer. Timer Id is Button Id
     BSP_MCU_CRITICAL_SECTION_ENTER();
+
+    int id = (name[0] - '0');
+
     switch( SVC_BUTTONEH_BUTTON_STATE_GET( id ) )
     {
         case SVC_BUTTONEH_BUTTON_STATE_PRESS:
@@ -132,7 +137,8 @@ svc_ButtonEh_timerCallback( osapi_Timer_t   timer,
                     SVC_BUTTONEH_BUTTON_STATE_SET( id, LONG_PRESS );
                     svc_ButtonEh_buildAndSendLongPressInd( id );
                 }
-                osapi_Timer_start( svc_ButtonEh_buttonInfoTable[id].timer );
+                osapi_Timer_oneShotStart( svc_ButtonEh_buttonInfoTable[id].timer,
+                                          SVC_BUTTONEH_BUTTON_POLLING_PERIOD_MS );
             }
         }
         break;
@@ -147,7 +153,8 @@ svc_ButtonEh_timerCallback( osapi_Timer_t   timer,
             }
             else
             {
-                osapi_Timer_start( svc_ButtonEh_buttonInfoTable[id].timer );
+                osapi_Timer_oneShotStart( svc_ButtonEh_buttonInfoTable[id].timer,
+                                          SVC_BUTTONEH_BUTTON_POLLING_PERIOD_MS );
             }
         }
         break;
@@ -160,7 +167,8 @@ svc_ButtonEh_timerCallback( osapi_Timer_t   timer,
             {
                 SVC_BUTTONEH_BUTTON_STATE_SET( id, PRESS );
                 svc_ButtonEh_buttonInfoTable[ id ].count = (SVC_BUTTONEH_BUTTON_LONG_PRESS_POLL_COUNT - 1);
-                osapi_Timer_start( svc_ButtonEh_buttonInfoTable[id].timer );
+                osapi_Timer_oneShotStart( svc_ButtonEh_buttonInfoTable[id].timer,
+                                          SVC_BUTTONEH_BUTTON_POLLING_PERIOD_MS );
                 svc_ButtonEh_buildAndSendPressInd( id );
             }
             else
@@ -188,7 +196,8 @@ svc_ButtonEh_buttonHandler( bsp_Button_Id_t id )
     SVC_BUTTONEH_BUTTON_STATE_SET( id, DEBOUNCING );
     BSP_MCU_CRITICAL_SECTION_EXIT();
 
-    osapi_Timer_start( svc_ButtonEh_buttonInfoTable[id].timer );
+    osapi_Timer_oneShotStart( svc_ButtonEh_buttonInfoTable[id].timer,
+                              SVC_BUTTONEH_BUTTON_POLLING_PERIOD_MS );
     return;
 }
 
@@ -201,13 +210,12 @@ svc_ButtonEh_init( void )
     for( uint8_t i=0; i<BSP_PLATFORM_IO_BUTTON_NUM; i++ )
     {
         bsp_Button_registerHandler( i, svc_ButtonEh_buttonHandler );
-
         bsp_Button_control( i, BSP_BUTTON_CONTROL_ENABLE );
-
-        svc_ButtonEh_buttonInfoTable[i].timer = osapi_Timer_create( i,
-                                                                    SVC_BUTTONEH_BUTTON_POLLING_PERIOD_MS,
-                                                                    OSAPI_TIMER_TYPE_ONE_SHOT,
-                                                                    svc_ButtonEh_timerCallback );
+        snprintf( svc_ButtonEh_buttonInfoTable[i].name,
+                  sizeof(svc_ButtonEh_buttonInfoTable[i].name),
+                  SVC_BUTTONEH_BUTTON_NAME, i );
+        svc_ButtonEh_buttonInfoTable[i].timer = osapi_Timer_oneShotCreate( svc_ButtonEh_buttonInfoTable[i].name,
+                                                                           svc_ButtonEh_timerCallback );
     }
 }
 

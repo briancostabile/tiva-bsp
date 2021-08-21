@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -351,7 +351,7 @@ osapi_Queue_enqueue( osapi_Queue_t queue,
 static void
 osapi_Timer_callbackWrapper( osapi_Timer_t handle )
 {
-    osapi_TimerId_t       id       = (osapi_TimerId_t)pcTimerGetTimerName( (TimerHandle_t)handle );
+    osapi_TimerName_t     id       = (osapi_TimerName_t)pcTimerGetTimerName( (TimerHandle_t)handle );
     osapi_TimerCallback_t callback = (osapi_TimerCallback_t)pvTimerGetTimerID( (TimerHandle_t)handle );
 
     if( callback )
@@ -363,7 +363,7 @@ osapi_Timer_callbackWrapper( osapi_Timer_t handle )
 
 /*============================================================================*/
 osapi_Timer_t
-osapi_Timer_create( osapi_TimerId_t       id,
+osapi_Timer_create( osapi_TimerName_t     id,
                     osapi_Timeout_t       timeout,
                     osapi_TimerType_t     type,
                     osapi_TimerCallback_t callback )
@@ -377,8 +377,45 @@ osapi_Timer_create( osapi_TimerId_t       id,
 }
 
 /*============================================================================*/
+osapi_Timer_t
+osapi_Timer_periodicCreate( osapi_TimerName_t     id,
+                            osapi_Timeout_t       timeout,
+                            osapi_TimerCallback_t callback )
+{
+    return( osapi_Timer_create( id, timeout, OSAPI_TIMER_TYPE_PERIODIC, callback ) );
+}
+
+/*============================================================================*/
+osapi_Timer_t
+osapi_Timer_oneShotCreate( osapi_TimerName_t     id,
+                           osapi_TimerCallback_t callback )
+{
+    return( osapi_Timer_create( id, 1000, OSAPI_TIMER_TYPE_ONE_SHOT, callback ) );
+}
+
+/*============================================================================*/
 bool
-osapi_Timer_start( osapi_Timer_t timer )
+osapi_Timer_oneShotStart( osapi_Timer_t   timer,
+                          osapi_Timeout_t timeout )
+{
+    BaseType_t ret;
+
+    if( bsp_Interrupt_activeId() == 0 )
+    {
+        ret = xTimerChangePeriod( (TimerHandle_t)timer, pdMS_TO_TICKS(timeout), (TickType_t)OSAPI_TIMEOUT_NO_WAIT );
+    }
+    else
+    {
+        BaseType_t pxHigherPriorityTaskWoken;
+        ret = xTimerChangePeriodFromISR( (TimerHandle_t)timer, pdMS_TO_TICKS(timeout), &pxHigherPriorityTaskWoken );
+    }
+
+    return( ret == pdPASS );
+}
+
+/*============================================================================*/
+bool
+osapi_Timer_periodicStart( osapi_Timer_t timer )
 {
     BaseType_t ret;
 
@@ -413,14 +450,6 @@ osapi_Timer_stop( osapi_Timer_t timer )
 
     return( ret == pdPASS );
 }
-
-/*============================================================================*/
-bool
-osapi_Timer_resume( osapi_Timer_t timer )
-{
-    return osapi_Timer_start( timer );
-}
-
 
 
 /********************

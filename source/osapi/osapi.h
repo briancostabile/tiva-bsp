@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -164,7 +164,7 @@ osapi_Queue_enqueue( osapi_Queue_t queue,
  */
 typedef void*    osapi_Timer_t;
 
-typedef uint32_t osapi_TimerId_t;
+typedef char* osapi_TimerName_t;
 
 typedef enum
 {
@@ -173,23 +173,35 @@ typedef enum
 } osapi_TimerType_t;
 
 typedef void (*osapi_TimerCallback_t)( osapi_Timer_t   timer,
-                                       osapi_TimerId_t id );
+                                       osapi_TimerName_t name );
 
 /*============================================================================*/
 osapi_Timer_t
-osapi_Timer_create( osapi_TimerId_t       id,
+osapi_Timer_create( osapi_TimerName_t       id,
                     osapi_Timeout_t       timeout,
                     osapi_TimerType_t     type,
                     osapi_TimerCallback_t callback );
 
 /*============================================================================*/
+osapi_Timer_t
+osapi_Timer_periodicCreate( osapi_TimerName_t       id,
+                            osapi_Timeout_t       timeout,
+                            osapi_TimerCallback_t callback );
+
+/*============================================================================*/
 bool
-osapi_Timer_start( osapi_Timer_t timer );
+osapi_Timer_periodicStart( osapi_Timer_t timer );
+
+/*============================================================================*/
+osapi_Timer_t
+osapi_Timer_oneShotCreate( osapi_TimerName_t       id,
+                           osapi_TimerCallback_t callback );
+
+/*============================================================================*/
+bool
+osapi_Timer_oneShotStart( osapi_Timer_t   timer,
+                          osapi_Timeout_t timeout );
 
 /*============================================================================*/
 bool
 osapi_Timer_stop( osapi_Timer_t timer );
-
-/*============================================================================*/
-bool
-osapi_Timer_resume( osapi_Timer_t timer );

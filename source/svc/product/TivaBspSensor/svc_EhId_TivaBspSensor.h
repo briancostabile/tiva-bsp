@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Brian Costabile
+ * Copyright 2021 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,10 +29,11 @@
 #define SVC_EHID_BROADCAST 0
 #define SVC_EHID_SERIO     1
 #define SVC_EHID_CMD       2
-#define SVC_EHID_BUTTON    3
-#define SVC_EHID_TEMP      4
-#define SVC_EHID_HUMID     5
-#define SVC_EHID_LIGHT     6
-#define SVC_EHID_TIMER     7
-#define SVC_EHID_TEST      8
-#define SVC_EHID_NUM_EHIDS 9
+#define SVC_EHID_TIMER     3
+#define SVC_EHID_BUTTON    4
+#define SVC_EHID_LED       5
+#define SVC_EHID_TEST      6
+#define SVC_EHID_TEMP      7
+#define SVC_EHID_HUMID     8
+#define SVC_EHID_LIGHT     9
+#define SVC_EHID_NUM_EHIDS 10
