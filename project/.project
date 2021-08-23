@@ -242,6 +242,16 @@
 			<locationURI>SOURCE_ROOT/bsp/bsp_Reset.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/bsp_TimerGp.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_TimerGp.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_TimerGp.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_TimerGp.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/bsp_Trace.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/bsp_Trace.c</locationURI>
@@ -357,6 +367,16 @@
 			<locationURI>SOURCE_ROOT/dev/dev_Light_isl29023.c</locationURI>
 		</link>
 		<link>
+			<name>source/dev/dev_PwrMon.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/dev/dev_PwrMon.h</locationURI>
+		</link>
+		<link>
+			<name>source/dev/dev_PwrMon_ina228.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/dev/dev_PwrMon_ina228.c</locationURI>
+		</link>
+		<link>
 			<name>source/dev/dev_Temp.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/dev/dev_Temp.h</locationURI>
@@ -460,6 +480,16 @@
 			<name>source/svc/svc_MsgFwk.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_MsgFwk.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_SamplerEh.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_SamplerEh.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_SamplerEh.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_SamplerEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_SerIoEh.h</name>
@@ -785,6 +815,16 @@
 			<name>source/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Interrupt_tm4c123.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c123/bsp_TimerGp_tm4c123.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_TimerGp_tm4c123.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c123/bsp_TimerGp_tm4c123.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_TimerGp_tm4c123.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Uart_tm4c123.c</name>

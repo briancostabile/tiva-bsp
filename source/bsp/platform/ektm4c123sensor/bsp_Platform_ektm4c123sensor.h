@@ -66,6 +66,7 @@
 #define BSP_PLATFORM_ENABLE_DEV_LIGHT_ISL20023
 #define BSP_PLATFORM_ENABLE_DEV_PRESSURE_BMP180
 #define BSP_PLATFORM_ENABLE_DEV_TEMP_TMP006
+#define BSP_PLATFORM_ENABLE_DEV_PWRMON_INA228
 
 // List the I2C devices for this platform as an array of structures
 // { <index-into-bsp_I2c_staticInfo>, <index-into-bsp_I2c_pinInfoTableSclX>, <index-into-bsp_I2c_pinInfoTableSdaX> }
