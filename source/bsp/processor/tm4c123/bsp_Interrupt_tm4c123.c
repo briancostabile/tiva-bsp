@@ -35,6 +35,7 @@
 #include "bsp_I2c.h"
 #include "bsp_Uart.h"
 #include "bsp_Usb.h"
+#include "bsp_TimerGp.h"
 
 
 /*==============================================================================
@@ -127,12 +128,12 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
     bsp_Interrupt_defaultHandler,             // ADC Sequence 2
     bsp_Interrupt_defaultHandler,             // ADC Sequence 3
     bsp_Interrupt_defaultHandler,             // Watchdog timer
-    bsp_Interrupt_defaultHandler,             // Timer 0 subtimer A
-    bsp_Interrupt_defaultHandler,             // Timer 0 subtimer B
-    bsp_Interrupt_defaultHandler,             // Timer 1 subtimer A
-    bsp_Interrupt_defaultHandler,             // Timer 1 subtimer B
-    bsp_Interrupt_defaultHandler,             // Timer 2 subtimer A
-    bsp_Interrupt_defaultHandler,             // Timer 2 subtimer B
+    bsp_TimerGp_interruptHandlerTimer0A,      // Timer 0 subtimer A
+    bsp_TimerGp_interruptHandlerTimer0B,      // Timer 0 subtimer B
+    bsp_TimerGp_interruptHandlerTimer1A,      // Timer 1 subtimer A
+    bsp_TimerGp_interruptHandlerTimer1B,      // Timer 1 subtimer B
+    bsp_TimerGp_interruptHandlerTimer2A,      // Timer 2 subtimer A
+    bsp_TimerGp_interruptHandlerTimer2B,      // Timer 2 subtimer B
     bsp_Interrupt_defaultHandler,             // Analog Comparator 0
     bsp_Interrupt_defaultHandler,             // Analog Comparator 1
     bsp_Interrupt_defaultHandler,             // Analog Comparator 2
@@ -143,8 +144,8 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
     bsp_Gpio_interruptHandlerPortH,           // GPIO Port H
     bsp_Uart_interruptHandler2,               // UART2 Rx and Tx
     bsp_Interrupt_defaultHandler,             // SSI1 Rx and Tx
-    bsp_Interrupt_defaultHandler,             // Timer 3 subtimer A
-    bsp_Interrupt_defaultHandler,             // Timer 3 subtimer B
+    bsp_TimerGp_interruptHandlerTimer3A,      // Timer 3 subtimer A
+    bsp_TimerGp_interruptHandlerTimer3B,      // Timer 3 subtimer B
     bsp_I2c_interruptHandler1,                // I2C1 Master and Slave
     bsp_Interrupt_defaultHandler,             // Quadrature Encoder 1
     bsp_Interrupt_defaultHandler,             // CAN0
@@ -178,8 +179,8 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
     bsp_I2c_interruptHandler2,                // I2C2 Master and Slave
     bsp_I2c_interruptHandler3,                // I2C3 Master and Slave
-    bsp_Interrupt_defaultHandler,             // Timer 4 subtimer A
-    bsp_Interrupt_defaultHandler,             // Timer 4 subtimer B
+    bsp_TimerGp_interruptHandlerTimer4A,      // Timer 4 subtimer A
+    bsp_TimerGp_interruptHandlerTimer4B,      // Timer 4 subtimer B
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
@@ -200,8 +201,8 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
     BSP_INTERRUPT_HANDLER_NULL,               // Reserved
-    bsp_Interrupt_defaultHandler,             // Timer 5 subtimer A
-    bsp_Interrupt_defaultHandler,             // Timer 5 subtimer B
+    bsp_TimerGp_interruptHandlerTimer5A,      // Timer 5 subtimer A
+    bsp_TimerGp_interruptHandlerTimer5B,      // Timer 5 subtimer B
     bsp_Interrupt_defaultHandler,             // Wide Timer 0 subtimer A
     bsp_Interrupt_defaultHandler,             // Wide Timer 0 subtimer B
     bsp_Interrupt_defaultHandler,             // Wide Timer 1 subtimer A

@@ -200,21 +200,13 @@ dev_Light_i2cTransCallback( bsp_I2c_Status_t status, void* usrData )
 /*===========================================================================*/
 // Wrapper function to setup the I2C transaction structure and queue it
 static void
-dev_Light_i2cTransQueue( bsp_I2c_TransType_t type,
-                         size_t              len,
-                         uint8_t*            buffer,
-                         void*               usrData )
+dev_Light_i2cTransQueue( void* usrData )
 {
-    dev_Light_i2cTrans.type     = type;
     dev_Light_i2cTrans.speed    = DEV_LIGHT_I2C_SPEED;
     dev_Light_i2cTrans.addr     = DEV_LIGHT_I2C_ADDR;
-    dev_Light_i2cTrans.len      = len;
-    dev_Light_i2cTrans.buffer   = buffer;
     dev_Light_i2cTrans.callback = dev_Light_i2cTransCallback;
     dev_Light_i2cTrans.usrData  = usrData;
-
     bsp_I2c_masterTransQueue( BSP_PLATFORM_I2C_ISL29023, &dev_Light_i2cTrans );
-
     return;
 }
 
@@ -226,11 +218,15 @@ dev_Light_i2cRegWrite( bsp_Light_I2cCmd_t regId,
                        dev_Light_Reg_t    regValue,
                        void*              usrData )
 {
-    dev_Light_i2cBuffer[0] = regId;
-    dev_Light_i2cBuffer[1] = ((regValue >> 0) & 0xFF);
-    dev_Light_i2cBuffer[2] = ((regValue >> 8) & 0xFF);
-
-    dev_Light_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 3, dev_Light_i2cBuffer, usrData );
+    dev_Light_i2cBuffer[0]     = regId;
+    dev_Light_i2cBuffer[1]     = ((regValue >> 0) & 0xFF);
+    dev_Light_i2cBuffer[2]     = ((regValue >> 8) & 0xFF);
+    dev_Light_i2cTrans.type    = BSP_I2C_TRANS_TYPE_WRITE;
+    dev_Light_i2cTrans.wLen    = 3;
+    dev_Light_i2cTrans.wBuffer = dev_Light_i2cBuffer;
+    dev_Light_i2cTrans.rLen    = 0;
+    dev_Light_i2cTrans.rBuffer = NULL;
+    dev_Light_i2cTransQueue( usrData );
 }
 
 /*===========================================================================*/
@@ -241,11 +237,15 @@ static void
 dev_Light_i2cRegRead( bsp_Light_I2cCmd_t regId,
                       void*              usrData )
 {
-    dev_Light_i2cBuffer[0] = regId;
-    dev_Light_i2cBuffer[1] = 0;
-    dev_Light_i2cBuffer[2] = 0;
-
-    dev_Light_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE_READ, 3, dev_Light_i2cBuffer, usrData );
+    dev_Light_i2cBuffer[0]     = regId;
+    dev_Light_i2cBuffer[1]     = 0;
+    dev_Light_i2cBuffer[2]     = 0;
+    dev_Light_i2cTrans.type    = BSP_I2C_TRANS_TYPE_WRITE_READ;
+    dev_Light_i2cTrans.wLen    = 1;
+    dev_Light_i2cTrans.wBuffer = &dev_Light_i2cBuffer[0];
+    dev_Light_i2cTrans.rLen    = 2;
+    dev_Light_i2cTrans.rBuffer = &dev_Light_i2cBuffer[1];
+    dev_Light_i2cTransQueue( usrData );
 }
 
 

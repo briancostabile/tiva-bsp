@@ -55,34 +55,58 @@ static const struct
 #endif
 
 /*============================================================================*/
-// Global pointers to manage the pending transaction queue. The queue is used
-// when there's an active transaction
-static bsp_I2c_MasterTrans_t* bsp_I2c_masterTransQueueHeadPtr;
-static bsp_I2c_MasterTrans_t* bsp_I2c_masterTransQueueTailPtr;
-
-
-/*============================================================================*/
 // Global containing a copy of the current active transaction. This is kept as
 // a copy to allow clients to reuse their own transaction globals as soon
 // as the transaction complete callback is called. If transactions queue up,
 // they are copied into this global before the transaction begins.
-static bsp_I2c_MasterTrans_t bsp_I2c_masterTransActive;
+/*============================================================================*/
+// Global pointers to manage the pending transaction queue. The queue is used
+// when there's an active transaction
+typedef struct bsp_I2c_MasterTransInfo_s
+{
+    bsp_I2c_MasterTrans_t* queueHeadPtr;
+    bsp_I2c_MasterTrans_t* queueTailPtr;
+    bsp_I2c_MasterTrans_t  active;
+} bsp_I2c_MasterTransInfo_t;
+
+static bsp_I2c_MasterTransInfo_t bsp_I2c_masterTransInfo[ BSP_I2C_PLATFORM_NUM ];
 
 /*==============================================================================
  *                            Local Functions
  *============================================================================*/
-#define BSP_I2C_NEXT_BYTE_SEND(_baseAddr, _transPtr)           \
-{                                                              \
-    ROM_I2CMasterDataPut( (_baseAddr), *(_transPtr)->buffer ); \
-    (_transPtr)->buffer = ((_transPtr)->buffer + 1);           \
-    (_transPtr)->len    = ((_transPtr)->len - 1);              \
+#define BSP_I2C_NEXT_BYTE_SEND(_baseAddr, _transPtr)            \
+{                                                               \
+    MAP_I2CMasterDataPut( (_baseAddr), *(_transPtr)->wBuffer ); \
+    (_transPtr)->wBuffer = ((_transPtr)->wBuffer + 1);          \
+    (_transPtr)->wLen    = ((_transPtr)->wLen - 1);             \
 }
 
-#define BSP_I2C_NEXT_BYTE_RCV(_baseAddr, _transPtr)            \
-{                                                              \
-    *(_transPtr)->buffer = ROM_I2CMasterDataGet( (_baseAddr) );\
-    (_transPtr)->buffer  = ((_transPtr)->buffer + 1);          \
-    (_transPtr)->len     = ((_transPtr)->len - 1);             \
+#define BSP_I2C_NEXT_BYTE_RCV(_baseAddr, _transPtr)              \
+{                                                                \
+    *(_transPtr)->rBuffer = MAP_I2CMasterDataGet( (_baseAddr) ); \
+    (_transPtr)->rBuffer  = ((_transPtr)->rBuffer + 1);          \
+    (_transPtr)->rLen     = ((_transPtr)->rLen - 1);             \
+}
+
+#define BSP_I2C_NEXT_BYTE_SEND_FIFO(_baseAddr, _transPtr)               \
+{                                                                       \
+    while( ((_transPtr)->wLen > 0) &&                                    \
+           (MAP_I2CFIFOStatus(_baseAddr) &  I2C_FIFO_TX_FULL) == 0x00 ) \
+    {                                                                   \
+        MAP_I2CFIFODataPut( (_baseAddr), *(_transPtr)->wBuffer );       \
+        (_transPtr)->wBuffer = ((_transPtr)->wBuffer + 1);              \
+        (_transPtr)->wLen    = ((_transPtr)->wLen - 1);                 \
+    }                                                                   \
+}
+
+#define BSP_I2C_NEXT_BYTE_RCV_FIFO(_baseAddr, _transPtr)                \
+{                                                                       \
+    while( (MAP_I2CFIFOStatus(_baseAddr) & I2C_FIFO_RX_EMPTY) == 0x00 ) \
+    {                                                                   \
+        *(_transPtr)->rBuffer = MAP_I2CFIFODataGet( (_baseAddr) );      \
+        (_transPtr)->rBuffer  = ((_transPtr)->rBuffer + 1);             \
+        (_transPtr)->rLen     = ((_transPtr)->rLen - 1);                \
+    }                                                                   \
 }
 
 /*============================================================================*/
@@ -90,136 +114,206 @@ static void
 bsp_I2c_masterTransStart( uint32_t               baseAddr,
                           bsp_I2c_MasterTrans_t* transPtr )
 {
-    // Set the slave address and the r/w bit
-    ROM_I2CMasterSlaveAddrSet( baseAddr,
-                               transPtr->addr,
-                               (transPtr->type == BSP_I2C_TRANS_TYPE_READ) );
-
-    // Only supports 100 and 400KHz for now
-    MAP_I2CMasterInitExpClk( baseAddr,
-                             MAP_SysCtlClockGet(),
-                             (transPtr->speed == BSP_I2C_SPEED_FAST) );
-
-    if( transPtr->type == BSP_I2C_TRANS_TYPE_READ )
+    BSP_TRACE_I2C_TRANS_START_ENTER();
+    /****** Set Speed ******/
+    // Library function works for 100 and 400KHz
+    if( (transPtr->speed == BSP_I2C_SPEED_STANDARD) || (transPtr->speed == BSP_I2C_SPEED_FAST) )
     {
-        ROM_I2CMasterControl( baseAddr, (transPtr->len == 1) ?
-                                            I2C_MASTER_CMD_SINGLE_RECEIVE :
-                                            I2C_MASTER_CMD_BURST_RECEIVE_START );
+        MAP_I2CMasterInitExpClk( baseAddr,
+                                 MAP_SysCtlClockGet(),
+                                (transPtr->speed != BSP_I2C_SPEED_STANDARD) );
+    }
+    else if (transPtr->speed == BSP_I2C_SPEED_FAST_PLUS)
+    {
+        // For FAST_PLUS or HIGH the I2CMTPR must be modified manually
+        *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = ((MAP_SysCtlClockGet() + (2 * 3 * 1000000) - 1) /
+                                                        (2 * 3 * 1000000)) - 1;
     }
     else
     {
-        // Set the next byte to transmit and trigger the I2C peripheral
-        BSP_I2C_NEXT_BYTE_SEND( baseAddr, transPtr );
-        ROM_I2CMasterControl( baseAddr, (transPtr->len == 0) ?
-                                            I2C_MASTER_CMD_SINGLE_SEND :
-                                            I2C_MASTER_CMD_BURST_SEND_START );
+        // For HIGH the I2CMTPR must be modified manually to max period
+        // Check for HS support
+        // *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = 11;
+        // *(volatile uint32_t*)(baseAddr + I2C_O_MSA) = 0x08;
+        // MAP_I2CMasterControl( baseAddr, 0x13 );
+        // while(MAP_I2CMasterBusy( baseAddr ));
+        *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = 1;
+        //*(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = I2C_MTPR_HS | 6;
     }
 
+    /****** Set Address ******/
+    // Set the slave address and the r/w bit
+    MAP_I2CMasterSlaveAddrSet( baseAddr,
+                               transPtr->addr,
+                               (transPtr->type == BSP_I2C_TRANS_TYPE_READ) );
+
+    /****** Read/Write ******/
+    uint32_t intctrl;
+    uint32_t ctrl;
+    MAP_I2CMasterIntDisableEx( baseAddr, 0xFFFFFFFF );
+    MAP_I2CMasterIntClearEx( baseAddr, 0xFFFFFFFF );
+    if( transPtr->type == BSP_I2C_TRANS_TYPE_READ )
+    {
+        uint8_t rTrig = (transPtr->rLen < 8) ? transPtr->rLen : 8;
+        MAP_I2CRxFIFOConfigSet( baseAddr, (I2C_FIFO_CFG_RX_MASTER | (rTrig << 16)) );
+        MAP_I2CRxFIFOFlush( baseAddr );
+        MAP_I2CMasterBurstLengthSet( baseAddr, transPtr->rLen ); //assumes less than 256
+        ctrl = (transPtr->rLen == 1) ? I2C_MASTER_CMD_FIFO_SINGLE_RECEIVE : I2C_MASTER_CMD_FIFO_BURST_RECEIVE_START;
+        intctrl = I2C_MASTER_INT_RX_FIFO_REQ;
+    }
+    else
+    {
+        MAP_I2CTxFIFOConfigSet( baseAddr, I2C_FIFO_CFG_TX_MASTER );
+        MAP_I2CTxFIFOFlush( baseAddr );
+        MAP_I2CMasterBurstLengthSet( baseAddr, transPtr->wLen ); //assumes less than 256
+        BSP_I2C_NEXT_BYTE_SEND_FIFO( baseAddr, transPtr );
+        ctrl = (transPtr->wLen == 1) ? I2C_MASTER_CMD_FIFO_SINGLE_SEND : I2C_MASTER_CMD_FIFO_BURST_SEND_START;
+        intctrl = I2C_MASTER_INT_TX_FIFO_EMPTY;
+    }
+    MAP_I2CMasterIntEnableEx( baseAddr, intctrl );
+    MAP_I2CMasterControl( baseAddr, ctrl );
+
+    BSP_TRACE_I2C_TRANS_START_EXIT();
     return;
 }
 
 
 /*============================================================================*/
 static void
-bsp_I2c_isrSlaveCommon( uint32_t baseAddr,
-                        uint32_t intStatus )
+bsp_I2c_transComplete( bsp_I2c_Id_t id,
+                       uint32_t     baseAddr )
 {
-    return;
+    bsp_I2c_MasterTrans_t* transPtr = &bsp_I2c_masterTransInfo[id].active;
+    // Call callback
+    transPtr->callback( 0, transPtr->usrData );
+
+    // mark the active transaction as inactive
+    transPtr->nextPtr = NULL;
+
+    // See if there is a pending transaction in the queue
+    bsp_I2c_MasterTransInfo_t* transInfoPtr = &bsp_I2c_masterTransInfo[id];
+    if ( transInfoPtr->queueHeadPtr != NULL )
+    {
+        memcpy( &transInfoPtr->active, transInfoPtr->queueHeadPtr, sizeof(bsp_I2c_MasterTrans_t) );
+        transInfoPtr->queueHeadPtr = transInfoPtr->queueHeadPtr->nextPtr;
+
+        // Check if the queue is empty
+        if( transInfoPtr->queueHeadPtr == NULL )
+        {
+            transInfoPtr->queueTailPtr = NULL;
+        }
+        transInfoPtr->active.nextPtr = &transInfoPtr->active;
+        bsp_I2c_masterTransStart( baseAddr, &transInfoPtr->active );
+    }
+    else
+    {
+        /* DONE */
+        MAP_I2CMasterIntDisable( baseAddr );
+    }
 }
 
 
 /*============================================================================*/
 static void
-bsp_I2c_isrMasterCommon( uint32_t baseAddr,
-                         uint32_t intStatus )
+bsp_I2c_isrMasterCommon( bsp_I2c_Id_t id,
+                         uint32_t     baseAddr,
+                         uint32_t     intStatus )
 {
     BSP_TRACE_I2C_ISR_MASTER_ENTER();
-    if( (intStatus & I2C_MCS_IDLE) != 0 )
+    uint32_t ctrl;
+    uint32_t intctrl = 0;
+    uint8_t burstLen;
+    bsp_I2c_MasterTrans_t* transPtr = &bsp_I2c_masterTransInfo[id].active;
+
+    /* TX Fifo Interrupt */
+    if( (intStatus & I2C_MASTER_INT_TX_FIFO_EMPTY) != 0 )
     {
-        BSP_TRACE_I2C_STATUS_IDLE();
-        bsp_I2c_MasterTrans_t* transPtr = &bsp_I2c_masterTransActive;
-
-        if( transPtr->type == BSP_I2C_TRANS_TYPE_READ )
-        {
-            BSP_I2C_NEXT_BYTE_RCV( baseAddr, transPtr );
-        }
-
-        // Call callback
-        transPtr->callback( 0, transPtr->usrData );
-
-        // mark the active transaction as inactive
-        transPtr->nextPtr = NULL;
-
-        // See if there is a pending transaction in the queue
-        if( bsp_I2c_masterTransQueueHeadPtr != NULL )
-        {
-            memcpy( &bsp_I2c_masterTransActive, bsp_I2c_masterTransQueueHeadPtr, sizeof(bsp_I2c_masterTransActive) );
-
-            bsp_I2c_masterTransQueueHeadPtr = bsp_I2c_masterTransQueueHeadPtr->nextPtr;
-
-            // Check if the queue is empty
-            if( bsp_I2c_masterTransQueueHeadPtr == NULL )
-            {
-                bsp_I2c_masterTransQueueTailPtr = NULL;
-            }
-            bsp_I2c_masterTransActive.nextPtr = &bsp_I2c_masterTransActive;
-            bsp_I2c_masterTransStart( baseAddr, &bsp_I2c_masterTransActive );
-        }
-    }
-    else if( (intStatus & I2C_MCS_BUSBSY) != 0 )
-    {
-        BSP_TRACE_I2C_STATUS_BUS_BUSY();
-        bsp_I2c_MasterTrans_t* transPtr = &bsp_I2c_masterTransActive;
-        uint32_t i2cCmd;
-
-        if( transPtr->type == BSP_I2C_TRANS_TYPE_READ )
-        {
-            // Get the next byte received and trigger the I2C peripheral
-            BSP_I2C_NEXT_BYTE_RCV( baseAddr, transPtr );
-            i2cCmd = (transPtr->len > 1) ? I2C_MASTER_CMD_BURST_RECEIVE_CONT : I2C_MASTER_CMD_BURST_RECEIVE_FINISH;
-        }
-        else if( transPtr->type == BSP_I2C_TRANS_TYPE_WRITE_READ )
+        BSP_TRACE_I2C_STATUS_OTHER();
+        if( transPtr->type == BSP_I2C_TRANS_TYPE_WRITE_READ )
         {
             // Switch to read mode
             transPtr->type = BSP_I2C_TRANS_TYPE_READ;
 
-            // Reset the slave address and the r/w bit
-            ROM_I2CMasterSlaveAddrSet( baseAddr, transPtr->addr, true );
+            // Clear out TX Fifo before switching to Rx
+            MAP_I2CMasterIntDisableEx( baseAddr, I2C_MASTER_INT_TX_FIFO_EMPTY );
+            MAP_I2CTxFIFOConfigSet( baseAddr, I2C_FIFO_CFG_TX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
+            MAP_I2CTxFIFOFlush( baseAddr );
 
-            i2cCmd = I2C_MASTER_CMD_BURST_RECEIVE_START;
+            // Reset the slave address and the r/w bit
+            MAP_I2CMasterSlaveAddrSet( baseAddr, transPtr->addr, true );
+            uint8_t rTrig = (transPtr->rLen < 8) ? transPtr->rLen : 8;
+            MAP_I2CRxFIFOConfigSet( baseAddr, I2C_FIFO_CFG_RX_MASTER | (rTrig << 16) );
+            MAP_I2CRxFIFOFlush( baseAddr );
+            burstLen = (transPtr->rLen < 255) ? transPtr->rLen : 255;
+            MAP_I2CMasterBurstLengthSet( baseAddr, burstLen );
+            ctrl = (transPtr->rLen == 1) ? I2C_MASTER_CMD_FIFO_SINGLE_RECEIVE : I2C_MASTER_CMD_FIFO_BURST_RECEIVE_START;
+            intctrl = I2C_MASTER_INT_RX_FIFO_REQ;
+            MAP_I2CMasterIntEnableEx( baseAddr, intctrl );
+            MAP_I2CMasterControl( baseAddr, ctrl );
         }
         else // Assume Write
         {
-            // Set the next byte to transmit and trigger the I2C peripheral
-            BSP_I2C_NEXT_BYTE_SEND( baseAddr, transPtr );
-            i2cCmd = (transPtr->len > 0) ? I2C_MASTER_CMD_BURST_SEND_CONT : I2C_MASTER_CMD_BURST_SEND_FINISH;
+            if( transPtr->wLen == 0 )
+            {
+                bsp_I2c_transComplete( id, baseAddr );
+            }
+            else
+            {
+                // Set the next byte to transmit and trigger the I2C peripheral
+                BSP_I2C_NEXT_BYTE_SEND_FIFO( baseAddr, transPtr );
+                if( transPtr->wLen <= 0 )
+                {
+                    ctrl = I2C_MASTER_CMD_FIFO_BURST_SEND_FINISH;
+                    //ctrl = I2C_MASTER_CMD_FIFO_BURST_SEND_CONT;
+                }
+                else
+                {
+                    burstLen = (transPtr->wLen < 255) ? transPtr->wLen : 255;
+                    MAP_I2CMasterBurstLengthSet( baseAddr, burstLen );
+                    ctrl = (transPtr->wLen == 1) ? I2C_MASTER_CMD_FIFO_SINGLE_SEND : I2C_MASTER_CMD_FIFO_BURST_SEND_CONT;
+                }
+                intctrl = I2C_MASTER_INT_TX_FIFO_EMPTY;
+                MAP_I2CMasterIntEnableEx( baseAddr, intctrl );
+                MAP_I2CMasterControl( baseAddr, ctrl );
+            }
         }
-        ROM_I2CMasterControl( baseAddr, i2cCmd );
     }
+
+    /* RX Fifo Interrupt */
+    else if( (intStatus & I2C_MASTER_INT_RX_FIFO_REQ) != 0 )
+    {
+        BSP_TRACE_I2C_STATUS_OTHER();
+        BSP_TRACE_I2C_STATUS_OTHER();
+        BSP_I2C_NEXT_BYTE_RCV_FIFO( baseAddr, transPtr );
+
+        if( transPtr->rLen <= 0 )
+        {
+            MAP_I2CRxFIFOConfigSet( baseAddr, I2C_FIFO_CFG_RX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
+            MAP_I2CRxFIFOFlush( baseAddr );
+            MAP_I2CMasterIntDisableEx( baseAddr, I2C_MASTER_INT_RX_FIFO_REQ );
+            MAP_I2CMasterIntClearEx( baseAddr, I2C_MASTER_INT_RX_FIFO_REQ );
+            MAP_I2CMasterControl( baseAddr, I2C_MASTER_CMD_BURST_SEND_STOP );
+
+            bsp_I2c_transComplete( id, baseAddr );
+        }
+        else
+        {
+            burstLen = (transPtr->rLen < 255) ? transPtr->rLen : 255;
+            MAP_I2CMasterBurstLengthSet( baseAddr, burstLen );
+            ctrl = (transPtr->wLen == 1) ? I2C_MASTER_CMD_FIFO_SINGLE_RECEIVE : I2C_MASTER_CMD_FIFO_BURST_RECEIVE_CONT;
+            MAP_I2CMasterControl( baseAddr, ctrl );
+        }
+    }
+
+    /* Unexpected Interrupt */
     else
     {
         BSP_TRACE_I2C_STATUS_OTHER();
-        if( (intStatus & I2C_MCS_ARBLST) != 0 )
-        {
-            // Check retry count and retry or fail
-        }
-
-        if( (intStatus & I2C_MCS_DATACK) != 0 )
-        {
-            // Check retry count and retry or fail
-        }
-
-        if( (intStatus & I2C_MCS_ADRACK) != 0 )
-        {
-            // Don't need this
-        }
-
-        if( (intStatus & I2C_MCS_ERROR) != 0 )
-        {
-            // Check retry count and retry or fail
-        }
+        BSP_TRACE_I2C_STATUS_OTHER();
+        BSP_TRACE_I2C_STATUS_OTHER();
     }
     BSP_TRACE_I2C_ISR_MASTER_EXIT();
+
     return;
 }
 
@@ -228,24 +322,18 @@ bsp_I2c_isrMasterCommon( uint32_t baseAddr,
 void
 bsp_I2c_isrCommon( bsp_I2c_Id_t id )
 {
+    BSP_TRACE_INT_ENTER();
     uint32_t baseAddr = bsp_I2c_staticInfo[id].baseAddr;
 
     // Read out and clear the masked interrupt status registers
-    uint32_t intStatusMaster = BSP_I2C_REG( baseAddr, MCS );
-    MAP_I2CMasterIntClear( baseAddr );
-
+    uint32_t intStatusMaster = MAP_I2CMasterIntStatusEx( baseAddr, true );
+    MAP_I2CMasterIntClearEx( baseAddr, intStatusMaster );
     if( intStatusMaster != 0 )
     {
-        bsp_I2c_isrMasterCommon( baseAddr, intStatusMaster );
+        bsp_I2c_isrMasterCommon( id, baseAddr, intStatusMaster );
     }
 
-    uint32_t intStatusSlave = BSP_I2C_REG( baseAddr, SCSR );
-    MAP_I2CSlaveIntClear( baseAddr );
-
-    if( intStatusSlave != 0 )
-    {
-        bsp_I2c_isrSlaveCommon( baseAddr, intStatusSlave );
-    }
+    BSP_TRACE_INT_EXIT();
     return;
 }
 
@@ -257,9 +345,12 @@ bsp_I2c_isrCommon( bsp_I2c_Id_t id )
 void
 bsp_I2c_init( void )
 {
-    bsp_I2c_masterTransQueueHeadPtr = NULL;
-    bsp_I2c_masterTransQueueTailPtr = NULL;
-    memset( &bsp_I2c_masterTransActive, 0, sizeof(bsp_I2c_masterTransActive) );
+    for( int id=0; id<DIM(bsp_I2c_masterTransInfo); id++ )
+    {
+        bsp_I2c_masterTransInfo[id].queueHeadPtr = NULL;
+        bsp_I2c_masterTransInfo[id].queueTailPtr = NULL;
+        memset( &bsp_I2c_masterTransInfo[id].active, 0, sizeof(bsp_I2c_MasterTrans_t) );
+    }
 
     // Disable all I2C blocks
     for( size_t i=0; i<DIM(bsp_I2c_staticInfo); i++ )
@@ -278,10 +369,14 @@ bsp_I2c_init( void )
         const bsp_I2c_PinInfo_t*    pinInfoPtrSda = &infoPtr->sdaPinInfoTable[bsp_I2c_idTable[i].selSda];
 
         MAP_SysCtlPeripheralEnable( infoPtr->sysCtrlAddr );
+
         MAP_I2CMasterIntDisable( infoPtr->baseAddr );
         MAP_I2CMasterIntClear( infoPtr->baseAddr );
+        MAP_I2CMasterIntDisableEx( infoPtr->baseAddr, 0xFFFFFFFF );
+
         MAP_I2CSlaveIntDisable( infoPtr->baseAddr );
         MAP_I2CSlaveIntClear( infoPtr->baseAddr );
+        MAP_I2CSlaveIntDisableEx( infoPtr->baseAddr, 0xFFFFFFFF );
 
         bsp_Gpio_configInput( pinInfoPtrScl->portId,
                               pinInfoPtrScl->mask,
@@ -300,6 +395,11 @@ bsp_I2c_init( void )
         bsp_Gpio_configAltFunction( pinInfoPtrSda->portId,
                                     pinInfoPtrSda->mask,
                                     pinInfoPtrSda->altFuncId );
+
+        MAP_I2CRxFIFOConfigSet( infoPtr->baseAddr, I2C_FIFO_CFG_RX_MASTER | I2C_FIFO_CFG_RX_NO_TRIG );
+        MAP_I2CRxFIFOFlush( infoPtr->baseAddr );
+        MAP_I2CTxFIFOConfigSet( infoPtr->baseAddr, I2C_FIFO_CFG_TX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
+        MAP_I2CTxFIFOFlush( infoPtr->baseAddr );
 
         /* Enable I2C interrupt at the NVIC */
         bsp_Interrupt_enable( infoPtr->intId );
@@ -322,8 +422,8 @@ bsp_I2c_masterControl( bsp_I2c_Id_t      id,
     MAP_I2CMasterIntDisable( baseAddr );
     MAP_I2CMasterIntClear( baseAddr );
 
-    // Disable Master mode
-    MAP_I2CMasterDisable( baseAddr );
+    // Disable Master mode interrupts
+    MAP_I2CMasterIntDisableEx( baseAddr, 0xFFFFFFFF );
 
     // Enable/Disable HW block
     if( control == BSP_I2C_CONTROL_ENABLE )
@@ -335,8 +435,14 @@ bsp_I2c_masterControl( bsp_I2c_Id_t      id,
                                  MAP_SysCtlClockGet(),
                                  false );
 
-        // Re-enable Master interrupts and master Mode
-        MAP_I2CMasterIntEnable( baseAddr );
+        // *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = 11;
+        // *(volatile uint32_t*)(baseAddr + I2C_O_MSA) = 0x08;
+        // MAP_I2CMasterControl( baseAddr, 0x13 );
+        // while(MAP_I2CMasterBusy( baseAddr ));
+    }
+    else
+    {
+        MAP_I2CMasterDisable( baseAddr );
     }
 
     BSP_MCU_CRITICAL_SECTION_EXIT();
@@ -349,39 +455,43 @@ bsp_I2c_masterTransQueue( bsp_I2c_Id_t           id,
                           bsp_I2c_MasterTrans_t* transPtr )
 {
     BSP_MCU_CRITICAL_SECTION_ENTER();
+    BSP_TRACE_I2C_TRANS_QUEUE_ENTER();
 
     // Passed in transaction is always at the end of the queue
     transPtr->nextPtr = NULL;
 
-    if( (transPtr->len == 0) || (transPtr->buffer == NULL) )
+    if( ((transPtr->wLen == 0) || (transPtr->wBuffer == NULL)) &&
+        ((transPtr->rLen == 0) || (transPtr->rBuffer == NULL)) )
     {
         // Call callback with error and don't queue the transaction
         return;
     }
 
     // nextPtr will be NULL if there is no active transaction underway
-    if( bsp_I2c_masterTransActive.nextPtr == NULL )
+    bsp_I2c_MasterTransInfo_t* transInfoPtr = &bsp_I2c_masterTransInfo[id];
+    if( transInfoPtr->active.nextPtr == NULL )
     {
-        memcpy( &bsp_I2c_masterTransActive, transPtr, sizeof(bsp_I2c_masterTransActive) );
-        bsp_I2c_masterTransActive.nextPtr = &bsp_I2c_masterTransActive;
-        bsp_I2c_masterTransStart( bsp_I2c_staticInfo[id].baseAddr, &bsp_I2c_masterTransActive );
+        memcpy( &transInfoPtr->active, transPtr, sizeof(bsp_I2c_MasterTrans_t) );
+        transInfoPtr->active.nextPtr = &transInfoPtr->active;
+        bsp_I2c_masterTransStart( bsp_I2c_staticInfo[id].baseAddr, &transInfoPtr->active );
     }
     else
     {
         // There is an active transaction so queue it up
-        if( bsp_I2c_masterTransQueueHeadPtr == NULL )
+        if( transInfoPtr->queueHeadPtr == NULL )
         {
             // Only thing in the queue so setup the head/tail properly
-            bsp_I2c_masterTransQueueHeadPtr = transPtr;
-            bsp_I2c_masterTransQueueTailPtr = transPtr;
+            transInfoPtr->queueHeadPtr = transPtr;
+            transInfoPtr->queueTailPtr = transPtr;
         }
         else
         {
             // put at the end of the list
-            bsp_I2c_masterTransQueueTailPtr->nextPtr = transPtr;
-            bsp_I2c_masterTransQueueTailPtr = transPtr;
+            transInfoPtr->queueTailPtr->nextPtr = transPtr;
+            transInfoPtr->queueTailPtr = transPtr;
         }
     }
 
+    BSP_TRACE_I2C_TRANS_QUEUE_EXIT();
     BSP_MCU_CRITICAL_SECTION_EXIT();
 }

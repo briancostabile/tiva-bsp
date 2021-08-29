@@ -69,12 +69,13 @@
 
 // List the I2C devices for this platform as an array of structures
 // { <index-into-bsp_I2c_staticInfo>, <index-into-bsp_I2c_pinInfoTableSclX>, <index-into-bsp_I2c_pinInfoTableSdaX> }
-#define BSP_PLATFORM_I2C_LIST   { { 3, 0, 0 } }
+#define BSP_PLATFORM_I2C_LIST   { { 3, 0, 0 }, { 1, 0, 0 } }
 
 // Each I2C device must identify the I2C hardware block it is connected to
 #define BSP_PLATFORM_I2C_SHT21    3
 #define BSP_PLATFORM_I2C_TMP006   3
 #define BSP_PLATFORM_I2C_ISL29023 3
+#define BSP_PLATFORM_I2C_INA228   1
 
 // Humidity/Temperature sensor accuracy selection
 //      Humid  Temp

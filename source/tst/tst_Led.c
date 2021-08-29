@@ -29,17 +29,22 @@
 #include "tst.h"
 #include "tst_Led.h"
 #include "svc_LedEh.h"
+#include "bsp_TimerGp.h"
 #include "osapi.h"
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-
+#if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
+#include "dev_PwrMon.h"
+#endif
 /*==============================================================================
  *                                 Globals
  *============================================================================*/
 // String globals
 TST_STR_CMD( TST_LED_TEST_STR_CMD, "test" );
 TST_STR_HLP( TST_LED_TEST_STR_HLP, "Run a predefined test pattern on LED" );
+TST_STR_CMD( TST_LED_TEST2_STR_CMD, "test2" );
+TST_STR_HLP( TST_LED_TEST2_STR_HLP, "Run a test" );
 TST_STR_CMD( TST_LED_SET_COLOR_STR_CMD, "set_color" );
 TST_STR_HLP( TST_LED_SET_COLOR_STR_HLP, "Set color of selected LED" );
 
@@ -94,6 +99,49 @@ tst_Led_set_color( int argc, char** argv )
     return( TST_STATUS_OK );
 }
 
+/*============================================================================*/
+uint32_t count = 1;
+void tst_Led_readCallback( void )
+{
+    bsp_Led_setColor( BSP_PLATFORM_LED_ID_STATUS,
+                      (BSP_LED_COLOR_MASK_R | BSP_LED_COLOR_MASK_G | BSP_LED_COLOR_MASK_B) * ((count++ >> 9) & 0x01) );
+    return;
+}
+
+// void tst_Led_readCallback2( void )
+// {
+//     return;
+// }
+
+/*============================================================================*/
+#if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
+dev_PwrMon_DeviceId_t deviceId;
+dev_PwrMon_Sample_t sample1;
+//dev_PwrMon_Sample_t sample2;
+#endif
+void
+tst_Led_testCallback( bsp_TimerGp_TimerId_t    timerId,
+                      bsp_TimerGp_SubTimerId_t subTimerId,
+                      uint32_t                 mask )
+{
+#if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
+    dev_PwrMon_deviceId( 0, &deviceId, tst_Led_readCallback );
+    //dev_PwrMon_sample( 0, &sample1, tst_Led_readCallback );
+    //dev_PwrMon_sample( 1, &sample2, tst_Led_readCallback2 );
+#endif
+}
+
+
+/*============================================================================*/
+static tst_Status_t
+tst_Led_test2( int argc, char** argv )
+{
+    bsp_TimerGp_startCountdown( BSP_TIMERGP_ID_0, BSP_TIMERGP_TYPE_PERIODIC, 0x00000000, 400, tst_Led_testCallback );
+    // Initialize/configure power monitors
+
+    return( TST_STATUS_OK );
+}
+
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
@@ -106,6 +154,7 @@ tst_Led_set_color( int argc, char** argv )
 const tst_TableElement_t tst_Led_menu[] =
 {
     TST_LED_CMD( TEST, test ),
+    TST_LED_CMD( TEST2, test2 ),
     TST_LED_CMD( SET_COLOR, set_color ),
     TST_END_ELEMENT
 };

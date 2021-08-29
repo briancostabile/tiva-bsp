@@ -27,6 +27,7 @@
 #include "bsp_Gpio.h"
 #include "bsp_Clk.h"
 #include "bsp_Interrupt.h"
+#include "bsp_Trace.h"
 #include <string.h>
 
 #include "driverlib/rom.h"
@@ -65,6 +66,7 @@ bsp_Gpio_isrCommon( bsp_Gpio_PortId_t portId )
     uint32_t                 tmpMis;
     uint8_t                  bitOffset;
 
+    BSP_TRACE_INT_ENTER();
     portBaseAddr = bsp_Gpio_platformPortInfoTable[ portId ].baseAddr;
     handlerTable = bsp_Gpio_platformPortInfoTable[ portId ].handlerTable;
 
@@ -85,6 +87,7 @@ bsp_Gpio_isrCommon( bsp_Gpio_PortId_t portId )
         tmpMis = (tmpMis >> 1);
         bitOffset++;
     }
+    BSP_TRACE_INT_EXIT();
     return;
 }
 
@@ -98,6 +101,7 @@ bsp_Gpio_isrPinCommon( bsp_Gpio_PortId_t    portId,
     uint32_t                 tmpMis;
     uint32_t                 bitMask;
 
+    BSP_TRACE_INT_ENTER();
     portBaseAddr = bsp_Gpio_platformPortInfoTable[ portId ].baseAddr;
     handlerTable = bsp_Gpio_platformPortInfoTable[ portId ].handlerTable;
 
@@ -119,7 +123,7 @@ bsp_Gpio_isrPinCommon( bsp_Gpio_PortId_t    portId,
             handlerTable[ bitOffset ]( portId, bitOffset );
         }
     }
-
+    BSP_TRACE_INT_EXIT();
     return;
 }
 

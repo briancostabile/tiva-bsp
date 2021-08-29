@@ -262,9 +262,11 @@ bsp_Usb_interruptHandler( void )
 {
 #if defined(BSP_PLATFORM_USB_ENABLED)
     extern void USB0DeviceIntHandler(void);
+    BSP_TRACE_INT_ENTER();
     BSP_TRACE_USBIO_INT_ENTER();
     USB0DeviceIntHandler();
     BSP_TRACE_USBIO_INT_EXIT();
+    BSP_TRACE_INT_EXIT();
 #endif
     return;
 }

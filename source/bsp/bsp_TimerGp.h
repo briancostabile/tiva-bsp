@@ -21,67 +21,61 @@
  */
 /*============================================================================*/
 /**
- * @file svc_SamplerEh.c
- * @brief Contains the Event handler for Service layer Sampler messages
+ * @file bsp_TimerGp.h
+ * @brief Contains types and prototypes to access the General Purpose Timers
  */
-#include "bsp_Types.h"
+#pragma once
+
 #include "bsp_Platform.h"
-#include "bsp_Mcu.h"
-#include "svc_SamplerEh.h"
-#include "svc_MsgFwk.h"
-#include "osapi.h"
-#if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
-#include "dev_PwrMon.h"
-#endif
-#ifndef SVC_LOG_LEVEL
-#define SVC_LOG_LEVEL SVC_LOG_LEVEL_NONE
-#endif
-#include "svc_Log.h"
 
-#if defined(SVC_EHID_SAMPLER)
+#include BUILD_INCLUDE_STRING( bsp_TimerGp_, PLATFORM_CORE )
+
 /*==============================================================================
- *                                Defines
+ *                             Defines
  *============================================================================*/
 
 /*==============================================================================
- *                                Types
+ *                             Macros
  *============================================================================*/
 
 /*==============================================================================
- *                                Globals
+ *                               Types
  *============================================================================*/
-
-/*==============================================================================
- *                            Local Functions
- *============================================================================*/
+/*============================================================================*/
+typedef uint32_t bsp_TimerGp_Timeout_t;
 
 /*============================================================================*/
-static void
-svc_SamplerEh_msgHandler( svc_MsgFwk_Hdr_t* msgPtr )
-{
-    return;
-}
+#define BSP_TIMERGP_TYPE_PERIODIC 0
+#define BSP_TIMERGP_TYPE_ONE_SHOT 1
+typedef uint8_t bsp_TimerGp_Type_t;
 
 /*============================================================================*/
-static void
-svc_SamplerEh_init( void )
-{
-#if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
-    dev_PwrMon_init();
-#endif
-}
+#define BSP_TIMERGP_CLK_SRC_SYSTEM 0
+#define BSP_TIMERGP_CLK_SRC_PIOSC  1
+typedef uint8_t bsp_TimerGp_ClkSrc_t;
+
+/*============================================================================*/
+#define BSP_TIMERGP_DMA_CTRL_NONE        0x00000000
+#define BSP_TIMERGP_DMA_CTRL_TIMEOUT     0x00000001
+#define BSP_TIMERGP_DMA_CTRL_CAP_MATCH   0x00000002
+#define BSP_TIMERGP_DMA_CTRL_CAP_EVENT   0x00000004
+#define BSP_TIMERGP_DMA_CTRL_CAP_RTC     0x00000008
+#define BSP_TIMERGP_DMA_CTRL_MODE_MATCH  0x00000010
+typedef uint8_t bsp_TimerGp_DmaCtrl_t;
 
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-const svc_Eh_Info_t svc_SamplerEh_info =
-{
-    SVC_EHID_SAMPLER,
-    0,    // bcastListLen
-    NULL, // bcastList
-    svc_SamplerEh_init,
-    svc_SamplerEh_msgHandler  // msgHandler
-};
-#endif
+void
+bsp_TimerGp_init( void );
+
+/*============================================================================*/
+void
+bsp_TimerGp_startCountdown( bsp_TimerGp_TimerId_t        timerId,
+                            bsp_TimerGp_Type_t           type,
+                            bsp_TimerGp_DmaCtrl_t        dmaCtrl,
+                            bsp_TimerGp_Timeout_t        timeout, //in microseconds
+                            bsp_TimerGp_TimeoutHandler_t callback );
+

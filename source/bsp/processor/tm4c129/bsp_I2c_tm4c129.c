@@ -232,3 +232,63 @@ bsp_I2c_interruptHandler3( void )
     bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C3 );
     return;
 }
+
+
+/*============================================================================*/
+void
+bsp_I2c_interruptHandler4( void )
+{
+    bsp_I2c_isrCommon( BSP_I2C_ID4 );
+    bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C4 );
+    return;
+}
+
+
+/*============================================================================*/
+void
+bsp_I2c_interruptHandler5( void )
+{
+    bsp_I2c_isrCommon( BSP_I2C_ID5 );
+    bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C5 );
+    return;
+}
+
+
+/*============================================================================*/
+void
+bsp_I2c_interruptHandler6( void )
+{
+    bsp_I2c_isrCommon( BSP_I2C_ID6 );
+    bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C6 );
+    return;
+}
+
+
+/*============================================================================*/
+void
+bsp_I2c_interruptHandler7( void )
+{
+    bsp_I2c_isrCommon( BSP_I2C_ID7 );
+    bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C7 );
+    return;
+}
+
+
+/*============================================================================*/
+void
+bsp_I2c_interruptHandler8( void )
+{
+    bsp_I2c_isrCommon( BSP_I2C_ID8 );
+    bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C8 );
+    return;
+}
+
+
+/*============================================================================*/
+void
+bsp_I2c_interruptHandler9( void )
+{
+    bsp_I2c_isrCommon( BSP_I2C_ID9 );
+    bsp_Interrupt_clearPending( BSP_INTERRUPT_ID_I2C9 );
+    return;
+}

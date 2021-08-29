@@ -36,8 +36,10 @@
 #include "bsp_Gpio.h"
 #include "bsp_Trace.h"
 #include "bsp_Button.h"
+#include "bsp_TimerGp.h"
 #include "bsp_I2c.h"
 #include "bsp_Io.h"
+#include "bsp_Dma.h"
 
 #include "osapi.h"
 
@@ -75,10 +77,12 @@ main(void)
     bsp_Clk_init();
     bsp_Reset_init();
     bsp_Interrupt_init();
+    bsp_Dma_init();
     bsp_Gpio_init();
     bsp_Trace_init();
     bsp_Led_init();
     bsp_Button_init();
+    bsp_TimerGp_init();
     bsp_I2c_init();
     bsp_Uart_init();
     bsp_Usb_init();

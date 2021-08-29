@@ -194,6 +194,7 @@ bsp_Uart_isrCommon( bsp_Uart_Id_t id )
     uint32_t intStatus;
     uint32_t baseAddr;
 
+    BSP_TRACE_INT_ENTER();
     BSP_TRACE_UART_INT_ENTER();
 
     baseAddr = bsp_Uart_staticInfoTable[id].baseAddr;
@@ -215,6 +216,7 @@ bsp_Uart_isrCommon( bsp_Uart_Id_t id )
     }
 
     BSP_TRACE_UART_INT_EXIT();
+    BSP_TRACE_INT_EXIT();
 
     return;
 }

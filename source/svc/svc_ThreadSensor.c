@@ -31,6 +31,7 @@
 #include "svc_TempEh.h"
 #include "svc_HumidEh.h"
 #include "svc_LightEh.h"
+#include "svc_SamplerEh.h"
 #include "svc_Eh.h"
 #include "osapi.h"
 
@@ -61,14 +62,17 @@ void*    svc_ThreadSensor_queue[SVC_THREADSENSOR_QUEUE_DEPTH];
 /*============================================================================*/
 static const svc_Eh_Info_t* svc_ThreadSensor_ehTable[] =
 {
-#if defined(SVC_EHID_TEMP)
-    &svc_TempEh_info,
-#endif
-#if defined(SVC_EHID_HUMID)
-    &svc_HumidEh_info,
-#endif
-#if defined(SVC_EHID_LIGHT)
-    &svc_LightEh_info,
+// #if defined(SVC_EHID_TEMP)
+//     &svc_TempEh_info,
+// #endif
+// #if defined(SVC_EHID_HUMID)
+//     &svc_HumidEh_info,
+// #endif
+// #if defined(SVC_EHID_LIGHT)
+//     &svc_LightEh_info,
+// #endif
+#if defined(SVC_EHID_SAMPLER)
+    &svc_SamplerEh_info
 #endif
 };
 

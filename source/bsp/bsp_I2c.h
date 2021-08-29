@@ -79,8 +79,10 @@ typedef struct bsp_I2c_MasterTrans_n
     bsp_I2c_TransType_t           type;
     bsp_I2c_Speed_t               speed;
     bsp_I2c_Addr_t                addr;
-    size_t                        len;
-    uint8_t*                      buffer;
+    size_t                        rLen;
+    uint8_t*                      rBuffer;
+    size_t                        wLen;
+    uint8_t*                      wBuffer;
     bsp_I2c_MasterTransCallback_t callback;
     void*                         usrData;
 } bsp_I2c_MasterTrans_t;

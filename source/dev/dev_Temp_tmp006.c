@@ -130,21 +130,13 @@ dev_Temp_i2cTransCallback( bsp_I2c_Status_t status, void* usrData )
 /*===========================================================================*/
 // Wrapper function to setup the I2C transaction structure and queue it
 static void
-dev_Temp_i2cTransQueue( bsp_I2c_TransType_t type,
-                        size_t              len,
-                        uint8_t*            buffer,
-                        void*               usrData )
+dev_Temp_i2cTransQueue( void* usrData )
 {
-    dev_Temp_i2cTrans.type     = type;
     dev_Temp_i2cTrans.speed    = DEV_TEMP_I2C_SPEED;
     dev_Temp_i2cTrans.addr     = DEV_TEMP_I2C_ADDR;
-    dev_Temp_i2cTrans.len      = len;
-    dev_Temp_i2cTrans.buffer   = buffer;
     dev_Temp_i2cTrans.callback = dev_Temp_i2cTransCallback;
     dev_Temp_i2cTrans.usrData  = usrData;
-
     bsp_I2c_masterTransQueue( BSP_PLATFORM_I2C_TMP006, &dev_Temp_i2cTrans );
-
     return;
 }
 
@@ -156,11 +148,15 @@ dev_Temp_i2cRegWrite( bsp_Temp_I2cCmd_t pointerId,
                       dev_Temp_Reg_t    regValue,
                       void*             usrData )
 {
-    dev_Temp_i2cBuffer[0] = pointerId;
-    dev_Temp_i2cBuffer[1] = ((regValue >> 8) & 0xFF);
-    dev_Temp_i2cBuffer[2] = ((regValue >> 0) & 0xFF);
-
-    dev_Temp_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 3, dev_Temp_i2cBuffer, usrData );
+    dev_Temp_i2cBuffer[0]     = pointerId;
+    dev_Temp_i2cBuffer[1]     = ((regValue >> 8) & 0xFF);
+    dev_Temp_i2cBuffer[2]     = ((regValue >> 0) & 0xFF);
+    dev_Temp_i2cTrans.type    = BSP_I2C_TRANS_TYPE_WRITE;
+    dev_Temp_i2cTrans.wLen    = 3;
+    dev_Temp_i2cTrans.wBuffer = dev_Temp_i2cBuffer;
+    dev_Temp_i2cTrans.rLen    = 0;
+    dev_Temp_i2cTrans.rBuffer = NULL;
+    dev_Temp_i2cTransQueue( usrData );
     return;
 }
 
@@ -169,8 +165,7 @@ static void
 dev_Temp_regSelect( bsp_Temp_I2cCmd_t regId )
 {
     // After reset is triggered, setup the pointer to be the Temperature register
-    dev_Temp_i2cBuffer[0] = regId;
-    dev_Temp_i2cTransQueue( BSP_I2C_TRANS_TYPE_WRITE, 1, dev_Temp_i2cBuffer, NULL );
+    dev_Temp_i2cRegWrite( regId, 0, NULL );
     return;
 }
 
@@ -219,10 +214,12 @@ static void
 dev_Temp_dataReadyHandler( bsp_Gpio_PortId_t    portId,
                            bsp_Gpio_PinOffset_t pinOffset )
 {
-    dev_Temp_i2cTransQueue( BSP_I2C_TRANS_TYPE_READ,
-                            sizeof(dev_Temp_Reg_t),
-                            dev_Temp_i2cBuffer,
-                            dev_Temp_readCompleteHandler );
+    dev_Temp_i2cTrans.type    = BSP_I2C_TRANS_TYPE_READ;
+    dev_Temp_i2cTrans.wLen    = 0;
+    dev_Temp_i2cTrans.wBuffer = NULL;
+    dev_Temp_i2cTrans.rLen    = 2;
+    dev_Temp_i2cTrans.rBuffer = dev_Temp_i2cBuffer;
+    dev_Temp_i2cTransQueue( dev_Temp_readCompleteHandler );
     return;
 }
 
