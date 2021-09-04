@@ -33,10 +33,55 @@
  *============================================================================*/
 typedef uint16_t dev_PwrMon_DeviceId_t;
 typedef uint16_t dev_PwrMon_ManufacturerId_t;
-typedef uint16_t dev_PwrMon_Sample_t;
+typedef uint16_t dev_PwrMon_Config_t;
+typedef uint16_t dev_PwrMon_Cal_t;
+typedef uint16_t dev_PwrMon_Data_t;
+typedef uint16_t dev_PwrMon_AlertMask_t;
+typedef uint16_t dev_PwrMon_ShuntVal_t;
 
-typedef uint8_t bsp_PwrMon_DevId_t;
-typedef void (*dev_PwrMon_ReadCallback_t)( void );
+
+enum
+{
+    BSP_PWRMOMN_AVG_MODE_SAMPLES_1    = 0x00,
+    BSP_PWRMOMN_AVG_MODE_SAMPLES_4    = 0x01,
+    BSP_PWRMOMN_AVG_MODE_SAMPLES_16   = 0x02,
+    BSP_PWRMOMN_AVG_MODE_SAMPLES_64   = 0x03,
+    BSP_PWRMOMN_AVG_MODE_SAMPLES_128  = 0x04,
+    BSP_PWRMOMN_AVG_MODE_SAMPLES_256  = 0x05,
+    BSP_PWRMOMN_AVG_MODE_SAMPLES_512  = 0x06,
+    BSP_PWRMOMN_AVG_MODE_SAMPLES_1024 = 0x07
+};
+typedef uint8_t dev_PwrMon_AvgMode_t;
+
+enum
+{
+    BSP_PWRMOMN_CONV_TIME_US_140   = 0x00,
+    BSP_PWRMOMN_CONV_TIME_US_204   = 0x01,
+    BSP_PWRMOMN_CONV_TIME_US_332   = 0x02,
+    BSP_PWRMOMN_CONV_TIME_US_558   = 0x03,
+    BSP_PWRMOMN_CONV_TIME_US_1100  = 0x04,
+    BSP_PWRMOMN_CONV_TIME_US_2116  = 0x05,
+    BSP_PWRMOMN_CONV_TIME_US_4156  = 0x06,
+    BSP_PWRMOMN_CONV_TIME_US_8244  = 0x07
+};
+typedef uint8_t dev_PwrMon_ConvTime_t;
+
+enum
+{
+    BSP_PWRMOMN_OP_MODE_PWR_DWN            = 0x00,
+    BSP_PWRMOMN_OP_MODE_TRIG_SHUNT         = 0x01,
+    BSP_PWRMOMN_OP_MODE_TRIG_BUS           = 0x02,
+    BSP_PWRMOMN_OP_MODE_TRIG_SHUNT_AND_BUS = 0x03,
+    BSP_PWRMOMN_OP_MODE_CONT_SHUNT         = 0x05,
+    BSP_PWRMOMN_OP_MODE_CONT_BUS           = 0x06,
+    BSP_PWRMOMN_OP_MODE_CONT_SHUNT_AND_BUS = 0x07,
+};
+typedef uint8_t dev_PwrMon_OpMode_t;
+
+
+typedef uint8_t dev_PwrMon_RailId_t;
+typedef uint8_t dev_PwrMon_DevId_t;
+typedef void (*dev_PwrMon_Callback_t)( void* cbData );
 
 /*==============================================================================
  *                               Prototypes
@@ -47,18 +92,44 @@ dev_PwrMon_init( void );
 
 /*===========================================================================*/
 void
-dev_PwrMon_deviceId( bsp_PwrMon_DevId_t        devId,
-                     dev_PwrMon_DeviceId_t*    dataPtr,
-                     dev_PwrMon_ReadCallback_t callback );
+dev_PwrMon_railConfig( dev_PwrMon_RailId_t   railId,
+                       dev_PwrMon_ConvTime_t shuntConvTime,
+                       dev_PwrMon_ConvTime_t busConvTime,
+                       dev_PwrMon_AvgMode_t  avgMode,
+                       dev_PwrMon_Callback_t callback,
+                       void*                 cbData );
 
 /*===========================================================================*/
 void
-dev_PwrMon_manufacturerId( bsp_PwrMon_DevId_t           devId,
-                           dev_PwrMon_ManufacturerId_t* dataPtr,
-                           dev_PwrMon_ReadCallback_t    callback );
+dev_PwrMon_railConfigShunt( dev_PwrMon_RailId_t   railId,
+                            dev_PwrMon_ShuntVal_t shunt,
+                            dev_PwrMon_Callback_t callback,
+                            void*                 cbData );
 
 /*===========================================================================*/
 void
-dev_PwrMon_sample( bsp_PwrMon_DevId_t        devId,
-                   dev_PwrMon_Sample_t*      dataPtr,
-                   dev_PwrMon_ReadCallback_t callback );
+dev_PwrMon_railCurrentRead( dev_PwrMon_RailId_t   railId,
+                            dev_PwrMon_Data_t*    dataPtr,
+                            dev_PwrMon_Callback_t callback,
+                            void*                 cbData );
+
+/*===========================================================================*/
+void
+dev_PwrMon_railBusVoltageRead( dev_PwrMon_RailId_t   railId,
+                               dev_PwrMon_Data_t*    dataPtr,
+                               dev_PwrMon_Callback_t callback,
+                               void*                 cbData );
+
+/*===========================================================================*/
+void
+dev_PwrMon_railShuntVoltageRead( dev_PwrMon_RailId_t   railId,
+                                 dev_PwrMon_Data_t*    dataPtr,
+                                 dev_PwrMon_Callback_t callback,
+                                 void*                 cbData );
+
+/*===========================================================================*/
+void
+dev_PwrMon_railPowerRead( dev_PwrMon_RailId_t   railId,
+                          dev_PwrMon_Data_t*    dataPtr,
+                          dev_PwrMon_Callback_t callback,
+                          void*                 cbData );

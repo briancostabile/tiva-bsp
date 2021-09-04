@@ -101,22 +101,23 @@ tst_Led_set_color( int argc, char** argv )
 
 /*============================================================================*/
 uint32_t count = 1;
-void tst_Led_readCallback( void )
+void tst_Led_voltageCallback( void* cbData )
 {
     bsp_Led_setColor( BSP_PLATFORM_LED_ID_STATUS,
                       (BSP_LED_COLOR_MASK_R | BSP_LED_COLOR_MASK_G | BSP_LED_COLOR_MASK_B) * ((count++ >> 9) & 0x01) );
     return;
 }
 
-// void tst_Led_readCallback2( void )
-// {
-//     return;
-// }
+void tst_Led_currentCallback( void* cbData )
+{
+    return;
+}
 
 /*============================================================================*/
 #if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
 dev_PwrMon_DeviceId_t deviceId;
-dev_PwrMon_Sample_t sample1;
+dev_PwrMon_Data_t current;
+dev_PwrMon_Data_t vBus;
 //dev_PwrMon_Sample_t sample2;
 #endif
 void
@@ -125,7 +126,9 @@ tst_Led_testCallback( bsp_TimerGp_TimerId_t    timerId,
                       uint32_t                 mask )
 {
 #if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
-    dev_PwrMon_deviceId( 0, &deviceId, tst_Led_readCallback );
+    dev_PwrMon_railCurrentRead( 0, &current, tst_Led_currentCallback, NULL );
+    dev_PwrMon_railBusVoltageRead( 0, &vBus, tst_Led_voltageCallback, NULL );
+    //dev_PwrMon_deviceId( 0, &deviceId, tst_Led_readCallback );
     //dev_PwrMon_sample( 0, &sample1, tst_Led_readCallback );
     //dev_PwrMon_sample( 1, &sample2, tst_Led_readCallback2 );
 #endif

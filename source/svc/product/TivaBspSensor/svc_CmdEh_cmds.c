@@ -21,25 +21,25 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Trace_ektm4c123sensor.c
- * @brief Contains table of available test point IOs
+ * @file svc_CmdEh_cmds.c
+ * @brief
  */
 
 #include "bsp_Types.h"
-#include "bsp_Trace.h"
-#include "bsp_Gpio.h"
+#include "bsp_Pragma.h"
 
 /*==============================================================================
- *                               Globals
+ *                                  Defines
+ *============================================================================*/
+
+/*==============================================================================
+ *                            Local Functions
  *============================================================================*/
 /*============================================================================*/
-/* One entry for each IO port. */
-const bsp_Trace_IoInfo_t bsp_Trace_ioInfoTable[BSP_GPIO_PORT_ID_NUM_PORTS]=
+
+/*============================================================================*/
+int32_t
+svc_CmdEh_handlerBinary( uint8_t* buf, uint16_t len )
 {
-    { BSP_GPIO_PORT_ID(PA0), (BSP_GPIO_MASK(TPA2) | BSP_GPIO_MASK(TPA3) | BSP_GPIO_MASK(TPA4) | BSP_GPIO_MASK(TPA5)) },
-    { BSP_GPIO_PORT_ID(PB0), (BSP_GPIO_MASK(TPB3) | BSP_GPIO_MASK(TPB4) | BSP_GPIO_MASK(TPB5)) },
-    { BSP_GPIO_PORT_ID(PC0), (BSP_GPIO_MASK(TPC4) | BSP_GPIO_MASK(TPC5) | BSP_GPIO_MASK(TPC6) | BSP_GPIO_MASK(TPC7)) },
-    { BSP_GPIO_PORT_ID(PD0), (BSP_GPIO_MASK(TPD6) | BSP_GPIO_MASK(TPD7)) },
-    { BSP_GPIO_PORT_ID(PE0), (BSP_GPIO_MASK(TPE2) | BSP_GPIO_MASK(TPE3) | BSP_GPIO_MASK(TPE4)) },
-    { BSP_GPIO_PORT_ID(PF0), 0x00000000 }
-};
+    return( 0 );
+}

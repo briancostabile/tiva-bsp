@@ -172,6 +172,16 @@
 			<locationURI>SOURCE_ROOT/bsp/bsp_Clk.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/bsp_Dma.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Dma.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_Dma.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Dma.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/bsp_Gpio.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/bsp_Gpio.c</locationURI>
@@ -370,6 +380,11 @@
 			<name>source/dev/dev_PwrMon.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/dev/dev_PwrMon.h</locationURI>
+		</link>
+		<link>
+			<name>source/dev/dev_PwrMon_ina226.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/dev/dev_PwrMon_ina226.c</locationURI>
 		</link>
 		<link>
 			<name>source/dev/dev_PwrMon_ina228.c</name>
@@ -727,6 +742,16 @@
 			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123gxl/bsp_Gpio_ektm4c123gxl.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/platform/ektm4c123gxl/bsp_Led_ektm4c123gxl.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123gxl/bsp_Led_ektm4c123gxl.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/ektm4c123gxl/bsp_Led_ektm4c123gxl.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123gxl/bsp_Led_ektm4c123gxl.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/platform/ektm4c123gxl/bsp_Platform_ektm4c123gxl.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123gxl/bsp_Platform_ektm4c123gxl.h</locationURI>
@@ -907,9 +932,29 @@
 			<locationURI>SOURCE_ROOT/osapi/product/TivaBspSensor/osapi_TivaBspSensor.h</locationURI>
 		</link>
 		<link>
+			<name>source/svc/product/TivaBspCore/svc_CmdEh_cmds.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/TivaBspCore/svc_CmdEh_cmds.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspCore/svc_CmdEh_cmds.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/TivaBspCore/svc_CmdEh_cmds.h</locationURI>
+		</link>
+		<link>
 			<name>source/svc/product/TivaBspCore/svc_EhId_TivaBspCore.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/product/TivaBspCore/svc_EhId_TivaBspCore.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspSensor/svc_CmdEh_cmds.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/TivaBspSensor/svc_CmdEh_cmds.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspSensor/svc_CmdEh_cmds.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/TivaBspSensor/svc_CmdEh_cmds.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/product/TivaBspSensor/svc_EhId_TivaBspSensor.h</name>

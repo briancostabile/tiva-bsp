@@ -43,6 +43,12 @@
 /*============================================================================*/
 #define BSP_I2C_REG( _base, _name ) ADDR_TO_REG(((_base) + I2C_O_##_name))
 
+#define BSP_I2C_FREQUENCY_STD       100000
+#define BSP_I2C_FREQUENCY_FAST      400000
+#define BSP_I2C_FREQUENCY_FAST_PLUS 1000000
+#define BSP_I2C_FREQUENCY_HIGH      2800000
+
+
 
 /*============================================================================*/
 #if defined BSP_PLATFORM_I2C_LIST
@@ -88,9 +94,10 @@ static bsp_I2c_MasterTransInfo_t bsp_I2c_masterTransInfo[ BSP_I2C_PLATFORM_NUM ]
     (_transPtr)->rLen     = ((_transPtr)->rLen - 1);             \
 }
 
+#if (BS_I2C_PLATFORM_USE_FIFO == 1)
 #define BSP_I2C_NEXT_BYTE_SEND_FIFO(_baseAddr, _transPtr)               \
 {                                                                       \
-    while( ((_transPtr)->wLen > 0) &&                                    \
+    while( ((_transPtr)->wLen > 0) &&                                   \
            (MAP_I2CFIFOStatus(_baseAddr) &  I2C_FIFO_TX_FULL) == 0x00 ) \
     {                                                                   \
         MAP_I2CFIFODataPut( (_baseAddr), *(_transPtr)->wBuffer );       \
@@ -108,45 +115,14 @@ static bsp_I2c_MasterTransInfo_t bsp_I2c_masterTransInfo[ BSP_I2C_PLATFORM_NUM ]
         (_transPtr)->rLen     = ((_transPtr)->rLen - 1);                \
     }                                                                   \
 }
+#endif
 
+#if (BS_I2C_PLATFORM_USE_FIFO == 1)
 /*============================================================================*/
 static void
-bsp_I2c_masterTransStart( uint32_t               baseAddr,
-                          bsp_I2c_MasterTrans_t* transPtr )
+bsp_I2c_masterTransStartFifo( uint32_t               baseAddr,
+                              bsp_I2c_MasterTrans_t* transPtr )
 {
-    BSP_TRACE_I2C_TRANS_START_ENTER();
-    /****** Set Speed ******/
-    // Library function works for 100 and 400KHz
-    if( (transPtr->speed == BSP_I2C_SPEED_STANDARD) || (transPtr->speed == BSP_I2C_SPEED_FAST) )
-    {
-        MAP_I2CMasterInitExpClk( baseAddr,
-                                 MAP_SysCtlClockGet(),
-                                (transPtr->speed != BSP_I2C_SPEED_STANDARD) );
-    }
-    else if (transPtr->speed == BSP_I2C_SPEED_FAST_PLUS)
-    {
-        // For FAST_PLUS or HIGH the I2CMTPR must be modified manually
-        *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = ((MAP_SysCtlClockGet() + (2 * 3 * 1000000) - 1) /
-                                                        (2 * 3 * 1000000)) - 1;
-    }
-    else
-    {
-        // For HIGH the I2CMTPR must be modified manually to max period
-        // Check for HS support
-        // *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = 11;
-        // *(volatile uint32_t*)(baseAddr + I2C_O_MSA) = 0x08;
-        // MAP_I2CMasterControl( baseAddr, 0x13 );
-        // while(MAP_I2CMasterBusy( baseAddr ));
-        *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = 1;
-        //*(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = I2C_MTPR_HS | 6;
-    }
-
-    /****** Set Address ******/
-    // Set the slave address and the r/w bit
-    MAP_I2CMasterSlaveAddrSet( baseAddr,
-                               transPtr->addr,
-                               (transPtr->type == BSP_I2C_TRANS_TYPE_READ) );
-
     /****** Read/Write ******/
     uint32_t intctrl;
     uint32_t ctrl;
@@ -167,16 +143,85 @@ bsp_I2c_masterTransStart( uint32_t               baseAddr,
         MAP_I2CTxFIFOFlush( baseAddr );
         MAP_I2CMasterBurstLengthSet( baseAddr, transPtr->wLen ); //assumes less than 256
         BSP_I2C_NEXT_BYTE_SEND_FIFO( baseAddr, transPtr );
-        ctrl = (transPtr->wLen == 1) ? I2C_MASTER_CMD_FIFO_SINGLE_SEND : I2C_MASTER_CMD_FIFO_BURST_SEND_START;
+        ctrl = ((transPtr->wLen == 0) && (transPtr->rLen == 0)) ? I2C_MASTER_CMD_FIFO_SINGLE_SEND : I2C_MASTER_CMD_FIFO_BURST_SEND_START;
         intctrl = I2C_MASTER_INT_TX_FIFO_EMPTY;
     }
     MAP_I2CMasterIntEnableEx( baseAddr, intctrl );
     MAP_I2CMasterControl( baseAddr, ctrl );
 
+    return;
+}
+#endif
+
+#if (BS_I2C_PLATFORM_USE_FIFO == 0)
+/*============================================================================*/
+static void
+bsp_I2c_masterTransStartNoFifo( uint32_t               baseAddr,
+                                bsp_I2c_MasterTrans_t* transPtr )
+{
+    /****** Read/Write ******/
+    uint32_t ctrl;
+    if( transPtr->type == BSP_I2C_TRANS_TYPE_READ )
+    {
+        ctrl= (transPtr->rLen == 1) ? I2C_MASTER_CMD_SINGLE_RECEIVE : I2C_MASTER_CMD_BURST_RECEIVE_START;
+    }
+    else
+    {
+        // Set the next byte to transmit and trigger the I2C peripheral
+        BSP_I2C_NEXT_BYTE_SEND( baseAddr, transPtr );
+        ctrl= ((transPtr->wLen == 0) && (transPtr->rLen == 0)) ? I2C_MASTER_CMD_SINGLE_SEND : I2C_MASTER_CMD_BURST_SEND_START;
+    }
+
+    // Re-enable Master interrupts and master Mode
+    MAP_I2CMasterIntEnable( baseAddr );
+    MAP_I2CMasterControl( baseAddr, ctrl );
+
+    return;
+}
+#endif
+
+/*============================================================================*/
+static void
+bsp_I2c_masterTransStart( uint32_t               baseAddr,
+                          bsp_I2c_MasterTrans_t* transPtr )
+{
+    BSP_TRACE_I2C_TRANS_START_ENTER();
+
+    /****** Set Speed ******/
+    uint32_t clkReg = 0;
+    if (transPtr->speed == BSP_I2C_SPEED_STANDARD)
+    {
+        clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (20 * BSP_I2C_FREQUENCY_STD)) - 1);
+    }
+    else if (transPtr->speed == BSP_I2C_SPEED_FAST)
+    {
+        clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (20 * BSP_I2C_FREQUENCY_FAST)) - 1);
+    }
+    else if (transPtr->speed == BSP_I2C_SPEED_FAST_PLUS)
+    {
+        clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (20 * BSP_I2C_FREQUENCY_FAST_PLUS)) - 3);
+    }
+    else
+    {
+        clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (6 * BSP_I2C_FREQUENCY_HIGH)) - 1);
+        clkReg |= I2C_MTPR_HS;
+    }
+    *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = clkReg;
+
+    /****** Set Address ******/
+    // Set the slave address and the r/w bit
+    MAP_I2CMasterSlaveAddrSet( baseAddr,
+                               transPtr->addr,
+                               (transPtr->type == BSP_I2C_TRANS_TYPE_READ) );
+
+#if (BS_I2C_PLATFORM_USE_FIFO == 1)
+    bsp_I2c_masterTransStartFifo( baseAddr, transPtr );
+#else
+    bsp_I2c_masterTransStartNoFifo( baseAddr, transPtr );
+#endif
     BSP_TRACE_I2C_TRANS_START_EXIT();
     return;
 }
-
 
 /*============================================================================*/
 static void
@@ -212,14 +257,13 @@ bsp_I2c_transComplete( bsp_I2c_Id_t id,
     }
 }
 
-
+#if (BS_I2C_PLATFORM_USE_FIFO == 1)
 /*============================================================================*/
 static void
-bsp_I2c_isrMasterCommon( bsp_I2c_Id_t id,
-                         uint32_t     baseAddr,
-                         uint32_t     intStatus )
+bsp_I2c_isrMasterCommonFifo( bsp_I2c_Id_t id,
+                             uint32_t     baseAddr,
+                             uint32_t     intStatus )
 {
-    BSP_TRACE_I2C_ISR_MASTER_ENTER();
     uint32_t ctrl;
     uint32_t intctrl = 0;
     uint8_t burstLen;
@@ -312,11 +356,89 @@ bsp_I2c_isrMasterCommon( bsp_I2c_Id_t id,
         BSP_TRACE_I2C_STATUS_OTHER();
         BSP_TRACE_I2C_STATUS_OTHER();
     }
-    BSP_TRACE_I2C_ISR_MASTER_EXIT();
+
 
     return;
 }
+#endif
 
+#if (BS_I2C_PLATFORM_USE_FIFO == 0)
+/*============================================================================*/
+static void
+bsp_I2c_isrMasterCommonNoFifo( bsp_I2c_Id_t id,
+                               uint32_t     baseAddr,
+                               uint32_t     intStatus )
+{
+    uint32_t intStatusMaster = BSP_I2C_REG( baseAddr, MCS );
+    bsp_I2c_MasterTrans_t* transPtr = &bsp_I2c_masterTransInfo[id].active;
+    if( (intStatusMaster & I2C_MCS_IDLE) != 0 )
+    {
+        BSP_TRACE_I2C_STATUS_OTHER();
+        if( transPtr->type == BSP_I2C_TRANS_TYPE_READ )
+        {
+            BSP_I2C_NEXT_BYTE_RCV( baseAddr, transPtr );
+        }
+        bsp_I2c_transComplete( id, baseAddr );
+    }
+    else if( (intStatusMaster & I2C_MCS_BUSBSY) != 0 )
+    {
+        BSP_TRACE_I2C_STATUS_OTHER();
+        BSP_TRACE_I2C_STATUS_OTHER();
+        uint32_t i2cCmd;
+
+        if( transPtr->type == BSP_I2C_TRANS_TYPE_READ )
+        {
+            // Get the next byte received and trigger the I2C peripheral
+            BSP_I2C_NEXT_BYTE_RCV( baseAddr, transPtr );
+            i2cCmd = (transPtr->rLen > 1) ? I2C_MASTER_CMD_BURST_RECEIVE_CONT : I2C_MASTER_CMD_BURST_RECEIVE_FINISH;
+        }
+        else if( transPtr->type == BSP_I2C_TRANS_TYPE_WRITE_READ )
+        {
+            // Switch to read mode
+            transPtr->type = BSP_I2C_TRANS_TYPE_READ;
+
+            // Reset the slave address and the r/w bit
+            MAP_I2CMasterSlaveAddrSet( baseAddr, transPtr->addr, true );
+
+            i2cCmd = I2C_MASTER_CMD_BURST_RECEIVE_START;
+        }
+        else // Assume Write
+        {
+            // Set the next byte to transmit and trigger the I2C peripheral
+            BSP_I2C_NEXT_BYTE_SEND( baseAddr, transPtr );
+            i2cCmd = (transPtr->wLen > 0) ? I2C_MASTER_CMD_BURST_SEND_CONT : I2C_MASTER_CMD_BURST_SEND_FINISH;
+        }
+        ROM_I2CMasterControl( baseAddr, i2cCmd );
+    }
+    else
+    {
+        BSP_TRACE_I2C_STATUS_OTHER();
+        BSP_TRACE_I2C_STATUS_OTHER();
+        BSP_TRACE_I2C_STATUS_OTHER();
+        if( (intStatusMaster & I2C_MCS_ARBLST) != 0 )
+        {
+            // Check retry count and retry or fail
+        }
+
+        if( (intStatusMaster & I2C_MCS_DATACK) != 0 )
+        {
+            // Check retry count and retry or fail
+        }
+
+        if( (intStatusMaster & I2C_MCS_ADRACK) != 0 )
+        {
+            // Don't need this
+        }
+
+        if( (intStatusMaster & I2C_MCS_ERROR) != 0 )
+        {
+            // Check retry count and retry or fail
+        }
+    }
+
+    return;
+}
+#endif
 
 /*============================================================================*/
 void
@@ -330,7 +452,13 @@ bsp_I2c_isrCommon( bsp_I2c_Id_t id )
     MAP_I2CMasterIntClearEx( baseAddr, intStatusMaster );
     if( intStatusMaster != 0 )
     {
-        bsp_I2c_isrMasterCommon( id, baseAddr, intStatusMaster );
+        BSP_TRACE_I2C_ISR_MASTER_ENTER();
+#if (BS_I2C_PLATFORM_USE_FIFO == 1)
+        bsp_I2c_isrMasterCommonFifo( id, baseAddr, intStatusMaster );
+#else
+        bsp_I2c_isrMasterCommonNoFifo( id, baseAddr, intStatusMaster );
+#endif
+        BSP_TRACE_I2C_ISR_MASTER_EXIT();
     }
 
     BSP_TRACE_INT_EXIT();
@@ -395,12 +523,12 @@ bsp_I2c_init( void )
         bsp_Gpio_configAltFunction( pinInfoPtrSda->portId,
                                     pinInfoPtrSda->mask,
                                     pinInfoPtrSda->altFuncId );
-
+#if (BS_I2C_PLATFORM_USE_FIFO == 1)
         MAP_I2CRxFIFOConfigSet( infoPtr->baseAddr, I2C_FIFO_CFG_RX_MASTER | I2C_FIFO_CFG_RX_NO_TRIG );
         MAP_I2CRxFIFOFlush( infoPtr->baseAddr );
         MAP_I2CTxFIFOConfigSet( infoPtr->baseAddr, I2C_FIFO_CFG_TX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
         MAP_I2CTxFIFOFlush( infoPtr->baseAddr );
-
+#endif
         /* Enable I2C interrupt at the NVIC */
         bsp_Interrupt_enable( infoPtr->intId );
     }
@@ -424,7 +552,6 @@ bsp_I2c_masterControl( bsp_I2c_Id_t      id,
 
     // Disable Master mode interrupts
     MAP_I2CMasterIntDisableEx( baseAddr, 0xFFFFFFFF );
-
     // Enable/Disable HW block
     if( control == BSP_I2C_CONTROL_ENABLE )
     {

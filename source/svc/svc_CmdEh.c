@@ -49,10 +49,7 @@
 /*==============================================================================
  *                                  Defines
  *============================================================================*/
-#define SVC_CMDEH_BUFFER_SIZE   64
-#define SVC_CMDEH_BIN_HDR_LEN   2
-#define SVC_CMDEH_BIN_MAX_LEN   (SVC_CMDEH_BUFFER_SIZE - SVC_CMDEH_BIN_HDR_LEN)
-#define SVC_CMDEH_ARGC_MAX      (SVC_CMDEH_BUFFER_SIZE / 2)
+#define SVC_CMDEH_BUFFER_SIZE    64
 
 // The command terminal supports up arrow for command history
 #define SVC_CMDEH_TXT_UP_ARROW "\x1B\x5B\x41"
@@ -99,6 +96,11 @@
     SVC_CMDEH_BUFFER_IDX = 0;                                             \
     svc_CmdEh_bufferArray[svc_CmdEh_bufferSel][SVC_CMDEH_BUFFER_IDX] = 0; \
 }
+
+#define SVC_CMDEH_BIN_LEN_DIGITS 2
+#define SVC_CMDEH_BIN_LEN_MAX    (SVC_CMDEH_BUFFER_SIZE * SVC_CMDEH_BUFFER_HISTORY)
+#define SVC_CMDEH_ARGC_MAX       (SVC_CMDEH_BUFFER_SIZE / 2)
+
 
 /*============================================================================*/
 uint16_t svc_CmdEh_bufferIdxArray[SVC_CMDEH_BUFFER_HISTORY];
@@ -179,19 +181,13 @@ svc_CmdEh_handlerText( int argc, char** argv )
     return( ret );
 }
 
-/*============================================================================*/
-int32_t
-svc_CmdEh_handlerBinary( uint8_t* buf, uint16_t len )
-{
-    return( 0 );
-}
 
 /*============================================================================*/
 static void
 svc_CmdEh_processBinary( uint8_t* buf, uint16_t len )
 {
     uint16_t i;
-    SVC_LOG_INFO( "Binary Command: len:%d"NL, len );
+    SVC_LOG_INFO( "Binary Command: len:%d Data:", len );
 
     for( i=0; i<len; i++ )
     {
@@ -200,6 +196,7 @@ svc_CmdEh_processBinary( uint8_t* buf, uint16_t len )
 
     SVC_LOG_INFO(NL);
 
+    extern svc_CmdEh_handlerBinary( uint8_t* buf, uint16_t len );
     svc_CmdEh_handlerBinary( buf, len );
     return;
 }
@@ -238,21 +235,36 @@ svc_CmdEh_bufferInit( void )
 
 
 /*============================================================================*/
+int svc_CmdEh_asciiToDec( char c )
+{
+    if     ( (c >= '0') && (c <= '9') ) { return( (c - '0') ); }
+    else if( (c >= 'a') && (c <= 'f') ) { return( (c - 'a') + 10 ); }
+    else if( (c >= 'A') && (c <= 'F') ) { return( (c - 'A') + 10 ); }
+    return 0;
+}
+
+
+/*============================================================================*/
 static void
 svc_CmdEh_bufferAddChar( char c )
 {
     static bool binary_mode = false;
+    static bool binary_len_done = false;
+    static int16_t binary_digits = 0;
     static int16_t binary_len = 0;
+    static uint8_t binary_data = 0;
     static uint8_t esc_buf[3];
     static uint8_t esc_cnt = 0;
     bool cmd_done = false;
 
     // If a command starts with a BIN_START then the rest of the command buffer
     // is filled with a binary command and ends
-    if( (SVC_CMDEH_BUFFER_IDX == 0) && (esc_cnt == 0) )
+    if( (binary_mode == false) && (SVC_CMDEH_BUFFER_IDX == 0) && (esc_cnt == 0) )
     {
         binary_mode = (c == SVC_CMDEH_BIN_START);
-        binary_len = -1;
+        binary_len = 0;
+        binary_len_done = false;
+        binary_digits = SVC_CMDEH_BIN_LEN_DIGITS;
         esc_cnt = 0;
 
         // If running in binary mode, Forget history and make use of all
@@ -261,16 +273,23 @@ svc_CmdEh_bufferAddChar( char c )
         {
             svc_CmdEh_bufferSel = 0;
             SVC_CMDEH_BUFFER_RESET();
+            return; // No need to add char to buffer
         }
     }
 
     // Establish the length of the binary command
-    if( (SVC_CMDEH_BUFFER_IDX == 1) && binary_mode )
+    if( (binary_mode == true) && (binary_len_done == false) )
     {
-        binary_len = (c + SVC_CMDEH_BIN_HDR_LEN); // add in "$X" where X is the length byte
-        binary_len = (binary_len > SVC_CMDEH_BUFFER_SIZE) ? SVC_CMDEH_BUFFER_SIZE : binary_len;
+        binary_len *= 16;
+        binary_len += svc_CmdEh_asciiToDec( c );
+        if( --binary_digits <= 0 )
+        {
+            binary_len_done = true;
+            binary_digits = (binary_len * 2);
+            binary_data = 0;
+        }
+        return;
     }
-
 
     // Continue adding to the buffer so long as there's space.
     // Text commands end with NL or end of buffer with NULL
@@ -278,8 +297,16 @@ svc_CmdEh_bufferAddChar( char c )
     //   Binary length is number of bytes after the length byte
     if( binary_mode == true )
     {
-        SVC_CMDEH_BUFFER_ADD_CHAR( c );
-        cmd_done = ((binary_len > 0) && (SVC_CMDEH_BUFFER_IDX >= binary_len));
+        binary_data *= 16;
+        binary_data += svc_CmdEh_asciiToDec( c );
+        binary_digits--;
+        // Every digit is a nibble so every other digit gets stored as a byte
+        if( (binary_digits & 0x01) == 0 )
+        {
+            SVC_CMDEH_BUFFER_ADD_CHAR( (char)binary_data );
+            binary_data = 0;
+        }
+        cmd_done = (binary_digits <= 0);
     }
     else
     {
@@ -356,6 +383,7 @@ svc_CmdEh_bufferAddChar( char c )
         {
             svc_CmdEh_processBinary( SVC_CMDEH_BUFFER, (uint16_t)SVC_CMDEH_BUFFER_IDX );
             SVC_CMDEH_BUFFER_RESET();
+            binary_mode = false;
         }
         else
         {

@@ -62,21 +62,33 @@
 #define BSP_PLATFORM_IO_USB0_RX_BUF_LEN  512
 #define BSP_PLATFORM_IO_USB0_TX_BUF_LEN  (2*1024)
 
-#define BSP_PLATFORM_ENABLE_DEV_HUMID_SHT21
-#define BSP_PLATFORM_ENABLE_DEV_LIGHT_ISL20023
-#define BSP_PLATFORM_ENABLE_DEV_PRESSURE_BMP180
-#define BSP_PLATFORM_ENABLE_DEV_TEMP_TMP006
-#define BSP_PLATFORM_ENABLE_DEV_PWRMON_INA228
+//#define BSP_PLATFORM_ENABLE_DEV_HUMID_SHT21
+//#define BSP_PLATFORM_ENABLE_DEV_LIGHT_ISL20023
+//#define BSP_PLATFORM_ENABLE_DEV_PRESSURE_BMP180
+//#define BSP_PLATFORM_ENABLE_DEV_TEMP_TMP006
+#define BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226
 
 // List the I2C devices for this platform as an array of structures
 // { <index-into-bsp_I2c_staticInfo>, <index-into-bsp_I2c_pinInfoTableSclX>, <index-into-bsp_I2c_pinInfoTableSdaX> }
-#define BSP_PLATFORM_I2C_LIST   { { 3, 0, 0 }, { 1, 0, 0 } }
+// I2C3:
+//    - SensorHub MPU9150
+//    - SensorHub BMP180
+//    - SensorHub SHT21
+//    - SensorHub ISL290023
+//    - SensorHub TMP006
+// I2C1:
+//    - INA226 0
+//    - INA226 1
+#define BSP_PLATFORM_I2C_LIST  { \
+    { 3, 0, 0 }, \
+    { 1, 0, 0 }  \
+}
 
 // Each I2C device must identify the I2C hardware block it is connected to
-#define BSP_PLATFORM_I2C_SHT21    3
-#define BSP_PLATFORM_I2C_TMP006   3
-#define BSP_PLATFORM_I2C_ISL29023 3
-#define BSP_PLATFORM_I2C_INA228   1
+//#define BSP_PLATFORM_I2C_SHT21    3
+//#define BSP_PLATFORM_I2C_TMP006   3
+//#define BSP_PLATFORM_I2C_ISL29023 3
+#define BSP_PLATFORM_I2C_INA226   1
 
 // Humidity/Temperature sensor accuracy selection
 //      Humid  Temp

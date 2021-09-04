@@ -36,10 +36,10 @@
 
 #define DEV_PWRMON_I2C_ID0     0
 #define DEV_PWRMON_I2C_ADDR0   ((bsp_I2c_Addr_t)0x40)
-#define DEV_PWRMON_I2C_SPEED0  BSP_I2C_SPEED_HIGH
+#define DEV_PWRMON_I2C_SPEED0  BSP_I2C_SPEED_FAST
 #define DEV_PWRMON_I2C_ID1     1
 #define DEV_PWRMON_I2C_ADDR1   ((bsp_I2c_Addr_t)0x40)
-#define DEV_PWRMON_I2C_SPEED1  BSP_I2C_SPEED_HIGH
+#define DEV_PWRMON_I2C_SPEED1  BSP_I2C_SPEED_FAST
 #define DEV_PWRMON_NUM_DEVICES 2
 
 #if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA228)
@@ -47,35 +47,31 @@
  *                                   Defines
  *===========================================================================*/
 
-// Configuration defines
-#define DEV_PWRMON_I2C_ADDR   ((bsp_I2c_Addr_t)0x40)
-#define DEV_PWRMON_I2C_SPEED  BSP_I2C_SPEED_HIGH
-
-#define DEV_PWRMON_REG_CONFIG       ((bsp_PwrMon_I2cCmd_t)0x00)
-#define DEV_PWRMON_REG_ADC_CONFIG   ((bsp_PwrMon_I2cCmd_t)0x01)
-#define DEV_PWRMON_REG_SHUNT_CAL    ((bsp_PwrMon_I2cCmd_t)0x02)
-#define DEV_PWRMON_REG_SHUNT_TEMPCO ((bsp_PwrMon_I2cCmd_t)0x03)
-#define DEV_PWRMON_REG_VSHUNT       ((bsp_PwrMon_I2cCmd_t)0x04)
-#define DEV_PWRMON_REG_VBUS         ((bsp_PwrMon_I2cCmd_t)0x05)
-#define DEV_PWRMON_REG_DIETEMP      ((bsp_PwrMon_I2cCmd_t)0x06)
-#define DEV_PWRMON_REG_CURRENT      ((bsp_PwrMon_I2cCmd_t)0x07)
-#define DEV_PWRMON_REG_POWER        ((bsp_PwrMon_I2cCmd_t)0x08)
-#define DEV_PWRMON_REG_ENERGY       ((bsp_PwrMon_I2cCmd_t)0x09)
-#define DEV_PWRMON_REG_CHARGE       ((bsp_PwrMon_I2cCmd_t)0x0A)
-#define DEV_PWRMON_REG_DIAG_ALRT    ((bsp_PwrMon_I2cCmd_t)0x0B)
-#define DEV_PWRMON_REG_SOVL         ((bsp_PwrMon_I2cCmd_t)0x0C)
-#define DEV_PWRMON_REG_SUVL         ((bsp_PwrMon_I2cCmd_t)0x0D)
-#define DEV_PWRMON_REG_BOVL         ((bsp_PwrMon_I2cCmd_t)0x0E)
-#define DEV_PWRMON_REG_BUVL         ((bsp_PwrMon_I2cCmd_t)0x0F)
-#define DEV_PWRMON_TEMP_LIMIT       ((bsp_PwrMon_I2cCmd_t)0x10)
-#define DEV_PWRMON_PWR_LIMIT        ((bsp_PwrMon_I2cCmd_t)0x11)
-#define DEV_PWRMON_MFGR_ID          ((bsp_PwrMon_I2cCmd_t)0x3E)
-#define DEV_PWRMON_DEV_ID           ((bsp_PwrMon_I2cCmd_t)0x3F)
-typedef uint8_t bsp_PwrMon_I2cCmd_t;
+#define DEV_PWRMON_REG_CONFIG       ((dev_PwrMon_I2cCmd_t)0x00)
+#define DEV_PWRMON_REG_ADC_CONFIG   ((dev_PwrMon_I2cCmd_t)0x01)
+#define DEV_PWRMON_REG_SHUNT_CAL    ((dev_PwrMon_I2cCmd_t)0x02)
+#define DEV_PWRMON_REG_SHUNT_TEMPCO ((dev_PwrMon_I2cCmd_t)0x03)
+#define DEV_PWRMON_REG_VSHUNT       ((dev_PwrMon_I2cCmd_t)0x04)
+#define DEV_PWRMON_REG_VBUS         ((dev_PwrMon_I2cCmd_t)0x05)
+#define DEV_PWRMON_REG_DIETEMP      ((dev_PwrMon_I2cCmd_t)0x06)
+#define DEV_PWRMON_REG_CURRENT      ((dev_PwrMon_I2cCmd_t)0x07)
+#define DEV_PWRMON_REG_POWER        ((dev_PwrMon_I2cCmd_t)0x08)
+#define DEV_PWRMON_REG_ENERGY       ((dev_PwrMon_I2cCmd_t)0x09)
+#define DEV_PWRMON_REG_CHARGE       ((dev_PwrMon_I2cCmd_t)0x0A)
+#define DEV_PWRMON_REG_DIAG_ALRT    ((dev_PwrMon_I2cCmd_t)0x0B)
+#define DEV_PWRMON_REG_SOVL         ((dev_PwrMon_I2cCmd_t)0x0C)
+#define DEV_PWRMON_REG_SUVL         ((dev_PwrMon_I2cCmd_t)0x0D)
+#define DEV_PWRMON_REG_BOVL         ((dev_PwrMon_I2cCmd_t)0x0E)
+#define DEV_PWRMON_REG_BUVL         ((dev_PwrMon_I2cCmd_t)0x0F)
+#define DEV_PWRMON_TEMP_LIMIT       ((dev_PwrMon_I2cCmd_t)0x10)
+#define DEV_PWRMON_PWR_LIMIT        ((dev_PwrMon_I2cCmd_t)0x11)
+#define DEV_PWRMON_MFGR_ID          ((dev_PwrMon_I2cCmd_t)0x3E)
+#define DEV_PWRMON_DEV_ID           ((dev_PwrMon_I2cCmd_t)0x3F)
+typedef uint8_t dev_PwrMon_I2cCmd_t;
 
 #define DEV_PWRMON_REG_TYPE_RO true
 #define DEV_PWRMON_REG_TYPE_RW false
-typedef uint8_t bsp_PwrMon_RegType_t;
+typedef uint8_t dev_PwrMon_RegType_t;
 
 
 /*=============================================================================
@@ -86,7 +82,7 @@ typedef uint16_t dev_PwrMon_Reg_t;
 
 typedef struct dev_PwrMon_RegInfo_s
 {
-    bsp_PwrMon_I2cCmd_t cmd;
+    dev_PwrMon_I2cCmd_t cmd;
     uint8_t             len;
     bool                rdOnly;
 } dev_PwrMon_RegInfo_t;
@@ -98,7 +94,7 @@ typedef struct dev_PwrMon_DeviceCtx_s
     uint8_t                   wBuffer[3];
     uint8_t                   rLen;
     void*                     rPtr;
-    dev_PwrMon_ReadCallback_t callback;
+    dev_PwrMon_Callback_t callback;
     dev_PwrMon_Reg_t          prevRegId;
     dev_PwrMon_DeviceId_t     deviceId;
     dev_PwrMon_ManufacturerId_t mftrId;
@@ -157,7 +153,7 @@ const dev_PwrMon_DeviceInfo_t dev_PwrMon_deviceInfo[] =
  *                              Local Functions
  *===========================================================================*/
 static inline const dev_PwrMon_RegInfo_t*
-dev_PwrMon_getRegInfo( bsp_PwrMon_I2cCmd_t regId )
+dev_PwrMon_getRegInfo( dev_PwrMon_I2cCmd_t regId )
 {
     if( regId <= DEV_PWRMON_PWR_LIMIT )
     {
@@ -197,7 +193,7 @@ dev_PwrMon_i2cTransQueue( const dev_PwrMon_DeviceInfo_t* devPtr )
 // Wrapper to write to the config register on the INA228.
 static void
 dev_PwrMon_i2cRegWrite( const dev_PwrMon_DeviceInfo_t* devPtr,
-                        bsp_PwrMon_I2cCmd_t            regId,
+                        dev_PwrMon_I2cCmd_t            regId,
                         uint16_t                       regValue )
 {
     devPtr->ctx->wBuffer[0] = regId;
@@ -216,7 +212,7 @@ dev_PwrMon_i2cRegWrite( const dev_PwrMon_DeviceInfo_t* devPtr,
 // Wrapper to read data from the INA228.
 static void
 dev_PwrMon_i2cRegRead( const dev_PwrMon_DeviceInfo_t* devPtr,
-                       bsp_PwrMon_I2cCmd_t            regId )
+                       dev_PwrMon_I2cCmd_t            regId )
 {
     const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_getRegInfo( regId );
 
@@ -240,40 +236,12 @@ dev_PwrMon_i2cRegRead( const dev_PwrMon_DeviceInfo_t* devPtr,
 }
 
 
-/*=============================================================================
- *                                   Functions
- *===========================================================================*/
-void dev_PwrMon_mftrCallback( void )
-{
-    dev_PwrMon_deviceId( 0, &dev_PwrMon_deviceCtx[0].deviceId, NULL );
-}
 /*===========================================================================*/
-void
-dev_PwrMon_init( void )
-{
-    BSP_GPIO_OUT_SET_HIGH( TPN0 );
-    for( int i=0; i < DIM(dev_PwrMon_deviceInfo); i++ )
-    {
-        dev_PwrMon_deviceCtx[i].prevRegId = 0xFF;
-        dev_PwrMon_deviceCtx[i].callback  = NULL;
-        bsp_I2c_masterControl( dev_PwrMon_deviceInfo[i].i2cId, BSP_I2C_CONTROL_ENABLE );
-
-       // dev_PwrMon_manufacturerId( i, &dev_PwrMon_deviceCtx[i].deviceId, NULL );
-        //dev_PwrMon_deviceId( i, &dev_PwrMon_deviceCtx[i].mfgrId, NULL );
-    }
-    dev_PwrMon_manufacturerId( 0, &dev_PwrMon_deviceCtx[0].mftrId, dev_PwrMon_mftrCallback );
-
-    BSP_GPIO_OUT_SET_LOW( TPN0 );
-    // Configure all devices
-
-    return;
-}
-
-/*===========================================================================*/
-void
-dev_PwrMon_manufacturerId( bsp_PwrMon_DevId_t           devId,
+static void
+dev_PwrMon_manufacturerId( dev_PwrMon_DevId_t           devId,
                            dev_PwrMon_ManufacturerId_t* dataPtr,
-                           dev_PwrMon_ReadCallback_t    callback )
+                           dev_PwrMon_Callback_t        callback,
+                           void*                        cbData )
 {
     const dev_PwrMon_DeviceInfo_t* devPtr = &dev_PwrMon_deviceInfo[devId];
     devPtr->ctx->callback = callback;
@@ -284,10 +252,11 @@ dev_PwrMon_manufacturerId( bsp_PwrMon_DevId_t           devId,
 }
 
 /*===========================================================================*/
-void
-dev_PwrMon_deviceId( bsp_PwrMon_DevId_t        devId,
-                     dev_PwrMon_DeviceId_t*    dataPtr,
-                     dev_PwrMon_ReadCallback_t callback )
+static void
+dev_PwrMon_deviceId( dev_PwrMon_DevId_t     devId,
+                     dev_PwrMon_DeviceId_t* dataPtr,
+                     dev_PwrMon_Callback_t  callback,
+                     void*                  cbData )
 {
     const dev_PwrMon_DeviceInfo_t* devPtr = &dev_PwrMon_deviceInfo[devId];
     devPtr->ctx->callback = callback;
@@ -297,18 +266,41 @@ dev_PwrMon_deviceId( bsp_PwrMon_DevId_t        devId,
     return;
 }
 
+/*=============================================================================
+ *                                   Functions
+ *===========================================================================*/
 /*===========================================================================*/
 void
-dev_PwrMon_sample( bsp_PwrMon_DevId_t        devId,
-                   dev_PwrMon_Sample_t*      dataPtr,
-                   dev_PwrMon_ReadCallback_t callback )
+dev_PwrMon_init( void )
 {
-    const dev_PwrMon_DeviceInfo_t* devPtr = &dev_PwrMon_deviceInfo[devId];
-    devPtr->ctx->callback = callback;
-    devPtr->ctx->rLen     = sizeof(dev_PwrMon_Sample_t);
-    devPtr->ctx->rPtr     = dataPtr;
-    dev_PwrMon_i2cRegRead( devPtr, DEV_PWRMON_REG_CURRENT );
+    for( int i=0; i < DEV_PWRMON_NUM_DEVICES; i++ )
+    {
+        dev_PwrMon_deviceCtx[i].prevRegId = 0xFF;
+        dev_PwrMon_deviceCtx[i].callback  = NULL;
+        bsp_I2c_masterControl( dev_PwrMon_deviceInfo[i].i2cId, BSP_I2C_CONTROL_ENABLE );
+
+        dev_PwrMon_manufacturerId( i, &dev_PwrMon_deviceCtx[i].deviceId, NULL, NULL );
+        dev_PwrMon_deviceId( i, &dev_PwrMon_deviceCtx[i].mfgrId, NULL, NULL );
+    }
+    // Configure all devices
+
     return;
 }
+
+
+
+// /*===========================================================================*/
+// void
+// dev_PwrMon_sample( dev_PwrMon_DevId_t        devId,
+//                    dev_PwrMon_Sample_t*      dataPtr,
+//                    dev_PwrMon_Callback_t callback )
+// {
+//     const dev_PwrMon_DeviceInfo_t* devPtr = &dev_PwrMon_deviceInfo[devId];
+//     devPtr->ctx->callback = callback;
+//     devPtr->ctx->rLen     = sizeof(dev_PwrMon_Sample_t);
+//     devPtr->ctx->rPtr     = dataPtr;
+//     dev_PwrMon_i2cRegRead( devPtr, DEV_PWRMON_REG_CURRENT );
+//     return;
+// }
 
 #endif
