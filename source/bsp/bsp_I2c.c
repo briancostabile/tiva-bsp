@@ -90,7 +90,7 @@ static bsp_I2c_MasterTransInfo_t bsp_I2c_masterTransInfo[ BSP_I2C_PLATFORM_NUM ]
 #define BSP_I2C_NEXT_BYTE_RCV(_baseAddr, _transPtr)              \
 {                                                                \
     *(_transPtr)->rBuffer = MAP_I2CMasterDataGet( (_baseAddr) ); \
-    (_transPtr)->rBuffer  = ((_transPtr)->rBuffer + 1);          \
+    (_transPtr)->rBuffer  += ((_transPtr)->rReverse) ? -1 : 1;   \
     (_transPtr)->rLen     = ((_transPtr)->rLen - 1);             \
 }
 
@@ -111,7 +111,7 @@ static bsp_I2c_MasterTransInfo_t bsp_I2c_masterTransInfo[ BSP_I2C_PLATFORM_NUM ]
     while( (MAP_I2CFIFOStatus(_baseAddr) & I2C_FIFO_RX_EMPTY) == 0x00 ) \
     {                                                                   \
         *(_transPtr)->rBuffer = MAP_I2CFIFODataGet( (_baseAddr) );      \
-        (_transPtr)->rBuffer  = ((_transPtr)->rBuffer + 1);             \
+        (_transPtr)->rBuffer  += ((_transPtr)->rReverse) ? -1 : 1;      \
         (_transPtr)->rLen     = ((_transPtr)->rLen - 1);                \
     }                                                                   \
 }
@@ -214,6 +214,7 @@ bsp_I2c_masterTransStart( uint32_t               baseAddr,
                                transPtr->addr,
                                (transPtr->type == BSP_I2C_TRANS_TYPE_READ) );
 
+    transPtr->rBuffer += (transPtr->rReverse) ? (transPtr->rLen - 1) : 0;
 #if (BS_I2C_PLATFORM_USE_FIFO == 1)
     bsp_I2c_masterTransStartFifo( baseAddr, transPtr );
 #else

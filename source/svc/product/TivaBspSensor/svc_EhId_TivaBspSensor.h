@@ -36,5 +36,5 @@
 #define SVC_EHID_TEMP      7
 #define SVC_EHID_HUMID     8
 #define SVC_EHID_LIGHT     9
-#define SVC_EHID_SAMPLER   10
+#define SVC_EHID_PWRMON   10
 #define SVC_EHID_NUM_EHIDS 11

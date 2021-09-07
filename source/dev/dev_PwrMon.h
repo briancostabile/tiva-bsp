@@ -35,7 +35,7 @@ typedef uint16_t dev_PwrMon_DeviceId_t;
 typedef uint16_t dev_PwrMon_ManufacturerId_t;
 typedef uint16_t dev_PwrMon_Config_t;
 typedef uint16_t dev_PwrMon_Cal_t;
-typedef uint16_t dev_PwrMon_Data_t;
+typedef int16_t  dev_PwrMon_Data_t;
 typedef uint16_t dev_PwrMon_AlertMask_t;
 typedef uint16_t dev_PwrMon_ShuntVal_t;
 
@@ -79,7 +79,7 @@ enum
 typedef uint8_t dev_PwrMon_OpMode_t;
 
 
-typedef uint8_t dev_PwrMon_RailId_t;
+typedef uint8_t dev_PwrMon_ChannelId_t;
 typedef uint8_t dev_PwrMon_DevId_t;
 typedef void (*dev_PwrMon_Callback_t)( void* cbData );
 
@@ -92,44 +92,44 @@ dev_PwrMon_init( void );
 
 /*===========================================================================*/
 void
-dev_PwrMon_railConfig( dev_PwrMon_RailId_t   railId,
-                       dev_PwrMon_ConvTime_t shuntConvTime,
-                       dev_PwrMon_ConvTime_t busConvTime,
-                       dev_PwrMon_AvgMode_t  avgMode,
-                       dev_PwrMon_Callback_t callback,
-                       void*                 cbData );
+dev_PwrMon_channelConfig( dev_PwrMon_ChannelId_t channelId,
+                          dev_PwrMon_ConvTime_t  shuntConvTime,
+                          dev_PwrMon_ConvTime_t  busConvTime,
+                          dev_PwrMon_AvgMode_t   avgMode,
+                          dev_PwrMon_Callback_t  callback,
+                          void*                  cbData );
 
 /*===========================================================================*/
 void
-dev_PwrMon_railConfigShunt( dev_PwrMon_RailId_t   railId,
-                            dev_PwrMon_ShuntVal_t shunt,
-                            dev_PwrMon_Callback_t callback,
-                            void*                 cbData );
+dev_PwrMon_channelConfigShunt( dev_PwrMon_ChannelId_t channelId,
+                               dev_PwrMon_ShuntVal_t  shunt,
+                               dev_PwrMon_Callback_t  callback,
+                               void*                  cbData );
 
 /*===========================================================================*/
 void
-dev_PwrMon_railCurrentRead( dev_PwrMon_RailId_t   railId,
-                            dev_PwrMon_Data_t*    dataPtr,
-                            dev_PwrMon_Callback_t callback,
-                            void*                 cbData );
+dev_PwrMon_channelCurrentRead( dev_PwrMon_ChannelId_t channelId,
+                               dev_PwrMon_Data_t*     dataPtr,
+                               dev_PwrMon_Callback_t  callback,
+                               void*                  cbData );
 
 /*===========================================================================*/
 void
-dev_PwrMon_railBusVoltageRead( dev_PwrMon_RailId_t   railId,
-                               dev_PwrMon_Data_t*    dataPtr,
-                               dev_PwrMon_Callback_t callback,
-                               void*                 cbData );
+dev_PwrMon_channelBusVoltageRead( dev_PwrMon_ChannelId_t channelId,
+                                  dev_PwrMon_Data_t*     dataPtr,
+                                  dev_PwrMon_Callback_t  callback,
+                                  void*                  cbData );
 
 /*===========================================================================*/
 void
-dev_PwrMon_railShuntVoltageRead( dev_PwrMon_RailId_t   railId,
-                                 dev_PwrMon_Data_t*    dataPtr,
-                                 dev_PwrMon_Callback_t callback,
-                                 void*                 cbData );
+dev_PwrMon_channelShuntVoltageRead( dev_PwrMon_ChannelId_t channelId,
+                                    dev_PwrMon_Data_t*     dataPtr,
+                                    dev_PwrMon_Callback_t  callback,
+                                    void*                  cbData );
 
 /*===========================================================================*/
 void
-dev_PwrMon_railPowerRead( dev_PwrMon_RailId_t   railId,
-                          dev_PwrMon_Data_t*    dataPtr,
-                          dev_PwrMon_Callback_t callback,
-                          void*                 cbData );
+dev_PwrMon_channelPowerRead( dev_PwrMon_ChannelId_t channelId,
+                             dev_PwrMon_Data_t*     dataPtr,
+                             dev_PwrMon_Callback_t  callback,
+                             void*                  cbData );

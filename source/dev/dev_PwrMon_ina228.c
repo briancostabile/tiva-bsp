@@ -40,7 +40,6 @@
 #define DEV_PWRMON_I2C_ID1     1
 #define DEV_PWRMON_I2C_ADDR1   ((bsp_I2c_Addr_t)0x40)
 #define DEV_PWRMON_I2C_SPEED1  BSP_I2C_SPEED_FAST
-#define DEV_PWRMON_NUM_DEVICES 2
 
 #if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA228)
 /*=============================================================================
@@ -140,7 +139,7 @@ static const dev_PwrMon_RegInfo_t dev_PwrMon_regInfo[] =
     { DEV_PWRMON_DEV_ID,           2, DEV_PWRMON_REG_TYPE_RO },
 };
 
-dev_PwrMon_DeviceCtx_t dev_PwrMon_deviceCtx[DEV_PWRMON_NUM_DEVICES];
+dev_PwrMon_DeviceCtx_t dev_PwrMon_deviceCtx[BSP_PLATFORM_PWRMON_NUM_DEVICES];
 
 const dev_PwrMon_DeviceInfo_t dev_PwrMon_deviceInfo[] =
 {
@@ -273,7 +272,7 @@ dev_PwrMon_deviceId( dev_PwrMon_DevId_t     devId,
 void
 dev_PwrMon_init( void )
 {
-    for( int i=0; i < DEV_PWRMON_NUM_DEVICES; i++ )
+    for( int i=0; i < BSP_PLATFORM_PWRMON_NUM_DEVICES; i++ )
     {
         dev_PwrMon_deviceCtx[i].prevRegId = 0xFF;
         dev_PwrMon_deviceCtx[i].callback  = NULL;

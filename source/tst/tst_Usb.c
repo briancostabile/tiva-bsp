@@ -60,7 +60,7 @@ int32_t tst_Usb_txCnt = 0;
 int32_t tst_Usb_rxCnt = 0;
 
 uint8_t tst_Usb_cmdBuffer[32];
-uint8_t tst_Usb_dataBuffer[4096];
+uint8_t tst_Usb_dataBuffer[2048];
 
 /*==============================================================================
  *                            Private Functions

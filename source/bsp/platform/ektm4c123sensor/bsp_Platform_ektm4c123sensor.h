@@ -52,21 +52,20 @@
 #define BSP_PLATFORM_IO_UART0_TX_PIN_SEL 0
 #define BSP_PLATFORM_IO_UART0_BAUD       (9600 * 1) //must be 9600 for Virtual Com port built into launchpad
 #define BSP_PLATFORM_IO_UART0_RX_BUF_LEN 32
-#define BSP_PLATFORM_IO_UART0_TX_BUF_LEN 128
+#define BSP_PLATFORM_IO_UART0_TX_BUF_LEN 256
 
 
 /* USB Setup */
 #define BSP_PLATFORM_USB_ENABLED
-#define BSP_PLATFORM_USB_CDC
-//#define BSP_PLATFORM_USB_BULK
+//#define BSP_PLATFORM_USB_CDC
+#define BSP_PLATFORM_USB_BULK
 #define BSP_PLATFORM_IO_USB0_RX_BUF_LEN  512
-#define BSP_PLATFORM_IO_USB0_TX_BUF_LEN  (2*1024)
+#define BSP_PLATFORM_IO_USB0_TX_BUF_LEN  (3*1024)
 
 //#define BSP_PLATFORM_ENABLE_DEV_HUMID_SHT21
 //#define BSP_PLATFORM_ENABLE_DEV_LIGHT_ISL20023
 //#define BSP_PLATFORM_ENABLE_DEV_PRESSURE_BMP180
 //#define BSP_PLATFORM_ENABLE_DEV_TEMP_TMP006
-#define BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226
 
 // List the I2C devices for this platform as an array of structures
 // { <index-into-bsp_I2c_staticInfo>, <index-into-bsp_I2c_pinInfoTableSclX>, <index-into-bsp_I2c_pinInfoTableSdaX> }
@@ -76,9 +75,11 @@
 //    - SensorHub SHT21
 //    - SensorHub ISL290023
 //    - SensorHub TMP006
+//    - Imeter INA226 2
+//    - Imeter INA226 3
 // I2C1:
-//    - INA226 0
-//    - INA226 1
+//    - Imeter INA226 0
+//    - Imeter INA226 1
 #define BSP_PLATFORM_I2C_LIST  { \
     { 3, 0, 0 }, \
     { 1, 0, 0 }  \
@@ -88,7 +89,6 @@
 //#define BSP_PLATFORM_I2C_SHT21    3
 //#define BSP_PLATFORM_I2C_TMP006   3
 //#define BSP_PLATFORM_I2C_ISL29023 3
-#define BSP_PLATFORM_I2C_INA226   1
 
 // Humidity/Temperature sensor accuracy selection
 //      Humid  Temp
@@ -110,3 +110,47 @@
 #define BSP_PLATFORM_IO_MAP_STDIN  "usb0"
 #define BSP_PLATFORM_IO_MAP_STDERR "usb0"
 #endif
+
+
+/*==============================================================================
+ *                            Power Monitor
+ *============================================================================*/
+#define BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226
+/*===========================================================================*/
+// Devices
+#define BSP_PLATFORM_PWRMON_NUM_DEVICES 4
+
+/**
+ * Device info for each INA126 device
+ * - I2C Device Id
+ * - I2C Address on Bus
+ * - I2C xfer speed
+ * - Associated Channel
+ * - Pointer to context table entry
+ */
+// Ch0: Device 0,1
+// Ch1: Device 2,3
+#define BSP_PLATFORM_PWRMON_DEVICE_TABLE(_ctxTable) {         \
+    { 1, 0x40, BSP_I2C_SPEED_FAST_PLUS, 0, &(_ctxTable)[0] }, \
+    { 1, 0x41, BSP_I2C_SPEED_FAST_PLUS, 0, &(_ctxTable)[1] }, \
+    { 3, 0x40, BSP_I2C_SPEED_FAST_PLUS, 0, &(_ctxTable)[2] }, \
+    { 3, 0x41, BSP_I2C_SPEED_FAST_PLUS, 0, &(_ctxTable)[3] }  \
+}
+
+/*===========================================================================*/
+// Channels
+#define BSP_PLATFORM_PWRMON_NUM_CHANNELS 2
+
+/**
+ * Which device from the device table to use for each of the result registers
+ * - Voltage-Bus
+ * - Voltage-Shunt
+ * - Current
+ * - Power
+ */
+// Ch0: 2 devices -  0: Bus, Shunt, Power, 1: Current
+// Ch1: 2 devices -  0: Bus, Shunt, Power, 1: Current
+#define BSP_PLATFORM_PWRMON_CHANNEL_MAP_TABLE { \
+    {0, 0, 1, 0},                               \
+    {2, 2, 3, 2}                                \
+}

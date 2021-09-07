@@ -70,12 +70,10 @@ static void
 svc_LedEh_buildAndSendSetColorCnf( svc_EhId_t   eh,
                                    bsp_Led_Id_t ledId )
 {
-    svc_LedEh_SetColorReq_t* reqPtr = svc_MsgFwk_msgAlloc( eh,
-                                                           SVC_LEDEH_SET_COLOR_CNF,
-                                                           sizeof(svc_LedEh_SetColorCnf_t) );
-
-    reqPtr->ledId = ledId;
-    svc_MsgFwk_msgSend( reqPtr );
+    svc_LedEh_SetColorCnf_t* cnfPtr;
+    cnfPtr = svc_MsgFwk_msgAlloc( eh, SVC_LEDEH_SET_COLOR_CNF, sizeof(svc_LedEh_SetColorCnf_t) );
+    cnfPtr->ledId = ledId;
+    svc_MsgFwk_msgSend( cnfPtr );
     return;
 }
 
@@ -84,12 +82,10 @@ static void
 svc_LedEh_buildAndSendSetPatternCnf( svc_EhId_t   eh,
                                      bsp_Led_Id_t ledId )
 {
-    svc_LedEh_SetColorReq_t* reqPtr = svc_MsgFwk_msgAlloc( eh,
-                                                           SVC_LEDEH_SET_PATTERN_CNF,
-                                                           sizeof(svc_LedEh_SetPatternCnf_t) );
-
-    reqPtr->ledId = ledId;
-    svc_MsgFwk_msgSend( reqPtr );
+    svc_LedEh_SetPatternCnf_t* cnfPtr;
+    cnfPtr = svc_MsgFwk_msgAlloc( eh, SVC_LEDEH_SET_PATTERN_CNF, sizeof(svc_LedEh_SetPatternCnf_t) );
+    cnfPtr->ledId = ledId;
+    svc_MsgFwk_msgSend( cnfPtr );
     return;
 }
 

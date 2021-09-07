@@ -35,61 +35,6 @@
 #include "dev_PwrMon.h"
 
 
-
-/*=============================================================================
- *                         Product Specific Defines
- *===========================================================================*/
-/*===========================================================================*/
-// Rails
-#define DEV_PWRMON_NUM_RAILS 1
-
-/**
- * Which device from the device table to use for each of the result registers
- * - Voltabe-Bus
- * - Voltage-Shunt
- * - Current
- * - Power
- */
-#define DEV_PWRMON_DEV_MAP_RAIL0 {0,0,1,0}
-
-#define DEV_PWRMON_RAIL_INFO_TABLE { \
-    DEV_PWRMON_DEV_MAP_RAIL0 \
-}
-
-
-/*===========================================================================*/
-// Devices
-#define DEV_PWRMON_NUM_DEVICES 2
-
-// Device 0
-#define DEV_PWRMON_I2C_ID0     1
-#define DEV_PWRMON_I2C_ADDR0   ((bsp_I2c_Addr_t)0x40)
-#define DEV_PWRMON_I2C_SPEED0  BSP_I2C_SPEED_FAST_PLUS
-#define DEV_PWRMON_I2C_RAIL0   0
-
-// Device 1
-#define DEV_PWRMON_I2C_ID1     1
-#define DEV_PWRMON_I2C_ADDR1   ((bsp_I2c_Addr_t)0x41)
-#define DEV_PWRMON_I2C_SPEED1  BSP_I2C_SPEED_FAST_PLUS
-#define DEV_PWRMON_I2C_RAIL1   0
-
-
-/*===========================================================================*/
-// Device Table
-#define DEV_PWRMON_DEV_INFO_ENTRY(_id) { DEV_PWRMON_I2C_ID##_id,    \
-                                         DEV_PWRMON_I2C_ADDR##_id,  \
-                                         DEV_PWRMON_I2C_SPEED##_id, \
-                                        DEV_PWRMON_I2C_RAIL##_id,   \
-                                         &dev_PwrMon_deviceCtx[(_id)] }
-
-#define DEV_PWRMON_DEV_INFO_TABLE \
-{                                 \
-    DEV_PWRMON_DEV_INFO_ENTRY(0), \
-    DEV_PWRMON_DEV_INFO_ENTRY(1)  \
-};
-
-
-
 #if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
 /*=============================================================================
  *                                   Defines
@@ -156,7 +101,7 @@ typedef struct dev_PwrMon_DeviceInfo_s
     bsp_I2c_Id_t            i2cId;
     bsp_I2c_Addr_t          i2cAddr;
     bsp_I2c_Speed_t         i2cSpeed;
-    dev_PwrMon_RailId_t     railId;
+    dev_PwrMon_ChannelId_t  channelId;
     dev_PwrMon_DeviceCtx_t* ctx;
 } dev_PwrMon_DeviceInfo_t;
 
@@ -164,18 +109,18 @@ typedef struct dev_PwrMon_DeviceInfo_s
 #define DEV_PWR_MGR_RAIL_INFO_VSHUNT_IDX  1
 #define DEV_PWR_MGR_RAIL_INFO_CURRENT_IDX 2
 #define DEV_PWR_MGR_RAIL_INFO_POWER_IDX   3
-typedef struct dev_PwrMon_RailDevices_s
+typedef struct dev_PwrMon_ChannelDevices_s
 {
     dev_PwrMon_DevId_t devices[4]; // bus, shunt, current, power
-} dev_PwrMon_RailDevices_t;
+} dev_PwrMon_ChannelDevices_t;
 
-typedef struct dev_PwrMon_RailInfo_s
+typedef struct dev_PwrMon_ChannelInfo_s
 {
     dev_PwrMon_DevId_t vBus;
     dev_PwrMon_DevId_t vShunt;
     dev_PwrMon_DevId_t current;
     dev_PwrMon_DevId_t power;
-} dev_PwrMon_RailInfo_t;
+} dev_PwrMon_ChannelInfo_t;
 
 
 // The User Data parameter for I2C transactions is a callback that this
@@ -199,9 +144,9 @@ static const dev_PwrMon_RegInfo_t dev_PwrMon_regInfo[] =
     { DEV_PWRMON_REG_DEV_ID,      2, DEV_PWRMON_REG_TYPE_RO },
 };
 
-dev_PwrMon_DeviceCtx_t dev_PwrMon_deviceCtx[DEV_PWRMON_NUM_DEVICES];
-const dev_PwrMon_DeviceInfo_t dev_PwrMon_deviceInfo[] = DEV_PWRMON_DEV_INFO_TABLE;
-const dev_PwrMon_RailInfo_t dev_PwrMon_railInfo[] = DEV_PWRMON_RAIL_INFO_TABLE;
+dev_PwrMon_DeviceCtx_t dev_PwrMon_deviceCtx[BSP_PLATFORM_PWRMON_NUM_DEVICES];
+const dev_PwrMon_DeviceInfo_t dev_PwrMon_deviceInfo[] = BSP_PLATFORM_PWRMON_DEVICE_TABLE(dev_PwrMon_deviceCtx);
+const dev_PwrMon_ChannelInfo_t dev_PwrMon_channelInfo[] = BSP_PLATFORM_PWRMON_CHANNEL_MAP_TABLE;
 
 /*=============================================================================
  *                              Local Functions
@@ -256,11 +201,12 @@ dev_PwrMon_i2cRegWrite( const dev_PwrMon_DeviceInfo_t* devPtr,
     devPtr->ctx->wBuffer[1] = ((regValue >> 8) & 0xFF);
     devPtr->ctx->wBuffer[2] = ((regValue >> 0) & 0xFF);
 
-    devPtr->ctx->i2cTrans.type    = BSP_I2C_TRANS_TYPE_WRITE;
-    devPtr->ctx->i2cTrans.wLen    = 3; // All writable registers are 2 bytes plus 1 byte address
-    devPtr->ctx->i2cTrans.wBuffer = devPtr->ctx->wBuffer;
-    devPtr->ctx->i2cTrans.rLen    = 0;
-    devPtr->ctx->i2cTrans.rBuffer = NULL;
+    devPtr->ctx->i2cTrans.type     = BSP_I2C_TRANS_TYPE_WRITE;
+    devPtr->ctx->i2cTrans.wLen     = 3; // All writable registers are 2 bytes plus 1 byte address
+    devPtr->ctx->i2cTrans.wBuffer  = devPtr->ctx->wBuffer;
+    devPtr->ctx->i2cTrans.rLen     = 0;
+    devPtr->ctx->i2cTrans.rBuffer  = NULL;
+    devPtr->ctx->i2cTrans.rReverse = false;
     dev_PwrMon_i2cTransQueue( devPtr );
 
     // Spin for completion if no callback
@@ -275,8 +221,9 @@ dev_PwrMon_i2cRegRead( const dev_PwrMon_DeviceInfo_t* devPtr,
 {
     const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_getRegInfo( regId );
 
-    devPtr->ctx->i2cTrans.rLen    = regInfoPtr->len;
-    devPtr->ctx->i2cTrans.rBuffer = devPtr->ctx->rPtr;
+    devPtr->ctx->i2cTrans.rLen     = regInfoPtr->len;
+    devPtr->ctx->i2cTrans.rBuffer  = devPtr->ctx->rPtr;
+    devPtr->ctx->i2cTrans.rReverse = true;
     if( regId != devPtr->ctx->prevRegId )
     {
         devPtr->ctx->wBuffer[0]       = regId;
@@ -302,7 +249,7 @@ dev_PwrMon_i2cRegRead( const dev_PwrMon_DeviceInfo_t* devPtr,
 static void
 dev_PwrMon_commonRead( dev_PwrMon_I2cCmd_t    regId,
                        dev_PwrMon_DevId_t     devId,
-                       dev_PwrMon_Data_t*     dataPtr,
+                       void*                  dataPtr,
                        dev_PwrMon_Callback_t  callback,
                        void*                  cbData )
 {
@@ -322,7 +269,7 @@ dev_PwrMon_manufacturerId( dev_PwrMon_DevId_t           devId,
                            dev_PwrMon_Callback_t        callback,
                            void*                        cbData )
 {
-    dev_PwrMon_commonRead( DEV_PWRMON_REG_DEV_ID,
+    dev_PwrMon_commonRead( DEV_PWRMON_REG_MFTR_ID,
                            devId, dataPtr, callback, cbData );
 }
 
@@ -333,7 +280,7 @@ dev_PwrMon_deviceId( dev_PwrMon_DevId_t     devId,
                      dev_PwrMon_Callback_t  callback,
                      void*                  cbData )
 {
-    dev_PwrMon_commonRead( DEV_PWRMON_REG_MFTR_ID,
+    dev_PwrMon_commonRead( DEV_PWRMON_REG_DEV_ID,
                            devId, dataPtr, callback, cbData );
 }
 
@@ -433,11 +380,19 @@ dev_PwrMon_calSet( dev_PwrMon_DevId_t     devId,
 void
 dev_PwrMon_init( void )
 {
-    for( uint8_t i=0; i < DEV_PWRMON_NUM_DEVICES; i++ )
+    uint16_t i2cBusInitMask = 0x0000;
+    for( uint8_t i=0; i < BSP_PLATFORM_PWRMON_NUM_DEVICES; i++ )
     {
         dev_PwrMon_deviceCtx[i].prevRegId = DEV_PWRMON_REG_INVALID;
         dev_PwrMon_deviceCtx[i].callback  = NULL;
-        bsp_I2c_masterControl( dev_PwrMon_deviceInfo[i].i2cId, BSP_I2C_CONTROL_ENABLE );
+
+        // Only init busses that haven't already been initialized
+        if ( (i2cBusInitMask & (1 << dev_PwrMon_deviceInfo[i].i2cId)) == 0 )
+        {
+            i2cBusInitMask |= (1 << dev_PwrMon_deviceInfo[i].i2cId);
+            bsp_I2c_masterControl( dev_PwrMon_deviceInfo[i].i2cId, BSP_I2C_CONTROL_ENABLE );
+        }
+
         dev_PwrMon_manufacturerId( i, &dev_PwrMon_deviceCtx[i].mftrId, NULL, NULL );
         dev_PwrMon_deviceId( i, &dev_PwrMon_deviceCtx[i].deviceId, NULL, NULL );
 
@@ -447,10 +402,10 @@ dev_PwrMon_init( void )
         dev_PwrMon_alertMaskSet( i, 0x0000, NULL, NULL );
     }
 
-    // For each rail, configure the default settings
-    for (uint8_t i=0; i<DIM(dev_PwrMon_railInfo); i++)
+    // For each channel, configure the default settings
+    for (uint8_t i=0; i<DIM(dev_PwrMon_channelInfo); i++)
     {
-        dev_PwrMon_railConfig( i,
+        dev_PwrMon_channelConfig( i,
                                BSP_PWRMOMN_CONV_TIME_US_140,
                                BSP_PWRMOMN_CONV_TIME_US_140,
                                BSP_PWRMOMN_AVG_MODE_SAMPLES_1,
@@ -462,30 +417,30 @@ dev_PwrMon_init( void )
 
 /*===========================================================================*/
 void
-dev_PwrMon_railConfig( dev_PwrMon_RailId_t   railId,
-                       dev_PwrMon_ConvTime_t shuntConvTime,
-                       dev_PwrMon_ConvTime_t busConvTime,
-                       dev_PwrMon_AvgMode_t  avgMode,
-                       dev_PwrMon_Callback_t callback,
-                       void*                 cbData )
+dev_PwrMon_channelConfig( dev_PwrMon_ChannelId_t channelId,
+                          dev_PwrMon_ConvTime_t  shuntConvTime,
+                          dev_PwrMon_ConvTime_t  busConvTime,
+                          dev_PwrMon_AvgMode_t   avgMode,
+                          dev_PwrMon_Callback_t  callback,
+                          void*                  cbData )
 {
-    const dev_PwrMon_RailInfo_t* railPtr = &dev_PwrMon_railInfo[railId];
-    const dev_PwrMon_RailDevices_t* devicesPtr = (const dev_PwrMon_RailDevices_t*)railPtr;
+    const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
+    const dev_PwrMon_ChannelDevices_t* devicesPtr = (const dev_PwrMon_ChannelDevices_t*)channelPtr;
 
-    // For each device on the rail make sure it's conversion mode
+    // For each device on the channel make sure it's conversion mode
     // is set properly.
     for (uint8_t i=0; i<DIM(devicesPtr->devices); i++)
     {
         dev_PwrMon_Data_t tmpReg;
         dev_PwrMon_OpMode_t mode = BSP_PWRMOMN_OP_MODE_PWR_DWN;
-        if ((railPtr->current == devicesPtr->devices[i]) ||
-            (railPtr->power   == devicesPtr->devices[i]) ||
-            (railPtr->vShunt  == devicesPtr->devices[i]))
+        if ((channelPtr->current == devicesPtr->devices[i]) ||
+            (channelPtr->power   == devicesPtr->devices[i]) ||
+            (channelPtr->vShunt  == devicesPtr->devices[i]))
         {
-            mode = (railPtr->vBus == devicesPtr->devices[i]) ?
+            mode = (channelPtr->vBus == devicesPtr->devices[i]) ?
                         BSP_PWRMOMN_OP_MODE_CONT_SHUNT_AND_BUS : BSP_PWRMOMN_OP_MODE_CONT_SHUNT;
         }
-        else if (railPtr->vBus == devicesPtr->devices[i])
+        else if (channelPtr->vBus == devicesPtr->devices[i])
         {
             mode = BSP_PWRMOMN_OP_MODE_CONT_SHUNT_AND_BUS;
         }
@@ -502,20 +457,20 @@ dev_PwrMon_railConfig( dev_PwrMon_RailId_t   railId,
 
 /*===========================================================================*/
 void
-dev_PwrMon_railConfigShunt( dev_PwrMon_RailId_t   railId,
-                            dev_PwrMon_ShuntVal_t shunt,
-                            dev_PwrMon_Callback_t callback,
-                            void*                 cbData )
+dev_PwrMon_channelConfigShunt( dev_PwrMon_ChannelId_t channelId,
+                               dev_PwrMon_ShuntVal_t  shunt,
+                               dev_PwrMon_Callback_t  callback,
+                               void*                  cbData )
 {
-    const dev_PwrMon_RailInfo_t* railPtr = &dev_PwrMon_railInfo[railId];
-    const dev_PwrMon_RailDevices_t* devicesPtr = (const dev_PwrMon_RailDevices_t*)railPtr;
+    const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
+    const dev_PwrMon_ChannelDevices_t* devicesPtr = (const dev_PwrMon_ChannelDevices_t*)channelPtr;
 
     for (uint8_t i=0; i<DIM(devicesPtr->devices); i++)
     {
         // Only setup shunt for devices measuring current or power or shunt voltage
-        if ((railPtr->current == devicesPtr->devices[i]) ||
-            (railPtr->power   == devicesPtr->devices[i]) ||
-            (railPtr->vShunt  == devicesPtr->devices[i]))
+        if ((channelPtr->current == devicesPtr->devices[i]) ||
+            (channelPtr->power   == devicesPtr->devices[i]) ||
+            (channelPtr->vShunt  == devicesPtr->devices[i]))
         {
             // Callback only on the last one
             dev_PwrMon_Callback_t cb;
@@ -529,49 +484,49 @@ dev_PwrMon_railConfigShunt( dev_PwrMon_RailId_t   railId,
 
 /*===========================================================================*/
 void
-dev_PwrMon_railCurrentRead( dev_PwrMon_RailId_t   railId,
-                            dev_PwrMon_Data_t*    dataPtr,
-                            dev_PwrMon_Callback_t callback,
-                            void*                 cbData )
+dev_PwrMon_channelCurrentRead( dev_PwrMon_ChannelId_t channelId,
+                               dev_PwrMon_Data_t*     dataPtr,
+                               dev_PwrMon_Callback_t  callback,
+                               void*                  cbData )
 {
-    const dev_PwrMon_RailInfo_t* railPtr = &dev_PwrMon_railInfo[railId];
-    dev_PwrMon_currentGet( railPtr->current, dataPtr, callback, cbData );
+    const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
+    dev_PwrMon_currentGet( channelPtr->current, dataPtr, callback, cbData );
     return;
 }
 
 /*===========================================================================*/
 void
-dev_PwrMon_railBusVoltageRead( dev_PwrMon_RailId_t   railId,
-                               dev_PwrMon_Data_t*    dataPtr,
-                               dev_PwrMon_Callback_t callback,
-                               void*                 cbData )
+dev_PwrMon_channelBusVoltageRead( dev_PwrMon_ChannelId_t channelId,
+                                  dev_PwrMon_Data_t*     dataPtr,
+                                  dev_PwrMon_Callback_t  callback,
+                                  void*                  cbData )
 {
-    const dev_PwrMon_RailInfo_t* railPtr = &dev_PwrMon_railInfo[railId];
-    dev_PwrMon_vBusGet( railPtr->vBus, dataPtr, callback, cbData );
+    const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
+    dev_PwrMon_vBusGet( channelPtr->vBus, dataPtr, callback, cbData );
     return;
 }
 
 /*===========================================================================*/
 void
-dev_PwrMon_railShuntVoltageRead( dev_PwrMon_RailId_t   railId,
-                                 dev_PwrMon_Data_t*    dataPtr,
-                                 dev_PwrMon_Callback_t callback,
-                                 void*                 cbData )
+dev_PwrMon_channelShuntVoltageRead( dev_PwrMon_ChannelId_t channelId,
+                                    dev_PwrMon_Data_t*     dataPtr,
+                                    dev_PwrMon_Callback_t  callback,
+                                    void*                  cbData )
 {
-    const dev_PwrMon_RailInfo_t* railPtr = &dev_PwrMon_railInfo[railId];
-    dev_PwrMon_vShuntGet( railPtr->vShunt, dataPtr, callback, cbData );
+    const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
+    dev_PwrMon_vShuntGet( channelPtr->vShunt, dataPtr, callback, cbData );
     return;
 }
 
 /*===========================================================================*/
 void
-dev_PwrMon_railPowerRead( dev_PwrMon_RailId_t   railId,
-                          dev_PwrMon_Data_t*    dataPtr,
-                          dev_PwrMon_Callback_t callback,
-                          void*                 cbData )
+dev_PwrMon_channelPowerRead( dev_PwrMon_ChannelId_t channelId,
+                             dev_PwrMon_Data_t*     dataPtr,
+                             dev_PwrMon_Callback_t  callback,
+                             void*                  cbData )
 {
-    const dev_PwrMon_RailInfo_t* railPtr = &dev_PwrMon_railInfo[railId];
-    dev_PwrMon_powerGet( railPtr->power, dataPtr, callback, cbData );
+    const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
+    dev_PwrMon_powerGet( channelPtr->power, dataPtr, callback, cbData );
     return;
 }
 

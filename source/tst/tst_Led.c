@@ -37,6 +37,7 @@
 #if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
 #include "dev_PwrMon.h"
 #endif
+
 /*==============================================================================
  *                                 Globals
  *============================================================================*/
@@ -100,38 +101,40 @@ tst_Led_set_color( int argc, char** argv )
 }
 
 /*============================================================================*/
-uint32_t count = 1;
-void tst_Led_voltageCallback( void* cbData )
+
+#if defined(SVC_EHID_PWRMON)
+#include "svc_SamplerEh.h"
+/*============================================================================*/
+static void
+tst_Led_buildAndSendSetPwrMonConfigReq( void )
 {
-    bsp_Led_setColor( BSP_PLATFORM_LED_ID_STATUS,
-                      (BSP_LED_COLOR_MASK_R | BSP_LED_COLOR_MASK_G | BSP_LED_COLOR_MASK_B) * ((count++ >> 9) & 0x01) );
+    svc_PwrMonEh_ConfigReq_t* reqPtr;
+    reqPtr = svc_MsgFwk_msgAlloc( SVC_EHID_TEST,
+                                  SVC_PWRMONEH_CONFIG_REQ,
+                                  sizeof(svc_PwrMonEh_ConfigReq_t) + (2 * sizeof(svc_PwrMonEh_ChEntry_t)) );
+    reqPtr->smplFmt = SVC_PWRMONEH_SMPL_FMT_32BIT;
+    reqPtr->numCh = 2;
+    reqPtr->chTable[0].chId = 0;
+    reqPtr->chTable[0].shuntVal = 10;
+    strncpy(reqPtr->chTable[0].chName, "TEST_POWER_RAIL0", sizeof(reqPtr->chTable[0].chName) );
+    reqPtr->chTable[1].chId = 1;
+    reqPtr->chTable[1].shuntVal = 12;
+    strncpy(reqPtr->chTable[0].chName, "TEST_POWER_RAIL1", sizeof(reqPtr->chTable[0].chName) );
+    svc_MsgFwk_msgSend( reqPtr );
     return;
 }
 
-void tst_Led_currentCallback( void* cbData )
-{
-    return;
-}
 
 /*============================================================================*/
-#if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
-dev_PwrMon_DeviceId_t deviceId;
-dev_PwrMon_Data_t current;
-dev_PwrMon_Data_t vBus;
-//dev_PwrMon_Sample_t sample2;
-#endif
-void
-tst_Led_testCallback( bsp_TimerGp_TimerId_t    timerId,
-                      bsp_TimerGp_SubTimerId_t subTimerId,
-                      uint32_t                 mask )
+static void
+tst_Led_buildAndSendSetPwrMonStartReq( void )
 {
-#if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
-    dev_PwrMon_railCurrentRead( 0, &current, tst_Led_currentCallback, NULL );
-    dev_PwrMon_railBusVoltageRead( 0, &vBus, tst_Led_voltageCallback, NULL );
-    //dev_PwrMon_deviceId( 0, &deviceId, tst_Led_readCallback );
-    //dev_PwrMon_sample( 0, &sample1, tst_Led_readCallback );
-    //dev_PwrMon_sample( 1, &sample2, tst_Led_readCallback2 );
-#endif
+    svc_PwrMonEh_StartReq_t* reqPtr;
+    reqPtr = svc_MsgFwk_msgAlloc( SVC_EHID_TEST,
+                                  SVC_PWRMONEH_START_REQ,
+                                  sizeof(svc_PwrMonEh_StartReq_t) );
+    svc_MsgFwk_msgSend( reqPtr );
+    return;
 }
 
 
@@ -139,12 +142,17 @@ tst_Led_testCallback( bsp_TimerGp_TimerId_t    timerId,
 static tst_Status_t
 tst_Led_test2( int argc, char** argv )
 {
-    bsp_TimerGp_startCountdown( BSP_TIMERGP_ID_0, BSP_TIMERGP_TYPE_PERIODIC, 0x00000000, 400, tst_Led_testCallback );
-    // Initialize/configure power monitors
-
+    tst_Led_buildAndSendSetPwrMonConfigReq();
+    tst_Led_buildAndSendSetPwrMonStartReq();
     return( TST_STATUS_OK );
 }
-
+#else
+static tst_Status_t
+tst_Led_test2( int argc, char** argv )
+{
+    return( TST_STATUS_OK );
+}
+#endif
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/

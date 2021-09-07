@@ -497,6 +497,26 @@
 			<locationURI>SOURCE_ROOT/svc/svc_MsgFwk.h</locationURI>
 		</link>
 		<link>
+			<name>source/svc/svc_PwrMon_channel.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_PwrMon_channel.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_PwrMon_channel.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_PwrMon_channel.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_PwrMon_sampler.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_PwrMon_sampler.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_PwrMon_sampler.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_PwrMon_sampler.h</locationURI>
+		</link>
+		<link>
 			<name>source/svc/svc_SamplerEh.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_SamplerEh.c</locationURI>

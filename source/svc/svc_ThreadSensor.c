@@ -71,8 +71,8 @@ static const svc_Eh_Info_t* svc_ThreadSensor_ehTable[] =
 // #if defined(SVC_EHID_LIGHT)
 //     &svc_LightEh_info,
 // #endif
-#if defined(SVC_EHID_SAMPLER)
-    &svc_SamplerEh_info
+#if defined(SVC_EHID_PWRMON)
+    &svc_PwrMonEh_info
 #endif
 };
 

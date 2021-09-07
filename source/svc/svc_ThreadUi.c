@@ -43,7 +43,7 @@
 /*==============================================================================
  *                                  Defines
  *============================================================================*/
-#define SVC_THREADUI_STACK_SIZE    2048
+#define SVC_THREADUI_STACK_SIZE    1024
 #define SVC_THREADUI_STACK_SIZE_32 (SVC_THREADUI_STACK_SIZE / 4)
 
 #define SVC_THREADUI_QUEUE_DEPTH 32

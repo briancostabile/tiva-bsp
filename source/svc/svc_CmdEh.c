@@ -196,7 +196,7 @@ svc_CmdEh_processBinary( uint8_t* buf, uint16_t len )
 
     SVC_LOG_INFO(NL);
 
-    extern svc_CmdEh_handlerBinary( uint8_t* buf, uint16_t len );
+    extern int32_t svc_CmdEh_handlerBinary( uint8_t* buf, uint16_t len );
     svc_CmdEh_handlerBinary( buf, len );
     return;
 }

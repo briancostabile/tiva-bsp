@@ -139,3 +139,20 @@ bsp_TimerGp_startCountdown( bsp_TimerGp_TimerId_t        timerId,
     BSP_TRACE_TIMER_START_EXIT();
     return;
 }
+
+/*============================================================================*/
+void
+bsp_TimerGp_stop( bsp_TimerGp_TimerId_t timerId )
+{
+    const bsp_TimerGp_PlatformInfo_t* timerInfoPtr = &bsp_TimerGp_platformInfoTable[timerId];
+    const bsp_TimerGp_InterruptInfo_t* timerIntInfoPtr = &bsp_TimerGp_platformInfoTable[timerId].handlerTable[BSP_TIMERGP_SUB_ID_A];
+
+    BSP_TRACE_TIMER_STOP_ENTER();
+    MAP_TimerDisable( timerInfoPtr->baseAddr, TIMER_A );
+    MAP_TimerIntDisable( timerInfoPtr->baseAddr, TIMER_A );
+    MAP_TimerIntClear( timerInfoPtr->baseAddr, TIMER_A );
+
+    *timerIntInfoPtr->handler = NULL;
+    BSP_TRACE_TIMER_STOP_EXIT();
+    return;
+}

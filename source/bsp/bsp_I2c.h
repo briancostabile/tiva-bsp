@@ -79,6 +79,7 @@ typedef struct bsp_I2c_MasterTrans_n
     bsp_I2c_TransType_t           type;
     bsp_I2c_Speed_t               speed;
     bsp_I2c_Addr_t                addr;
+    bool_t                        rReverse;
     size_t                        rLen;
     uint8_t*                      rBuffer;
     size_t                        wLen;
