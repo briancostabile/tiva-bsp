@@ -31,7 +31,7 @@
 #include "svc_TempEh.h"
 #include "svc_HumidEh.h"
 #include "svc_LightEh.h"
-#include "svc_SamplerEh.h"
+#include "svc_PwrMonEh.h"
 #include "svc_Eh.h"
 #include "osapi.h"
 

@@ -29,7 +29,7 @@
 #include "bsp_Mcu.h"
 #include "bsp_UsbBulk.h"
 #include "bsp_Led.h"
-#include "svc_SamplerEh.h"
+#include "svc_PwrMonEh.h"
 #include "svc_MsgFwk.h"
 #include "osapi.h"
 #include "dev_PwrMon.h"

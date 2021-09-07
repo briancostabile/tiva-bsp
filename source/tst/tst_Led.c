@@ -103,7 +103,7 @@ tst_Led_set_color( int argc, char** argv )
 /*============================================================================*/
 
 #if defined(SVC_EHID_PWRMON)
-#include "svc_SamplerEh.h"
+#include "svc_PwrMonEh.h"
 /*============================================================================*/
 static void
 tst_Led_buildAndSendSetPwrMonConfigReq( void )

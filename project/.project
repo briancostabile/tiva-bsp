@@ -517,14 +517,14 @@
 			<locationURI>SOURCE_ROOT/svc/svc_PwrMon_sampler.h</locationURI>
 		</link>
 		<link>
-			<name>source/svc/svc_SamplerEh.c</name>
+			<name>source/svc/svc_PwrMonEh.c</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_SamplerEh.c</locationURI>
+			<locationURI>SOURCE_ROOT/svc/svc_PwrMonEh.c</locationURI>
 		</link>
 		<link>
-			<name>source/svc/svc_SamplerEh.h</name>
+			<name>source/svc/svc_PwrMonEh.h</name>
 			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_SamplerEh.h</locationURI>
+			<locationURI>SOURCE_ROOT/svc/svc_PwrMonEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_SerIoEh.h</name>
