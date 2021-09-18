@@ -33,11 +33,6 @@
 #include "svc_PwrMon_channel.h"
 #include "dev_PwrMon.h"
 
-#ifndef SVC_LOG_LEVEL
-#define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
-#endif
-#include "svc_Log.h"
-
 #if defined(SVC_EHID_PWRMON)
 /*==============================================================================
  *                               Defines

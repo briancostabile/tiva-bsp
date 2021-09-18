@@ -36,11 +36,6 @@
 #include "svc_MsgFwk.h"
 #include "svc_PwrMonEh.h"
 
-#ifndef SVC_LOG_LEVEL
-#define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
-#endif
-#include "svc_Log.h"
-
 #if defined(SVC_EHID_PWRMON)
 /*==============================================================================
  *                               Defines
@@ -50,6 +45,11 @@
 
 // How many DataInd packets to buffer
 #define SVC_PWRMON_SAMPLER_PACKET_BUFFER_CNT 2
+
+// If we want to include in the test packet which is the max sized packet with
+// known pattern. Used for bandwidth and performance testing
+#define SVC_PWRMON_SAMPLER_TEST_PKT
+
 
 /*==============================================================================
  *                                Types
@@ -64,7 +64,7 @@ typedef struct svc_PwrMon_SamplerFrameInfo_s
 {
     svc_PwrMonEh_ChBitmap_t vBitmap;
     svc_PwrMonEh_ChBitmap_t iBitmap;
-    uint16_t                   smplSet;
+    uint16_t                smplSet;
 } svc_PwrMon_SamplerPktInfo_t;
 
 typedef struct svc_PwrMon_SamplerCtx_s
@@ -84,7 +84,6 @@ typedef struct svc_PwrMon_SamplerCtx_s
 
 /*============================================================================*/
 // Define a max size packet with known pattern to test the Packet Data pipe
-#define SVC_PWRMON_SAMPLER_TEST_PKT
 #ifdef SVC_PWRMON_SAMPLER_TEST_PKT
 static const svc_PwrMon_SamplerPkt_t svc_PwrMon_tstPkt = {
     0,
@@ -250,8 +249,10 @@ void svc_PwrMon_currentCallback( void* cbData )
 /*============================================================================*/
 void svc_PwrMon_sendTestPkt( void )
 {
+#ifdef SVC_PWRMON_SAMPLER_TEST_PKT
     memcpy( &svc_PwrMon_ctx.pktArray[0], &svc_PwrMon_tstPkt, sizeof(svc_PwrMon_tstPkt));
     svc_MsgFwk_msgBroadcast( &(svc_PwrMon_ctx.pktArray[0].dataInd.hdr) );
+#endif
 }
 
 /*============================================================================*/
