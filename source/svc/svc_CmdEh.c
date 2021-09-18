@@ -28,9 +28,13 @@
 #include "bsp_Types.h"
 #include "bsp_Pragma.h"
 #include "bsp_UartIo.h"
+#include "bsp_UsbIo.h"
+#include "bsp_UsbBulk.h"
 #include "bsp_Mcu.h"
 #include "bsp_Io.h"
 #include "svc_CmdEh.h"
+#include "svc_CmdEh_text.h"
+#include "svc_CmdEh_cmds.h"
 #include "svc_SerIoEh.h"
 #include "osapi.h"
 #include <stdio.h>
@@ -38,10 +42,6 @@
 #include <stdint.h>
 #include <ctype.h>
 
-#include "svc_TestEh.h"
-
-// Menu is defined in tst directory
-#include "tst.h"
 
 #define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
 #include "svc_Log.h"
@@ -67,7 +67,8 @@
 
 // If using the binary command interface, then the commands must start
 // with this character.
-#define SVC_CMDEH_BIN_START  '$'
+#define SVC_CMDEH_BIN_START      '$'
+#define SVC_CMDEH_BIN_START_RSP  '!'
 
 // Define the number of command line buffers to keep. In reality, there's one
 // less than this value because once a command is triggered, the next command
@@ -97,7 +98,7 @@
     svc_CmdEh_bufferArray[svc_CmdEh_bufferSel][SVC_CMDEH_BUFFER_IDX] = 0; \
 }
 
-#define SVC_CMDEH_BIN_LEN_DIGITS 2
+#define SVC_CMDEH_BIN_LEN_BYTES 2
 #define SVC_CMDEH_BIN_LEN_MAX    (SVC_CMDEH_BUFFER_SIZE * SVC_CMDEH_BUFFER_HISTORY)
 #define SVC_CMDEH_ARGC_MAX       (SVC_CMDEH_BUFFER_SIZE / 2)
 
@@ -107,13 +108,27 @@ uint16_t svc_CmdEh_bufferIdxArray[SVC_CMDEH_BUFFER_HISTORY];
 uint8_t  svc_CmdEh_bufferArray[SVC_CMDEH_BUFFER_HISTORY][SVC_CMDEH_BUFFER_SIZE];
 uint8_t  svc_CmdEh_bufferSel;
 
+typedef void (*svc_CmdEh_sendCallback_t)( uint8_t* buf, uint16_t len );
+typedef struct svc_CmdEh_Ctx_s
+{
+    uint32_t rxCntSerial;
+    uint32_t txCntSerial;
+    uint32_t rxCntBulk;
+    uint32_t txCntBulk;
+    int      fdSerial;
+    int      fdUsb;
+    svc_CmdEh_sendCallback_t pendingCb;
+    bool_t   cbSkipSerial;
+    bool_t   cbSkipBulk;
+} svc_CmdEh_Ctx_t;
+svc_CmdEh_Ctx_t svc_CmdEh_ctx;
 
 /*============================================================================*/
 const svc_MsgFwk_MsgId_t svc_CmdEh_bcastMsgIds[] =
 {
-    SVC_SERIOEH_DATA_IND
+    SVC_SERIOEH_DATA_IND,
+    SVC_SERIOEH_BULK_DATA_IND
 };
-
 
 /*==============================================================================
  *                            Local Functions
@@ -136,8 +151,9 @@ svc_CmdEh_handlerText( int argc, char** argv )
     uint8_t                   argi;
     const tst_TableElement_t* tbl_ptr;
     int32_t                   ret = TST_STATUS_ERROR;
+    bool_t                    handlerCalled = false;
 
-    tbl_ptr = tst_MenuTable;
+    tbl_ptr = svc_CmdEh_textMenu;
 
     for( argi= 0; argi<argc; argi++ )
     {
@@ -171,11 +187,16 @@ svc_CmdEh_handlerText( int argc, char** argv )
                     argi++;
                     ret = tbl_ptr->handler( (argc - argi), &argv[argi] );
                     argi = argc; // force exit the outer for loop
+                    handlerCalled = true;
                 }
                 break;
             }
             tbl_ptr++;
         }
+    }
+    if (handlerCalled == false)
+    {
+        svc_Cmd_dumpHelp( tbl_ptr );
     }
 
     return( ret );
@@ -183,21 +204,26 @@ svc_CmdEh_handlerText( int argc, char** argv )
 
 
 /*============================================================================*/
-static void
-svc_CmdEh_processBinary( uint8_t* buf, uint16_t len )
+void
+svc_CmdEh_binarySendSerial( uint8_t* buf, uint16_t len )
 {
-    uint16_t i;
-    SVC_LOG_INFO( "Binary Command: len:%d Data:", len );
+    svc_CmdEh_Ctx_t* ctx = &svc_CmdEh_ctx;
+    printf( "%c", SVC_CMDEH_BIN_START_RSP );
+    // printf( "%04X", len );
+    for( uint16_t i=0; i<len; i++ ) { printf("%02X", buf[i]); }
+    printf( NL );
+    // Each byte is 2 characters, plus 1 for start plus 2 for NL
+    ctx->txCntSerial += (len * 2) + 1;
+    return;
+}
 
-    for( i=0; i<len; i++ )
-    {
-        SVC_LOG_INFO( "%02X ", buf[i] );
-    }
 
-    SVC_LOG_INFO(NL);
-
-    extern int32_t svc_CmdEh_handlerBinary( uint8_t* buf, uint16_t len );
-    svc_CmdEh_handlerBinary( buf, len );
+/*============================================================================*/
+void
+svc_CmdEh_binarySendBulk( uint8_t* buf, uint16_t len )
+{
+    svc_CmdEh_Ctx_t* ctx = &svc_CmdEh_ctx;
+    ctx->txCntBulk += bsp_UsbBulk_write( ctx->fdUsb, buf, len );
     return;
 }
 
@@ -251,7 +277,8 @@ svc_CmdEh_bufferAddChar( char c )
     static bool binary_mode = false;
     static bool binary_len_done = false;
     static int16_t binary_digits = 0;
-    static int16_t binary_len = 0;
+    static uint8_t binary_len_bytes[SVC_CMDEH_BIN_LEN_BYTES];
+    static uint8_t binary_len_idx = 0;
     static uint8_t binary_data = 0;
     static uint8_t esc_buf[3];
     static uint8_t esc_cnt = 0;
@@ -262,9 +289,11 @@ svc_CmdEh_bufferAddChar( char c )
     if( (binary_mode == false) && (SVC_CMDEH_BUFFER_IDX == 0) && (esc_cnt == 0) )
     {
         binary_mode = (c == SVC_CMDEH_BIN_START);
-        binary_len = 0;
+        memset(binary_len_bytes, 0, sizeof(binary_len_bytes));
+        binary_len_idx = 0;
         binary_len_done = false;
-        binary_digits = SVC_CMDEH_BIN_LEN_DIGITS;
+        binary_digits = (SVC_CMDEH_BIN_LEN_BYTES * 2);
+        binary_data = 0;
         esc_cnt = 0;
 
         // If running in binary mode, Forget history and make use of all
@@ -280,12 +309,23 @@ svc_CmdEh_bufferAddChar( char c )
     // Establish the length of the binary command
     if( (binary_mode == true) && (binary_len_done == false) )
     {
-        binary_len *= 16;
-        binary_len += svc_CmdEh_asciiToDec( c );
-        if( --binary_digits <= 0 )
+        binary_data *= 16;
+        binary_data += svc_CmdEh_asciiToDec( c );
+        binary_digits--;
+
+        // Every other digit makes a byte
+        if( (binary_digits & 0x01) == 0 )
+        {
+            binary_len_bytes[binary_len_idx++] = binary_data;
+            SVC_CMDEH_BUFFER_ADD_CHAR( (char)binary_data );
+            binary_data = 0;
+        }
+
+        // See if we grabbed all the digits that make up the length
+        if( binary_digits <= 0 )
         {
             binary_len_done = true;
-            binary_digits = (binary_len * 2);
+            binary_digits = (((binary_len_bytes[1] << 8) + binary_len_bytes[0]) * 2);
             binary_data = 0;
         }
         return;
@@ -300,6 +340,7 @@ svc_CmdEh_bufferAddChar( char c )
         binary_data *= 16;
         binary_data += svc_CmdEh_asciiToDec( c );
         binary_digits--;
+
         // Every digit is a nibble so every other digit gets stored as a byte
         if( (binary_digits & 0x01) == 0 )
         {
@@ -381,12 +422,16 @@ svc_CmdEh_bufferAddChar( char c )
     {
         if( binary_mode == true )
         {
-            svc_CmdEh_processBinary( SVC_CMDEH_BUFFER, (uint16_t)SVC_CMDEH_BUFFER_IDX );
+            svc_CmdEh_ctx.pendingCb = svc_CmdEh_binarySendSerial;
+            svc_CmdEh_handlerBinary( (svc_CmdEh_CmdHdr_t*)SVC_CMDEH_BUFFER,
+                                     svc_CmdEh_binarySendSerial );
+
             SVC_CMDEH_BUFFER_RESET();
             binary_mode = false;
         }
         else
         {
+            svc_CmdEh_ctx.pendingCb = NULL;
             svc_CmdEh_processText( SVC_CMDEH_BUFFER, (uint8_t)SVC_CMDEH_BUFFER_IDX );
             putc( SVC_CMDEH_TXT_PROMPT, stdout );
         }
@@ -396,18 +441,34 @@ svc_CmdEh_bufferAddChar( char c )
     return;
 }
 
-bool svc_CmdEh_ioCallbackSuppressed = false;
 /*============================================================================*/
 static void
-svc_CmdEh_ioCallback( void )
+svc_CmdEh_ioCallback( size_t cnt )
 {
     // Message sending is supressed until input processing has completed
-    if( svc_CmdEh_ioCallbackSuppressed == false )
+    if( svc_CmdEh_ctx.cbSkipSerial == false )
     {
-        svc_CmdEh_ioCallbackSuppressed = true;
+        svc_CmdEh_ctx.cbSkipSerial = true;
         svc_MsgFwk_msgAllocAndBroadcast( SVC_SERIOEH_DATA_IND,
-                                        sizeof(svc_SerIoEh_DataInd_t),
-                                        NULL );
+                                         sizeof(svc_SerIoEh_DataInd_t),
+                                         NULL );
+    }
+
+    return;
+}
+
+
+/*============================================================================*/
+static void
+svc_CmdEh_ioCallbackBulk( size_t cnt )
+{
+    // Message sending is supressed until input processing has completed
+    if( svc_CmdEh_ctx.cbSkipBulk == false )
+    {
+        svc_CmdEh_ctx.cbSkipBulk = true;
+        svc_MsgFwk_msgAllocAndBroadcast( SVC_SERIOEH_BULK_DATA_IND,
+                                         sizeof(svc_SerIoEh_DataInd_t),
+                                         NULL );
     }
 
     return;
@@ -418,18 +479,24 @@ svc_CmdEh_ioCallback( void )
 static void
 svc_CmdEh_init( void )
 {
-    svc_CmdEh_ioCallbackSuppressed = false;
+    svc_CmdEh_Ctx_t* ctx = &svc_CmdEh_ctx;
+    memset( ctx, 0, sizeof(svc_CmdEh_Ctx_t) );
+
     svc_CmdEh_bufferInit();
 
     // Grab the file descriptor for the serial device and register a callback
     // to be informed when data is received on stdin
-    int fd = bsp_Io_fileToDfd( stdin );
+    ctx->fdSerial = bsp_Io_fileToDfd( stdin );
 
-#if (PLATFORM_IO == uart)
-    bsp_UartIo_registerDataAvailableCallback( fd, svc_CmdEh_ioCallback );
-#elif (PLATFORM_IO == usb)
-    bsp_UsbIo_registerDataAvailableCallback( fd, svc_CmdEh_ioCallback );
-#endif
+    bsp_UartIo_registerDataAvailableCallback( ctx->fdSerial, svc_CmdEh_ioCallback );
+    bsp_UsbIo_registerDataAvailableCallback( ctx->fdSerial, svc_CmdEh_ioCallback );
+
+
+    ctx->fdUsb = bsp_UsbBulk_open();
+    bsp_UsbBulk_registerCallbackDataAvailable( ctx->fdUsb, svc_CmdEh_ioCallbackBulk );
+
+    // Register this event handler as the proxy for unhandled messages
+    svc_MsgFwk_registerProxyEh( SVC_EHID_CMD );
 
     // Print out the command console header and first prompt
     printf( SVC_CMDEH_TXT_HDR, SVC_CMDEH_TXT_PROMPT );
@@ -440,6 +507,7 @@ svc_CmdEh_init( void )
 static void
 svc_CmdEh_msgHandler( svc_MsgFwk_Hdr_t* msgPtr )
 {
+    svc_CmdEh_Ctx_t* ctx = &svc_CmdEh_ctx;
     switch( msgPtr->id )
     {
         case SVC_SERIOEH_DATA_IND:
@@ -449,14 +517,46 @@ svc_CmdEh_msgHandler( svc_MsgFwk_Hdr_t* msgPtr )
             c = getc( stdin );
             while( c != EOF )
             {
+                ctx->rxCntSerial++;
                 svc_CmdEh_bufferAddChar( (char)c );
                 c = getc( stdin );
             }
             BSP_MCU_CRITICAL_SECTION_ENTER();
-            svc_CmdEh_ioCallbackSuppressed = false;
+            ctx->cbSkipSerial = false;
             BSP_MCU_CRITICAL_SECTION_EXIT();
         }
         break;
+
+        case SVC_SERIOEH_BULK_DATA_IND:
+        {
+            int rd_cnt = bsp_UsbBulk_read( ctx->fdUsb,
+                                           &svc_CmdEh_bufferArray[0][0],
+                                           sizeof(svc_CmdEh_bufferArray));
+            ctx->rxCntBulk += rd_cnt;
+
+            // Pull the length off the front and process the rest
+            ctx->pendingCb = svc_CmdEh_binarySendBulk;
+            svc_CmdEh_handlerBinary( (svc_CmdEh_CmdHdr_t*)(&svc_CmdEh_bufferArray[0][0]),
+                                     svc_CmdEh_binarySendBulk );
+            SVC_CMDEH_BUFFER_RESET();
+
+            BSP_MCU_CRITICAL_SECTION_ENTER();
+            ctx->cbSkipBulk = false;
+            BSP_MCU_CRITICAL_SECTION_EXIT();
+        }
+        break;
+
+        default:
+        {
+            // unhandled messages sent here may be destine for external event handlers
+            if ( (msgPtr->eh == SVC_EHID_BROADCAST) || (msgPtr->eh >= SVC_EHID_NUM_EHIDS) )
+            {
+                svc_CmdEh_CmdHdr_t* cmdPtr = (svc_CmdEh_CmdHdr_t*)SVC_MSGFWK_MSG_SYSTEM_PTR(msgPtr);
+                cmdPtr->len = (msgPtr->len + 2);
+                cmdPtr->cmdId = SVC_CMDEH_CMD_ID_EHMSG;
+                svc_CmdEh_binarySendBulk((uint8_t*)cmdPtr, (msgPtr->len + sizeof(svc_CmdEh_CmdHdr_t)));
+            }
+        }
     }
 }
 

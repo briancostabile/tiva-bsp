@@ -32,9 +32,8 @@
 #define SVC_EHID_TIMER     3
 #define SVC_EHID_BUTTON    4
 #define SVC_EHID_LED       5
-#define SVC_EHID_TEST      6
-#define SVC_EHID_TEMP      7
-#define SVC_EHID_HUMID     8
-#define SVC_EHID_LIGHT     9
-#define SVC_EHID_PWRMON   10
-#define SVC_EHID_NUM_EHIDS 11
+#define SVC_EHID_TEMP      6
+#define SVC_EHID_HUMID     7
+#define SVC_EHID_LIGHT     8
+#define SVC_EHID_PWRMON    9
+#define SVC_EHID_NUM_EHIDS 10

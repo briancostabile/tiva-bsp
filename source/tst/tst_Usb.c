@@ -60,7 +60,7 @@ int32_t tst_Usb_txCnt = 0;
 int32_t tst_Usb_rxCnt = 0;
 
 uint8_t tst_Usb_cmdBuffer[32];
-uint8_t tst_Usb_dataBuffer[2048];
+uint8_t tst_Usb_dataBuffer[512];
 
 /*==============================================================================
  *                            Private Functions
@@ -144,6 +144,7 @@ tst_Usb_send( int argc, char** argv )
     }
     int pkt_len = (uint32_t)strtol(argv[0], NULL, 10);
     int snt = 0;
+    pkt_len = (sizeof(tst_Usb_dataBuffer) >= pkt_len) ? pkt_len : sizeof(tst_Usb_dataBuffer);
     while( pkt_len > 0 )
     {
         snt += bsp_UsbBulk_write(tst_Usb_fd, &tst_Usb_dataBuffer[snt], pkt_len);

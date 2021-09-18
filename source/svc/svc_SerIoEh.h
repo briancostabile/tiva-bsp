@@ -39,6 +39,7 @@
 /*============================================================================*/
 // Event handler message IDs
 #define SVC_SERIOEH_DATA_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_SERIO, 0 )
+#define SVC_SERIOEH_BULK_DATA_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_SERIO, 1 )
 
 
 /*==============================================================================

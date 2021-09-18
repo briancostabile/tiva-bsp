@@ -28,7 +28,10 @@
 
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
+#include "bsp_Pragma.h"
 #include "dev_PwrMon.h"
+#include "svc_MsgFwk.h"
+#include "svc_PwrMonEh.h"
 
 /*==============================================================================
  *                               Defines
@@ -36,74 +39,12 @@
 /*============================================================================*/
 #define SVC_PWRMON_SAMPLER_TICK_US 400
 
-/*============================================================================*/
-// Max channels per sample-time
-#define SVC_PWRMON_SAMPLER_CHANNELS_MAX 11
-
-// Max Sample size in bytes (16-bit V, 16-bit I)
-#define SVC_PWRMON_SAMPLER_SAMPLE_SIZE_MAX 4
-
-// Samples Per Packet: 50 sample sets at 2500Hz = 20ms worth of samples
-#define SVC_PWRMON_SAMPLER_SAMPLE_SETS_PER_PACKET 50
-
-
-/*==============================================================================
- *                                Types
- *============================================================================*/
-/*============================================================================*/
-// Callback type passed into the Packet Ready callback
-typedef void (*dev_PwrMon_SamplerPktSent_t)( void* cbData );
-
-// Callback type passed in during initialization. To be called when
-// a packet is full.
-typedef void (*dev_PwrMon_SamplerPktReady_t)( void*                       dataPtr,
-                                              size_t                      len,
-                                              dev_PwrMon_SamplerPktSent_t callback,
-                                              void*                       cbData );
-
-// Define the sizes for the sample types supported
-#define SVC_PWRMON_SAMPLER_SAMPLE_SIZE_24BIT 3
-#define SVC_PWRMON_SAMPLER_SAMPLE_SIZE_32BIT 4
-typedef uint8_t svc_PwrMon_SamplerSampleSize_t;
-
-
-/*============================================================================*/
-// Packed structures for the packet sent through USB.
-typedef struct BSP_ATTR_PACKED {
-    uint16_t numCh      :  6;
-    uint16_t numSmplSet :  6;
-    uint16_t sampleSize :  4;
-    uint16_t seq;
-    uint32_t smplStartIdx;
-    uint32_t chBitmap;
-} svc_PwrMon_SamplerPacketHdr_t;
-
-typedef struct BSP_ATTR_PACKED {
-    int16_t v;
-    int16_t i;
-} svc_PwrMon_SamplerPacketData_t;
-
-typedef struct BSP_ATTR_PACKED {
-    svc_PwrMon_SamplerPacketHdr_t  hdr;
-    svc_PwrMon_SamplerPacketData_t data[ SVC_PWRMON_SAMPLER_SAMPLE_SETS_PER_PACKET * SVC_PWRMON_SAMPLER_CHANNELS_MAX ];
-} svc_PwrMon_SamplerPacket_t;
-
-/*============================================================================*/
-// Stats made available outside
-typedef struct svc_PwrMon_SamplerStats_s
-{
-    uint64_t smplNum;
-    uint32_t smplErrNum;
-    uint32_t pktSndNum;
-    uint32_t pktErrNum;
-} svc_PwrMon_SamplerStats_t;
-
 /*==============================================================================
  *                             Public Functions
  *============================================================================*/
 /*============================================================================*/
 void
-svc_PwrMon_samplerInit( dev_PwrMon_SamplerPktReady_t callback );
+svc_PwrMon_samplerInit( void );
 
 /*============================================================================*/
 void
@@ -111,9 +52,13 @@ svc_PwrMon_samplerStop( void );
 
 /*============================================================================*/
 void
-svc_PwrMon_samplerStart( svc_PwrMon_ChannelBitmap_t     chBitmap,
-                         svc_PwrMon_SamplerSampleSize_t sampleSize );
+svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap,
+                         svc_PwrMonEh_SmplFmt_t  smplFmt );
 
 /*============================================================================*/
-svc_PwrMon_SamplerStats_t*
+svc_PwrMonEh_SamplerStats_t*
 svc_PwrMon_samplerStatsPtr( void );
+
+/*============================================================================*/
+void
+svc_PwrMon_samplerStatsReset( void );

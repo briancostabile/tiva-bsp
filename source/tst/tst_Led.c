@@ -34,9 +34,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-#if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
-#include "dev_PwrMon.h"
-#endif
+
 
 /*==============================================================================
  *                                 Globals
@@ -103,47 +101,13 @@ tst_Led_set_color( int argc, char** argv )
 /*============================================================================*/
 
 #if defined(SVC_EHID_PWRMON)
-#include "svc_PwrMonEh.h"
-/*============================================================================*/
-static void
-tst_Led_buildAndSendSetPwrMonConfigReq( void )
-{
-    svc_PwrMonEh_ConfigReq_t* reqPtr;
-    reqPtr = svc_MsgFwk_msgAlloc( SVC_EHID_TEST,
-                                  SVC_PWRMONEH_CONFIG_REQ,
-                                  sizeof(svc_PwrMonEh_ConfigReq_t) + (2 * sizeof(svc_PwrMonEh_ChEntry_t)) );
-    reqPtr->smplFmt = SVC_PWRMONEH_SMPL_FMT_32BIT;
-    reqPtr->numCh = 2;
-    reqPtr->chTable[0].chId = 0;
-    reqPtr->chTable[0].shuntVal = 10;
-    strncpy(reqPtr->chTable[0].chName, "TEST_POWER_RAIL0", sizeof(reqPtr->chTable[0].chName) );
-    reqPtr->chTable[1].chId = 1;
-    reqPtr->chTable[1].shuntVal = 12;
-    strncpy(reqPtr->chTable[0].chName, "TEST_POWER_RAIL1", sizeof(reqPtr->chTable[0].chName) );
-    svc_MsgFwk_msgSend( reqPtr );
-    return;
-}
-
-
-/*============================================================================*/
-static void
-tst_Led_buildAndSendSetPwrMonStartReq( void )
-{
-    svc_PwrMonEh_StartReq_t* reqPtr;
-    reqPtr = svc_MsgFwk_msgAlloc( SVC_EHID_TEST,
-                                  SVC_PWRMONEH_START_REQ,
-                                  sizeof(svc_PwrMonEh_StartReq_t) );
-    svc_MsgFwk_msgSend( reqPtr );
-    return;
-}
-
-
+#include "dev_PwrMon.h"
 /*============================================================================*/
 static tst_Status_t
 tst_Led_test2( int argc, char** argv )
 {
-    tst_Led_buildAndSendSetPwrMonConfigReq();
-    tst_Led_buildAndSendSetPwrMonStartReq();
+    extern void svc_PwrMon_sendTestPkt(void);
+    svc_PwrMon_sendTestPkt();
     return( TST_STATUS_OK );
 }
 #else

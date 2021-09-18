@@ -28,6 +28,7 @@
 #include "bsp_Types.h"
 #include "bsp_Assert.h"
 #include "bsp_Reset.h"
+#include "bsp_Build.h"
 #include "tst.h"
 #include "tst_Sys.h"
 #include "osapi.h"
@@ -39,8 +40,10 @@
  *                                 Globals
  *============================================================================*/
 // String globals
-TST_STR_CMD( TST_SYS_RESET_STR_CMD,        "reset" );
+TST_STR_CMD( TST_SYS_VERSION_STR_CMD, "version" );
+TST_STR_HLP( TST_SYS_VERSION_STR_HLP, "Dump Version" );
 
+TST_STR_CMD( TST_SYS_RESET_STR_CMD,        "reset" );
 TST_STR_CMD( TST_SYS_RESET_FORCE_STR_CMD,  "force" );
 TST_STR_HLP( TST_SYS_RESET_FORCE_STR_HLP,  "Force Reset" );
 TST_STR_CMD( TST_SYS_RESET_ASSERT_STR_CMD, "assert" );
@@ -103,6 +106,18 @@ tst_Sys_resetFault( int argc, char** argv )
     return( TST_STATUS_OK );
 }
 
+/*============================================================================*/
+static tst_Status_t
+tst_Sys_version( int argc, char** argv )
+{
+    printf( "Product: %s"NL, bsp_Build_product );
+    printf( "Platform: %s"NL, bsp_Build_platform );
+    printf( "Build Date: %s"NL, bsp_Build_timestamp );
+    printf( "HW Version: 0x%08lX"NL, bsp_Build_versionHw );
+    printf( "FW Version: 0x%08lX"NL, bsp_Build_versionFw );
+    return( TST_STATUS_OK );
+}
+
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
@@ -124,6 +139,7 @@ const tst_TableElement_t tst_Sys_resetMenu[] =
 /*============================================================================*/
 const tst_TableElement_t tst_Sys_menu[] =
 {
+    TST_SYS_CMD( VERSION,  version ),
     TST_SUBMENU_ELEMENT( TST_SYS_RESET_STR_CMD, "Reset commands", tst_Sys_resetMenu ),
     TST_END_ELEMENT
 };

@@ -21,19 +21,14 @@
  */
 /*============================================================================*/
 /**
- * @file tst_Menu.c
- * @brief
+ * @file svc_CmdEh_text.h
+ * @brief Contains the root of the test menu
  */
+#pragma once
 
-#include "bsp_Types.h"
 #include "tst.h"
-#include "tst_Mem.h"
-#include "tst_Sys.h"
-#include "tst_Led.h"
-#include "tst_Usb.h"
-
 
 /*==============================================================================
- *                                 Globals
+ *                                Globals
  *============================================================================*/
-
+extern const tst_TableElement_t svc_CmdEh_textMenu[];

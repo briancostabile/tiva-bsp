@@ -25,5 +25,4 @@ $(info Including:$(FILENAME))
 # Default platform for BspSensor
 PLATFORM ?= ektm4c123sensor
 PRODUCT_DFLAGS += PRODUCT=$(PRODUCT)
-PRODUCT_DFLAGS += PLATFORM_IO=uart
 include ./project/config/platform/$(PLATFORM).mk

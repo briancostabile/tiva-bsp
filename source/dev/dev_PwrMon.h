@@ -109,27 +109,27 @@ dev_PwrMon_channelConfigShunt( dev_PwrMon_ChannelId_t channelId,
 /*===========================================================================*/
 void
 dev_PwrMon_channelCurrentRead( dev_PwrMon_ChannelId_t channelId,
-                               dev_PwrMon_Data_t*     dataPtr,
+                               uint8_t*               dataPtr,
                                dev_PwrMon_Callback_t  callback,
                                void*                  cbData );
 
 /*===========================================================================*/
 void
 dev_PwrMon_channelBusVoltageRead( dev_PwrMon_ChannelId_t channelId,
-                                  dev_PwrMon_Data_t*     dataPtr,
+                                  uint8_t*               dataPtr,
                                   dev_PwrMon_Callback_t  callback,
                                   void*                  cbData );
 
 /*===========================================================================*/
 void
 dev_PwrMon_channelShuntVoltageRead( dev_PwrMon_ChannelId_t channelId,
-                                    dev_PwrMon_Data_t*     dataPtr,
+                                    uint8_t*               dataPtr,
                                     dev_PwrMon_Callback_t  callback,
                                     void*                  cbData );
 
 /*===========================================================================*/
 void
 dev_PwrMon_channelPowerRead( dev_PwrMon_ChannelId_t channelId,
-                             dev_PwrMon_Data_t*     dataPtr,
+                             uint8_t*               dataPtr,
                              dev_PwrMon_Callback_t  callback,
                              void*                  cbData );

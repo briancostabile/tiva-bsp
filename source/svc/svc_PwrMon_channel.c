@@ -29,6 +29,7 @@
 #include "bsp_Mcu.h"
 #include "bsp_Assert.h"
 #include "svc_EhId.h"
+#include "svc_PwrMonEh.h"
 #include "svc_PwrMon_channel.h"
 #include "dev_PwrMon.h"
 
@@ -50,14 +51,14 @@ typedef struct svc_PwrMon_ChannelInfo_s
 {
     dev_PwrMon_ChannelId_t chId;
     dev_PwrMon_ShuntVal_t  shuntVal;
-    char                   name[SVC_PWRMON_CHANNEL_NAME_LEN_MAX+1];
+    char                   name[SVC_PWRMONEH_CH_NAME_LEN+1];
     uint32_t               smplCnt;
     uint32_t               avgCnt;
     int64_t                sumV;
     int64_t                sumI;
 } svc_PwrMon_ChannelInfo_t;
 
-svc_PwrMon_ChannelBitmap_t svc_PwrMon_channelBitmap;
+svc_PwrMonEh_ChBitmap_t svc_PwrMon_channelBitmap;
 
 /*==============================================================================
  *                                Globals
@@ -83,8 +84,8 @@ void svc_PwrMon_channelConfig( dev_PwrMon_ChannelId_t chId,
 {
     BSP_ASSERT( chId < BSP_PLATFORM_PWRMON_NUM_CHANNELS );
 
-    strncpy( svc_PwrMon_channelInfo[chId].name, name, SVC_PWRMON_CHANNEL_NAME_LEN_MAX );
-    svc_PwrMon_channelInfo[chId].name[SVC_PWRMON_CHANNEL_NAME_LEN_MAX] = 0;
+    strncpy( svc_PwrMon_channelInfo[chId].name, name, SVC_PWRMONEH_CH_NAME_LEN );
+    svc_PwrMon_channelInfo[chId].name[SVC_PWRMONEH_CH_NAME_LEN] = 0;
 
     svc_PwrMon_channelInfo[chId].chId     = chId;
     svc_PwrMon_channelInfo[chId].shuntVal = shuntVal;
@@ -115,9 +116,28 @@ void svc_PwrMon_channelUpdate( dev_PwrMon_ChannelId_t chId,
 /*============================================================================*/
 void svc_PwrMon_channelAvgReset( dev_PwrMon_ChannelId_t chId )
 {
+    BSP_MCU_CRITICAL_SECTION_ENTER();
     svc_PwrMon_channelInfo[chId].avgCnt = 0;
     svc_PwrMon_channelInfo[chId].sumV   = 0;
     svc_PwrMon_channelInfo[chId].sumI   = 0;
+    BSP_MCU_CRITICAL_SECTION_EXIT();
+    return;
+}
+
+/*============================================================================*/
+void svc_PwrMon_channelAvgResetAll( void )
+{
+    uint8_t chId = 0;
+    svc_PwrMonEh_ChBitmap_t bitmap = svc_PwrMon_channelBitmap;
+    while( bitmap )
+    {
+        if( bitmap & 1 )
+        {
+            svc_PwrMon_channelAvgReset( chId );
+        }
+        bitmap >>= 1;
+        chId++;
+    }
     return;
 }
 
@@ -142,9 +162,50 @@ void svc_PwrMon_channelAvgGet( dev_PwrMon_ChannelId_t chId,
     return;
 }
 
+
 /*============================================================================*/
-svc_PwrMon_ChannelBitmap_t svc_PwrMon_channelBitmapGet( void )
+void svc_PwrMon_channelAvgGetAll( svc_PwrMonEh_ChAvgInfo_t* dataBuffer )
+{
+    uint8_t chId = 0;
+    uint8_t bufIdx = 0;
+    svc_PwrMonEh_ChBitmap_t bitmap = svc_PwrMon_channelBitmap;
+    while( bitmap )
+    {
+        if( bitmap & 1 )
+        {
+            // Use temporary variables because SmplData is not aligned
+            dev_PwrMon_Data_t v;
+            dev_PwrMon_Data_t i;
+            svc_PwrMon_channelAvgGet( chId, &v, &i );
+            dataBuffer[ bufIdx ].chId = chId;
+            dataBuffer[ bufIdx ].avg.fmt0.v = v;
+            dataBuffer[ bufIdx ].avg.fmt0.i = i;
+            bufIdx++;
+        }
+        bitmap >>= 1;
+        chId++;
+    }
+
+    return;
+}
+
+/*============================================================================*/
+svc_PwrMonEh_ChBitmap_t svc_PwrMon_channelBitmapGet( void )
 {
     return( svc_PwrMon_channelBitmap );
 }
+
+/*============================================================================*/
+uint8_t svc_PwrMon_channelCntGet( void )
+{
+    uint8_t cnt = 0;
+    svc_PwrMonEh_ChBitmap_t bitmap = svc_PwrMon_channelBitmap;
+    while( bitmap )
+    {
+        cnt += (bitmap & 1);
+        bitmap >>= 1;
+    }
+    return( cnt );
+}
+
 #endif

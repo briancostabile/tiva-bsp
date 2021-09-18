@@ -25,5 +25,4 @@ $(info Including:$(FILENAME))
 # Default platform for BspCore
 PLATFORM ?= ektm4c123gxl
 PRODUCT_DFLAGS += PRODUCT=$(PRODUCT)
-PRODUCT_DFLAGS += PLATFORM_IO=uart
 include ./project/config/platform/$(PLATFORM).mk

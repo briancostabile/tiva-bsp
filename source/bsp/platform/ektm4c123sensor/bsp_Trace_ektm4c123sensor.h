@@ -38,7 +38,8 @@
 //#define BSP_TRACE_USBIO
 //#define BSP_TRACE_I2C
 //#define BSP_TRACE_TIMER
-#define BSP_TRACE_PWRMON_SAMPLER
+//#define BSP_TRACE_PWRMON_SAMPLER
+#define BSP_TRACE_PWRMONEH
 
 #if defined(BSP_TRACE_ENABLE) && defined( BSP_TRACE_INT )
 #define BSP_TRACE_INT_ENTER()      {BSP_GPIO_OUT_SET_HIGH( TPA2 );}
@@ -156,6 +157,13 @@
 #define BSP_TRACE_PWRMON_SAMPLER_PKT_SND_DONE()
 #endif
 
+#if defined(BSP_TRACE_ENABLE) && defined( BSP_TRACE_PWRMONEH )
+#define BSP_TRACE_PWRMONEH_DATA_IND_ENTER()      {BSP_GPIO_OUT_SET_HIGH( TPA2 );}
+#define BSP_TRACE_PWRMONEH_DATA_IND_EXIT()       {BSP_GPIO_OUT_SET_LOW( TPA2 );}
+#else
+#define BSP_TRACE_PWRMONEH_DATA_IND_ENTER()
+#define BSP_TRACE_PWRMONEH_DATA_IND_EXIT()
+#endif
 
 /*==============================================================================
  *                            Public Functions

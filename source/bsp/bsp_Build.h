@@ -21,19 +21,23 @@
  */
 /*============================================================================*/
 /**
- * @file tst_Menu.c
- * @brief
+ * @file bsp_Version.h
+ * @brief Contains Version and build Strings and defines.
  */
+#pragma once
 
 #include "bsp_Types.h"
-#include "tst.h"
-#include "tst_Mem.h"
-#include "tst_Sys.h"
-#include "tst_Led.h"
-#include "tst_Usb.h"
-
 
 /*==============================================================================
- *                                 Globals
+ *                                   Types
  *============================================================================*/
+typedef uint32_t bsp_Build_Version_t;
 
+/*==============================================================================
+ *                               Globals
+ *============================================================================*/
+extern const char bsp_Build_product[];
+extern const char bsp_Build_platform[];
+extern const char bsp_Build_timestamp[];
+extern const bsp_Build_Version_t bsp_Build_versionHw;
+extern const bsp_Build_Version_t bsp_Build_versionFw;

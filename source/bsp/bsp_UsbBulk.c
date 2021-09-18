@@ -283,7 +283,7 @@ uint32_t bsp_UsbBulk_txHandler( void*    pvCBData,
         case USB_EVENT_TX_COMPLETE:
         {
             //ui32MsgValue has the number of bytes transmitted
-            if( internalInfoPtr->txDoneCallback != NULL )
+            if( (internalInfoPtr != NULL) && (internalInfoPtr->txDoneCallback != NULL) )
             {
                 internalInfoPtr->txDoneCallback( ui32MsgValue );
             }

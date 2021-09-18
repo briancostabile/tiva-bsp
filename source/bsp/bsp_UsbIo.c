@@ -73,6 +73,8 @@ bsp_UsbIo_init( void )
                       bsp_UsbIo_unlink,
                       bsp_UsbIo_rename );
 
+    bsp_UsbIo_descriptor.cdcFd = bsp_UsbCdc_open();
+
     return;
 }
 
@@ -81,7 +83,8 @@ bsp_UsbIo_init( void )
 void
 bsp_UsbIo_registerDataAvailableCallback( int fd, bsp_UsbIo_DataAvailableCallback_t callback )
 {
-    bsp_UsbCdc_registerCallbackDataAvailable( fd, (bsp_UsbCdc_DataAvailableCallback_t)callback );
+    bsp_UsbCdc_registerCallbackDataAvailable( ((bsp_UsbIo_descriptor_t*)fd)->cdcFd,
+                                              (bsp_UsbCdc_DataAvailableCallback_t)callback );
     return;
 }
 
@@ -92,19 +95,6 @@ bsp_UsbIo_open( const char*  path,
                 unsigned int flags,
                 int          llv_fd )
 {
-    uint8_t pathLen;
-
-    pathLen = strlen(path);
-
-    /* Todo: Do something smarter here */
-    if( path[(pathLen-2)] == '0' )
-    {
-        bsp_UsbIo_descriptor.cdcFd = bsp_UsbCdc_open();
-    }
-    else
-    {
-        bsp_UsbIo_descriptor.cdcFd = bsp_UsbCdc_open();
-    }
 
     return( (int)&bsp_UsbIo_descriptor );
 }
@@ -124,7 +114,7 @@ bsp_UsbIo_read( int    fd,
                 char*  buffer,
                 size_t count )
 {
-    return( bsp_UsbIo_read( ((bsp_UsbIo_descriptor_t*)fd)->cdcFd, buffer, count ) );
+    return( bsp_UsbCdc_read( ((bsp_UsbIo_descriptor_t*)fd)->cdcFd, buffer, count ) );
 }
 
 
@@ -134,7 +124,7 @@ bsp_UsbIo_write( int         fd,
                  const char* buffer,
                  size_t      count )
 {
-    return( bsp_UsbIo_write( ((bsp_UsbIo_descriptor_t*)fd)->cdcFd, buffer, count )  );
+    return( bsp_UsbCdc_write( ((bsp_UsbIo_descriptor_t*)fd)->cdcFd, buffer, count )  );
 }
 
 

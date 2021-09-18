@@ -152,6 +152,16 @@
 			<locationURI>SOURCE_ROOT/bsp/bsp_Assert.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/bsp_Build.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Build.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_Build.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Build.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/bsp_Button.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/bsp_Button.c</locationURI>
@@ -497,6 +507,16 @@
 			<locationURI>SOURCE_ROOT/svc/svc_MsgFwk.h</locationURI>
 		</link>
 		<link>
+			<name>source/svc/svc_PwrMonEh.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_PwrMonEh.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_PwrMonEh.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_PwrMonEh.h</locationURI>
+		</link>
+		<link>
 			<name>source/svc/svc_PwrMon_channel.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_PwrMon_channel.c</locationURI>
@@ -515,16 +535,6 @@
 			<name>source/svc/svc_PwrMon_sampler.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_PwrMon_sampler.h</locationURI>
-		</link>
-		<link>
-			<name>source/svc/svc_PwrMonEh.c</name>
-			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_PwrMonEh.c</locationURI>
-		</link>
-		<link>
-			<name>source/svc/svc_PwrMonEh.h</name>
-			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_PwrMonEh.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/svc_SerIoEh.h</name>
@@ -975,6 +985,16 @@
 			<name>source/svc/product/TivaBspSensor/svc_CmdEh_cmds.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/product/TivaBspSensor/svc_CmdEh_cmds.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspSensor/svc_CmdEh_text.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/TivaBspSensor/svc_CmdEh_text.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspSensor/svc_CmdEh_text.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/TivaBspSensor/svc_CmdEh_text.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/product/TivaBspSensor/svc_EhId_TivaBspSensor.h</name>

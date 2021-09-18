@@ -19,21 +19,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/*============================================================================*/
+/*===========================================================================*/
 /**
- * @file tst_Menu.c
- * @brief
+ * @file bsp_Build.c
+ * @brief Contains Build strings.
  */
-
 #include "bsp_Types.h"
-#include "tst.h"
-#include "tst_Mem.h"
-#include "tst_Sys.h"
-#include "tst_Led.h"
-#include "tst_Usb.h"
+#include "bsp_Pragma.h"
+#include "bsp_Build.h"
+
+#define BSP_BUILD_VERSION_FW (bsp_Build_Version_t)0x00000001
+#define BSP_BUILD_VERSION_HW (bsp_Build_Version_t)0x00000101
 
 
-/*==============================================================================
- *                                 Globals
- *============================================================================*/
-
+#define BSP_BUILD_STR(_name, _str) STRING(_name, _str, ".build_str")
+/*=============================================================================
+ *                                   Globals
+ *===========================================================================*/
+BSP_BUILD_STR( bsp_Build_product, CONVERT_NAME_TO_STRING( PRODUCT ) );
+BSP_BUILD_STR( bsp_Build_platform, CONVERT_NAME_TO_STRING( PLATFORM ) );
+BSP_BUILD_STR( bsp_Build_timestamp, __TIMESTAMP__ );
+const bsp_Build_Version_t bsp_Build_versionHw = BSP_BUILD_VERSION_HW;
+const bsp_Build_Version_t bsp_Build_versionFw = BSP_BUILD_VERSION_FW;

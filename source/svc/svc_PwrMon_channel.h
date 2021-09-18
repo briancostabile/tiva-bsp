@@ -29,47 +29,49 @@
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
 #include "dev_PwrMon.h"
-
-/*==============================================================================
- *                               Defines
- *============================================================================*/
-/*============================================================================*/
-#define SVC_PWRMON_CHANNEL_NAME_LEN_MAX 48
-
-/*==============================================================================
- *                                Types
- *============================================================================*/
-/*============================================================================*/
-typedef uint32_t svc_PwrMon_ChannelBitmap_t;
-
-/*==============================================================================
- *                                Globals
- *============================================================================*/
+#include "svc_PwrMonEh.h"
 
 /*==============================================================================
  *                             Public Functions
  *============================================================================*/
 /*============================================================================*/
-void svc_PwrMon_channelInit( void );
+void
+svc_PwrMon_channelInit( void );
 
 /*============================================================================*/
-void svc_PwrMon_channelConfig( dev_PwrMon_ChannelId_t chId,
-                               dev_PwrMon_ShuntVal_t  shuntVal,
-                               char*                  name );
+void
+svc_PwrMon_channelConfig( dev_PwrMon_ChannelId_t chId,
+                          dev_PwrMon_ShuntVal_t  shuntVal,
+                          char*                  name );
 
 /*============================================================================*/
-void svc_PwrMon_channelUpdate( dev_PwrMon_ChannelId_t chId,
-                               dev_PwrMon_Data_t      voltage,
-                               dev_PwrMon_Data_t      current );
+void
+svc_PwrMon_channelUpdate( dev_PwrMon_ChannelId_t chId,
+                          dev_PwrMon_Data_t      voltage,
+                          dev_PwrMon_Data_t      current );
 
 /*============================================================================*/
-void svc_PwrMon_channelAvgReset( dev_PwrMon_ChannelId_t chId );
+void
+svc_PwrMon_channelAvgReset( dev_PwrMon_ChannelId_t chId );
 
 /*============================================================================*/
-void svc_PwrMon_channelAvgGet( dev_PwrMon_ChannelId_t chId,
-                               dev_PwrMon_Data_t*     vPtr,
-                               dev_PwrMon_Data_t*     iPtr );
+void
+svc_PwrMon_channelAvgResetAll( void );
 
 /*============================================================================*/
-svc_PwrMon_ChannelBitmap_t svc_PwrMon_channelBitmapGet( void );
+void
+svc_PwrMon_channelAvgGet( dev_PwrMon_ChannelId_t chId,
+                          dev_PwrMon_Data_t*     vPtr,
+                          dev_PwrMon_Data_t*     iPtr );
 
+/*============================================================================*/
+void
+svc_PwrMon_channelAvgGetAll( svc_PwrMonEh_ChAvgInfo_t* dataBuffer );
+
+/*============================================================================*/
+svc_PwrMonEh_ChBitmap_t
+svc_PwrMon_channelBitmapGet( void );
+
+/*============================================================================*/
+uint8_t
+svc_PwrMon_channelCntGet( void );

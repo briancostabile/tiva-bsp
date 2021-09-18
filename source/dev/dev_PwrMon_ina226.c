@@ -287,7 +287,7 @@ dev_PwrMon_deviceId( dev_PwrMon_DevId_t     devId,
 /*===========================================================================*/
 static void
 dev_PwrMon_vShuntGet( dev_PwrMon_DevId_t     devId,
-                      dev_PwrMon_Data_t*     dataPtr,
+                      uint8_t*               dataPtr,
                       dev_PwrMon_Callback_t  callback,
                       void*                  cbData )
 {
@@ -298,7 +298,7 @@ dev_PwrMon_vShuntGet( dev_PwrMon_DevId_t     devId,
 /*===========================================================================*/
 static void
 dev_PwrMon_vBusGet( dev_PwrMon_DevId_t     devId,
-                    dev_PwrMon_Data_t*     dataPtr,
+                    uint8_t*               dataPtr,
                     dev_PwrMon_Callback_t  callback,
                     void*                  cbData )
 {
@@ -309,7 +309,7 @@ dev_PwrMon_vBusGet( dev_PwrMon_DevId_t     devId,
 /*===========================================================================*/
 static void
 dev_PwrMon_powerGet( dev_PwrMon_DevId_t     devId,
-                     dev_PwrMon_Data_t*     dataPtr,
+                     uint8_t*               dataPtr,
                      dev_PwrMon_Callback_t  callback,
                      void*                  cbData )
 {
@@ -320,7 +320,7 @@ dev_PwrMon_powerGet( dev_PwrMon_DevId_t     devId,
 /*===========================================================================*/
 static void
 dev_PwrMon_currentGet( dev_PwrMon_DevId_t     devId,
-                       dev_PwrMon_Data_t*     dataPtr,
+                       uint8_t*               dataPtr,
                        dev_PwrMon_Callback_t  callback,
                        void*                  cbData )
 {
@@ -485,7 +485,7 @@ dev_PwrMon_channelConfigShunt( dev_PwrMon_ChannelId_t channelId,
 /*===========================================================================*/
 void
 dev_PwrMon_channelCurrentRead( dev_PwrMon_ChannelId_t channelId,
-                               dev_PwrMon_Data_t*     dataPtr,
+                               uint8_t*               dataPtr,
                                dev_PwrMon_Callback_t  callback,
                                void*                  cbData )
 {
@@ -497,7 +497,7 @@ dev_PwrMon_channelCurrentRead( dev_PwrMon_ChannelId_t channelId,
 /*===========================================================================*/
 void
 dev_PwrMon_channelBusVoltageRead( dev_PwrMon_ChannelId_t channelId,
-                                  dev_PwrMon_Data_t*     dataPtr,
+                                  uint8_t*               dataPtr,
                                   dev_PwrMon_Callback_t  callback,
                                   void*                  cbData )
 {
@@ -509,7 +509,7 @@ dev_PwrMon_channelBusVoltageRead( dev_PwrMon_ChannelId_t channelId,
 /*===========================================================================*/
 void
 dev_PwrMon_channelShuntVoltageRead( dev_PwrMon_ChannelId_t channelId,
-                                    dev_PwrMon_Data_t*     dataPtr,
+                                    uint8_t*               dataPtr,
                                     dev_PwrMon_Callback_t  callback,
                                     void*                  cbData )
 {
@@ -521,7 +521,7 @@ dev_PwrMon_channelShuntVoltageRead( dev_PwrMon_ChannelId_t channelId,
 /*===========================================================================*/
 void
 dev_PwrMon_channelPowerRead( dev_PwrMon_ChannelId_t channelId,
-                             dev_PwrMon_Data_t*     dataPtr,
+                             uint8_t*               dataPtr,
                              dev_PwrMon_Callback_t  callback,
                              void*                  cbData )
 {

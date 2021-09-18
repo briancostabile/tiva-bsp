@@ -139,7 +139,7 @@ osapi_Memory_initPool( const osapi_MemoryPoolInfo_t* poolInfoPtr )
     {
         *hdrPtr  = (uint32_t)poolPtr;
         hdrPtr   = (uint32_t*)*hdrPtr;
-        poolPtr += poolInfoPtr->blockSize;
+        poolPtr += (poolInfoPtr->blockSize + OSAPI_MEMORY_HDR_SIZE_8);
     }
 
     // Overwrite the last hdrPtr to Null-terminate the list
@@ -254,7 +254,7 @@ osapi_Memory_alloc( size_t size )
     BSP_MCU_CRITICAL_SECTION_ENTER();
     for( uint8_t i=0; (retPtr == NULL) && (i<DIM(osapi_memoryPoolTable)); i++ )
     {
-        if( (osapi_memoryPoolTable[i].blockSize > size) && (*osapi_memoryPoolTable[i].hdrPtrPtr != NULL) )
+        if( (osapi_memoryPoolTable[i].blockSize >= size) && (*osapi_memoryPoolTable[i].hdrPtrPtr != NULL) )
         {
             void* blockPtr = *osapi_memoryPoolTable[i].hdrPtrPtr;
 
@@ -269,8 +269,10 @@ osapi_Memory_alloc( size_t size )
         }
     }
     BSP_MCU_CRITICAL_SECTION_EXIT();
+    BSP_ASSERT( retPtr != NULL );
     return( retPtr );
 }
+
 
 /*============================================================================*/
 void

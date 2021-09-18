@@ -21,18 +21,14 @@
  */
 /*============================================================================*/
 /**
- * @file svc_Periph.h
- * @brief Contains the API for the Peripheral Service thread
+ * @file svc_CmdEh_text.h
+ * @brief Contains the root of the test menu
  */
 #pragma once
 
-#include "bsp_Types.h"
-#include "bsp_Platform.h"
-#include "svc_Eh.h"
-#include <stdint.h>
+#include "tst.h"
 
 /*==============================================================================
- *                                 Globals
+ *                                Globals
  *============================================================================*/
-/*============================================================================*/
-extern const svc_Eh_Info_t svc_TestEh_info;
+extern const tst_TableElement_t svc_CmdEh_textMenu[];

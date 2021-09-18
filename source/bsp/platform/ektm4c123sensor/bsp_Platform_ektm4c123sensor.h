@@ -57,9 +57,9 @@
 
 /* USB Setup */
 #define BSP_PLATFORM_USB_ENABLED
-//#define BSP_PLATFORM_USB_CDC
+#define BSP_PLATFORM_USB_CDC
 #define BSP_PLATFORM_USB_BULK
-#define BSP_PLATFORM_IO_USB0_RX_BUF_LEN  512
+#define BSP_PLATFORM_IO_USB0_RX_BUF_LEN  256
 #define BSP_PLATFORM_IO_USB0_TX_BUF_LEN  (3*1024)
 
 //#define BSP_PLATFORM_ENABLE_DEV_HUMID_SHT21
@@ -101,15 +101,10 @@
 /*==============================================================================
  *                            STDIO Mapping
  *============================================================================*/
-#if (PLATFORM_IO == uart)
-#define BSP_PLATFORM_IO_MAP_STDOUT "uart0"
-#define BSP_PLATFORM_IO_MAP_STDIN  "uart0"
-#define BSP_PLATFORM_IO_MAP_STDERR "uart0"
-#elif (PLATFORM_IO == usb)
+// Choose "uart0" or "usb0"
 #define BSP_PLATFORM_IO_MAP_STDOUT "usb0"
 #define BSP_PLATFORM_IO_MAP_STDIN  "usb0"
 #define BSP_PLATFORM_IO_MAP_STDERR "usb0"
-#endif
 
 
 /*==============================================================================
