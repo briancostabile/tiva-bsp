@@ -38,7 +38,7 @@
 /**
  * The tm4c129 has I2C Read/Write Fifos
  */
-#define BS_I2C_PLATFORM_USE_FIFO 1
+#define BSP_I2C_PLATFORM_USE_FIFO 1
 
 /*==============================================================================
  *                                 Types

@@ -38,7 +38,7 @@
 /**
  * The tm4c123 does not have FIFOs on I2C
  */
-#define BS_I2C_PLATFORM_USE_FIFO 0
+#define BSP_I2C_PLATFORM_USE_FIFO 0
 
 /*==============================================================================
  *                                 Types

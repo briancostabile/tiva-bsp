@@ -94,7 +94,7 @@ static bsp_I2c_MasterTransInfo_t bsp_I2c_masterTransInfo[ BSP_I2C_PLATFORM_NUM ]
     (_transPtr)->rLen     = ((_transPtr)->rLen - 1);             \
 }
 
-#if (BS_I2C_PLATFORM_USE_FIFO == 1)
+#if (BSP_I2C_PLATFORM_USE_FIFO == 1)
 #define BSP_I2C_NEXT_BYTE_SEND_FIFO(_baseAddr, _transPtr)               \
 {                                                                       \
     while( ((_transPtr)->wLen > 0) &&                                   \
@@ -117,7 +117,7 @@ static bsp_I2c_MasterTransInfo_t bsp_I2c_masterTransInfo[ BSP_I2C_PLATFORM_NUM ]
 }
 #endif
 
-#if (BS_I2C_PLATFORM_USE_FIFO == 1)
+#if (BSP_I2C_PLATFORM_USE_FIFO == 1)
 /*============================================================================*/
 static void
 bsp_I2c_masterTransStartFifo( uint32_t               baseAddr,
@@ -153,7 +153,7 @@ bsp_I2c_masterTransStartFifo( uint32_t               baseAddr,
 }
 #endif
 
-#if (BS_I2C_PLATFORM_USE_FIFO == 0)
+#if (BSP_I2C_PLATFORM_USE_FIFO == 0)
 /*============================================================================*/
 static void
 bsp_I2c_masterTransStartNoFifo( uint32_t               baseAddr,
@@ -215,7 +215,7 @@ bsp_I2c_masterTransStart( uint32_t               baseAddr,
                                (transPtr->type == BSP_I2C_TRANS_TYPE_READ) );
 
     transPtr->rBuffer += (transPtr->rReverse) ? (transPtr->rLen - 1) : 0;
-#if (BS_I2C_PLATFORM_USE_FIFO == 1)
+#if (BSP_I2C_PLATFORM_USE_FIFO == 1)
     bsp_I2c_masterTransStartFifo( baseAddr, transPtr );
 #else
     bsp_I2c_masterTransStartNoFifo( baseAddr, transPtr );
@@ -258,7 +258,7 @@ bsp_I2c_transComplete( bsp_I2c_Id_t id,
     }
 }
 
-#if (BS_I2C_PLATFORM_USE_FIFO == 1)
+#if (BSP_I2C_PLATFORM_USE_FIFO == 1)
 /*============================================================================*/
 static void
 bsp_I2c_isrMasterCommonFifo( bsp_I2c_Id_t id,
@@ -363,7 +363,7 @@ bsp_I2c_isrMasterCommonFifo( bsp_I2c_Id_t id,
 }
 #endif
 
-#if (BS_I2C_PLATFORM_USE_FIFO == 0)
+#if (BSP_I2C_PLATFORM_USE_FIFO == 0)
 /*============================================================================*/
 static void
 bsp_I2c_isrMasterCommonNoFifo( bsp_I2c_Id_t id,
@@ -454,7 +454,7 @@ bsp_I2c_isrCommon( bsp_I2c_Id_t id )
     if( intStatusMaster != 0 )
     {
         BSP_TRACE_I2C_ISR_MASTER_ENTER();
-#if (BS_I2C_PLATFORM_USE_FIFO == 1)
+#if (BSP_I2C_PLATFORM_USE_FIFO == 1)
         bsp_I2c_isrMasterCommonFifo( id, baseAddr, intStatusMaster );
 #else
         bsp_I2c_isrMasterCommonNoFifo( id, baseAddr, intStatusMaster );
@@ -524,7 +524,7 @@ bsp_I2c_init( void )
         bsp_Gpio_configAltFunction( pinInfoPtrSda->portId,
                                     pinInfoPtrSda->mask,
                                     pinInfoPtrSda->altFuncId );
-#if (BS_I2C_PLATFORM_USE_FIFO == 1)
+#if (BSP_I2C_PLATFORM_USE_FIFO == 1)
         MAP_I2CRxFIFOConfigSet( infoPtr->baseAddr, I2C_FIFO_CFG_RX_MASTER | I2C_FIFO_CFG_RX_NO_TRIG );
         MAP_I2CRxFIFOFlush( infoPtr->baseAddr );
         MAP_I2CTxFIFOConfigSet( infoPtr->baseAddr, I2C_FIFO_CFG_TX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
