@@ -52,8 +52,7 @@ svc_PwrMon_samplerStop( void );
 
 /*============================================================================*/
 void
-svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap,
-                         svc_PwrMonEh_SmplFmt_t  smplFmt );
+svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap );
 
 /*============================================================================*/
 svc_PwrMonEh_SamplerStats_t*

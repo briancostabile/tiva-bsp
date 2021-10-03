@@ -37,7 +37,6 @@ typedef uint16_t dev_PwrMon_Config_t;
 typedef uint16_t dev_PwrMon_Cal_t;
 typedef int16_t  dev_PwrMon_Data_t;
 typedef uint16_t dev_PwrMon_AlertMask_t;
-typedef uint16_t dev_PwrMon_ShuntVal_t;
 
 
 enum
@@ -92,6 +91,12 @@ dev_PwrMon_init( void );
 
 /*===========================================================================*/
 void
+dev_PwrMon_channelOffsetCal( dev_PwrMon_ChannelId_t channelId,
+                             uint8_t*               vBusPtr,
+                             uint8_t*               vShuntPtr );
+
+/*===========================================================================*/
+void
 dev_PwrMon_channelConfig( dev_PwrMon_ChannelId_t channelId,
                           dev_PwrMon_ConvTime_t  shuntConvTime,
                           dev_PwrMon_ConvTime_t  busConvTime,
@@ -101,10 +106,10 @@ dev_PwrMon_channelConfig( dev_PwrMon_ChannelId_t channelId,
 
 /*===========================================================================*/
 void
-dev_PwrMon_channelConfigShunt( dev_PwrMon_ChannelId_t channelId,
-                               dev_PwrMon_ShuntVal_t  shunt,
-                               dev_PwrMon_Callback_t  callback,
-                               void*                  cbData );
+dev_PwrMon_channelConfigCal( dev_PwrMon_ChannelId_t channelId,
+                             dev_PwrMon_Cal_t       cal,
+                             dev_PwrMon_Callback_t  callback,
+                             void*                  cbData );
 
 /*===========================================================================*/
 void

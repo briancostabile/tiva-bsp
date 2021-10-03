@@ -55,6 +55,7 @@
 #define SVC_PWRMONEH_MSG_ID_STATS_CNF   8
 #define SVC_PWRMONEH_MSG_ID_CH_AVG_REQ  9
 #define SVC_PWRMONEH_MSG_ID_CH_AVG_CNF  10
+#define SVC_PWRMONEH_MSG_ID_SAMPLE_IND  11
 
 
 #define SVC_PWRMONEH_MSG_ID_NAMES_TABLE \
@@ -70,6 +71,7 @@
     "StatsCnf",                         \
     "ChAvgReq",                         \
     "ChAvgCnf",                         \
+    "SampleInd",                        \
 }
 
 #define SVC_PWRMONEH_START_REQ      SCV_PWRMONEH_MSG_ID_BUILD( START, REQ )
@@ -83,6 +85,7 @@
 #define SVC_PWRMONEH_STATS_CNF      SCV_PWRMONEH_MSG_ID_BUILD( STATS, CNF )
 #define SVC_PWRMONEH_CH_AVG_REQ     SCV_PWRMONEH_MSG_ID_BUILD( CH_AVG, REQ )
 #define SVC_PWRMONEH_CH_AVG_CNF     SCV_PWRMONEH_MSG_ID_BUILD( CH_AVG, CNF )
+#define SVC_PWRMONEH_SAMPLE_IND     SCV_PWRMONEH_MSG_ID_BUILD( SAMPLE, IND )
 
 /*==============================================================================
  *                                Types
@@ -91,14 +94,18 @@
 #define SVC_PWRMONEH_STATUS_FAILURE 1
 typedef uint8_t svc_PwrMonEh_Status_t;
 
-#define SVC_PWRMONEH_SMPL_FMT0_IV  0
-#define SVC_PWRMONEH_SMPL_FMT1_IOW 1
+#define SVC_PWRMONEH_SMPL_FMT0_VV  0
+#define SVC_PWRMONEH_SMPL_FMT1_IOI 1
+#define SVC_PWRMONEH_SMPL_FMT1_IV  2
 typedef uint8_t svc_PwrMonEh_SmplFmt_t;
 
 typedef uint8_t svc_PwrMonEh_ChId_t;
 
 /*============================================================================*/
 typedef uint32_t svc_PwrMonEh_ChBitmap_t;
+
+/*============================================================================*/
+typedef uint32_t svc_PwrMonEh_ShuntVal_t;
 
 
 /*============================================================================*/
@@ -137,9 +144,9 @@ typedef struct BSP_ATTR_PACKED svc_PwrMonEh_StopCnf_s
 // ConfigReq
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_ChEntry_s
 {
-    dev_PwrMon_ChannelId_t chId;
-    dev_PwrMon_ShuntVal_t  shuntVal;
-    char                   chName[SVC_PWRMONEH_CH_NAME_LEN+1];
+    dev_PwrMon_ChannelId_t  chId;
+    svc_PwrMonEh_ShuntVal_t shuntVal;
+    char                    chName[SVC_PWRMONEH_CH_NAME_LEN+1];
 } svc_PwrMonEh_ChEntry_t;
 
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_ConfigReq_s
@@ -167,24 +174,32 @@ typedef struct BSP_ATTR_PACKED svc_PwrMonEh_ConfigCnf_s
 // Samples Per Packet: 50 sample sets at 2500Hz = 20ms worth of samples
 #define SVC_PWRMONEH_DATA_IND_SAMPLE_SETS_MAX 50
 
-// Fmt0 is 16bit signed current and voltage
+// Fmt0 is 16bit signed bus and shunt voltage
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_SmplDataFmt0_s
 {
-    int16_t v;
-    int16_t i;
+    int16_t vBus;
+    int16_t vShunt;
 } svc_PwrMonEh_SmplDataFmt0_t;
 
-// Fmt0 is 16bit signed current and voltage
+// Fmt1 is 24bit signed current and io samples
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_SmplDataFmt1_s
 {
-    uint8_t iobitmap : 8;
-    int32_t w        : 24;
+    uint8_t ioBitmap : 8;
+    int32_t current  : 24;
 } svc_PwrMonEh_SmplDataFmt1_t;
+
+// Fmt2 is 16bit signed bus voltage and 16bit signed current
+typedef struct BSP_ATTR_PACKED svc_PwrMonEh_SmplDataFmt2_s
+{
+    int16_t vBus;
+    int16_t iShunt;
+} svc_PwrMonEh_SmplDataFmt2_t;
 
 typedef union
 {
     svc_PwrMonEh_SmplDataFmt0_t fmt0;
     svc_PwrMonEh_SmplDataFmt1_t fmt1;
+    svc_PwrMonEh_SmplDataFmt2_t fmt2;
 } svc_PwrMonEh_SmplData_t;
 
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_DataInd_s
@@ -200,6 +215,22 @@ typedef struct BSP_ATTR_PACKED svc_PwrMonEh_DataInd_s
 } svc_PwrMonEh_DataInd_t;
 
 
+typedef struct BSP_ATTR_PACKED svc_PwrMonEh_SampleData_s
+{
+    int16_t vBus;
+    int16_t vShunt;
+} svc_PwrMonEh_SampleData_t;
+
+typedef struct BSP_ATTR_PACKED svc_PwrMonEh_SampleInd_s
+{
+    svc_MsgFwk_Hdr_t          hdr;
+    uint16_t                  numCh;
+    uint32_t                  seq;
+    uint32_t                  ioBitmap;
+    svc_PwrMonEh_ChBitmap_t   chBitmap;
+    svc_PwrMonEh_SampleData_t data[ SVC_PWRMONEH_DATA_IND_CHANNELS_MAX ];
+} svc_PwrMonEh_SampleInd_t;
+
 //----------------------
 // StatsReq
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_StatsReq_s
@@ -212,18 +243,23 @@ typedef struct BSP_ATTR_PACKED svc_PwrMonEh_StatsReq_s
 // StatsCnf
 /*============================================================================*/
 // Stats made available outside
+typedef struct BSP_ATTR_PACKED svc_PwrMonEh_ChannelStats_s
+{
+    uint32_t pktSndNum;
+    uint32_t pktErrNum;
+} svc_PwrMonEh_ChannelStats_t;
+
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_SamplerStats_s
 {
     uint64_t smplNum;
     uint32_t smplErrNum;
-    uint32_t pktSndNum;
-    uint32_t pktErrNum;
 } svc_PwrMonEh_SamplerStats_t;
 
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_StatsCnf_s
 {
     svc_MsgFwk_Hdr_t            hdr;
     svc_PwrMonEh_SamplerStats_t samplerStats;
+    svc_PwrMonEh_ChannelStats_t channelStats;
 } svc_PwrMonEh_StatsCnf_t;
 
 
@@ -239,8 +275,10 @@ typedef struct BSP_ATTR_PACKED svc_PwrMonEh_ChAvgReq_s
 // ChAvgCnf
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_ChAvgInfo_s
 {
-    uint8_t                 chId;
-    svc_PwrMonEh_SmplData_t avg;
+    uint8_t  chId;
+    int32_t  mvBusAvg;
+    int32_t  uvShuntAvg;
+    int32_t  uaShuntAvg;
 } svc_PwrMonEh_ChAvgInfo_t;
 
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_ChAvgCnf_s

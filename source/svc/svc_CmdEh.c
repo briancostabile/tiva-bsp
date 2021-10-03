@@ -26,6 +26,7 @@
  */
 
 #include "bsp_Types.h"
+#include "bsp_Assert.h"
 #include "bsp_Pragma.h"
 #include "bsp_UartIo.h"
 #include "bsp_UsbIo.h"
@@ -49,7 +50,7 @@
 /*==============================================================================
  *                                  Defines
  *============================================================================*/
-#define SVC_CMDEH_BUFFER_SIZE    64
+#define SVC_CMDEH_BUFFER_SIZE    256
 
 // The command terminal supports up arrow for command history
 #define SVC_CMDEH_TXT_UP_ARROW "\x1B\x5B\x41"
@@ -232,7 +233,7 @@ svc_CmdEh_binarySendBulk( uint8_t* buf, uint16_t len )
 static void
 svc_CmdEh_processText( uint8_t* buf, uint8_t len )
 {
-    char* argv[SVC_CMDEH_ARGC_MAX];
+    static char* argv[SVC_CMDEH_ARGC_MAX];
     int argc = 0;
     char* ptr = (char*)&buf[0];
 
@@ -529,10 +530,29 @@ svc_CmdEh_msgHandler( svc_MsgFwk_Hdr_t* msgPtr )
 
         case SVC_SERIOEH_BULK_DATA_IND:
         {
-            int rd_cnt = bsp_UsbBulk_read( ctx->fdUsb,
-                                           &svc_CmdEh_bufferArray[0][0],
-                                           sizeof(svc_CmdEh_bufferArray));
+            int      rd_cnt;
+            uint16_t len;
+            int32_t  idx;
+
+            // Pull out the length
+            rd_cnt = bsp_UsbBulk_read( ctx->fdUsb,
+                                       &svc_CmdEh_bufferArray[0][0],
+                                       sizeof(uint16_t) );
             ctx->rxCntBulk += rd_cnt;
+
+            // Prepare to loop and read out remaining data for message
+            len = *((uint16_t*)&(svc_CmdEh_bufferArray[0][0])) + sizeof(uint16_t);
+            BSP_ASSERT( len <= sizeof(svc_CmdEh_bufferArray) );
+
+            idx = rd_cnt;
+            while( idx < len )
+            {
+                rd_cnt = bsp_UsbBulk_read( ctx->fdUsb,
+                                           &svc_CmdEh_bufferArray[0][idx],
+                                           (len - idx) );
+                ctx->rxCntBulk += rd_cnt;
+                idx += rd_cnt;
+            }
 
             // Pull the length off the front and process the rest
             ctx->pendingCb = svc_CmdEh_binarySendBulk;

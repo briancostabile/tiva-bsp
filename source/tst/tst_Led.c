@@ -106,8 +106,6 @@ tst_Led_set_color( int argc, char** argv )
 static tst_Status_t
 tst_Led_test2( int argc, char** argv )
 {
-    extern void svc_PwrMon_sendTestPkt(void);
-    svc_PwrMon_sendTestPkt();
     return( TST_STATUS_OK );
 }
 #else

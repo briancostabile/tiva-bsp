@@ -62,28 +62,34 @@ static const bsp_I2c_PinInfo_t bsp_I2c_pinInfoTableSda1[] =
 static const bsp_I2c_PinInfo_t bsp_I2c_pinInfoTableScl2[] =
 {
   {BSP_GPIO_PORT_ID(PG2), BSP_GPIO_MASK(PG2), BSP_GPIO_ALT_FUNC(PG2_I2C2SCL)}, // Pin
+  {BSP_GPIO_PORT_ID(PL1), BSP_GPIO_MASK(PL1), BSP_GPIO_ALT_FUNC(PL1_I2C2SCL)}  // Pin
 };
 static const bsp_I2c_PinInfo_t bsp_I2c_pinInfoTableSda2[] =
 {
-  {BSP_GPIO_PORT_ID(PG3), BSP_GPIO_MASK(PG3), BSP_GPIO_ALT_FUNC(PG3_I2C2SDA)}  // Pin
+  {BSP_GPIO_PORT_ID(PG3), BSP_GPIO_MASK(PG3), BSP_GPIO_ALT_FUNC(PG3_I2C2SDA)}, // Pin
+  {BSP_GPIO_PORT_ID(PL0), BSP_GPIO_MASK(PL0), BSP_GPIO_ALT_FUNC(PL0_I2C2SDA)}  // Pin
 };
 
 static const bsp_I2c_PinInfo_t bsp_I2c_pinInfoTableScl3[] =
 {
   {BSP_GPIO_PORT_ID(PG4), BSP_GPIO_MASK(PG4), BSP_GPIO_ALT_FUNC(PG4_I2C3SCL)}, // Pin
+  {BSP_GPIO_PORT_ID(PK4), BSP_GPIO_MASK(PK4), BSP_GPIO_ALT_FUNC(PK4_I2C3SCL)}  // Pin
 };
 static const bsp_I2c_PinInfo_t bsp_I2c_pinInfoTableSda3[] =
 {
-  {BSP_GPIO_PORT_ID(PG5), BSP_GPIO_MASK(PG5), BSP_GPIO_ALT_FUNC(PG5_I2C3SDA)}  // Pin
+  {BSP_GPIO_PORT_ID(PG5), BSP_GPIO_MASK(PG5), BSP_GPIO_ALT_FUNC(PG5_I2C3SDA)},  // Pin
+  {BSP_GPIO_PORT_ID(PK5), BSP_GPIO_MASK(PK5), BSP_GPIO_ALT_FUNC(PK5_I2C3SDA)}   // Pin
 };
 
 static const bsp_I2c_PinInfo_t bsp_I2c_pinInfoTableScl4[] =
 {
   {BSP_GPIO_PORT_ID(PG6), BSP_GPIO_MASK(PG6), BSP_GPIO_ALT_FUNC(PG6_I2C4SCL)}, // Pin
+  {BSP_GPIO_PORT_ID(PK6), BSP_GPIO_MASK(PK6), BSP_GPIO_ALT_FUNC(PK6_I2C4SCL)}  // Pin
 };
 static const bsp_I2c_PinInfo_t bsp_I2c_pinInfoTableSda4[] =
 {
-  {BSP_GPIO_PORT_ID(PG7), BSP_GPIO_MASK(PG7), BSP_GPIO_ALT_FUNC(PG7_I2C4SDA)}  // Pin
+  {BSP_GPIO_PORT_ID(PG7), BSP_GPIO_MASK(PG7), BSP_GPIO_ALT_FUNC(PG7_I2C4SDA)}, // Pin
+  {BSP_GPIO_PORT_ID(PK7), BSP_GPIO_MASK(PK7), BSP_GPIO_ALT_FUNC(PK7_I2C4SDA)}  // Pin
 };
 
 static const bsp_I2c_PinInfo_t bsp_I2c_pinInfoTableScl5[] =

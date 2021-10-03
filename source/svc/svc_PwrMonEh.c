@@ -57,7 +57,7 @@ typedef enum svc_PwrMon_State_e {
 #define SVC_PWRMON_STATE_SET( _state )                           \
 {                                                                \
     svc_PwrMonEh_state = SVC_PWRMON_STATE_##_state;              \
-    SVC_LOG_INFO( "[PwrMon] New State: %s"NL,                    \
+    SVC_LOG_INFO( "[PwrMon] Setting State: %s"NL,                \
                   svc_PwrMonEh_stateNames[svc_PwrMonEh_state] ); \
 }
 
@@ -92,7 +92,7 @@ const char* svc_PwrMonEh_stateNames[] =
 
 const char* svc_PwrMonEh_msgNames[] = SVC_PWRMONEH_MSG_ID_NAMES_TABLE;
 
-svc_PwrMonEh_SmplFmt_t svc_PwrMonEh_smplFmt;
+svc_PwrMonEh_ChannelStats_t* svc_PwrMonEh_channelStatsPtr;
 svc_PwrMonEh_SamplerStats_t* svc_PwrMonEh_samplerStatsPtr;
 svc_PwrMon_State_t svc_PwrMonEh_state;
 
@@ -143,6 +143,7 @@ svc_PwrMonEh_buildAndSendStatsCnf( svc_EhId_t eh )
     svc_PwrMonEh_StatsCnf_t* cnfPtr;
     cnfPtr = svc_MsgFwk_msgAlloc( eh, SVC_PWRMONEH_STATS_CNF, sizeof(svc_PwrMonEh_StatsCnf_t) );
     BSP_MCU_CRITICAL_SECTION_ENTER();
+    memcpy( &cnfPtr->channelStats, svc_PwrMonEh_channelStatsPtr, sizeof(cnfPtr->channelStats) );
     memcpy( &cnfPtr->samplerStats, svc_PwrMonEh_samplerStatsPtr, sizeof(cnfPtr->samplerStats) );
     BSP_MCU_CRITICAL_SECTION_EXIT();
     SVC_PWRMON_MSG_SND( cnfPtr );
@@ -169,13 +170,9 @@ svc_PwrMonEh_buildAndSendChAvgCnf( svc_EhId_t eh )
 static void
 svc_PwrMonEh_processConfigReq( svc_PwrMonEh_ConfigReq_t* configReqPtr )
 {
-    for( int i=0; i<configReqPtr->numCh; i++ )
-    {
-        svc_PwrMon_channelConfig( configReqPtr->chTable[i].chId,
-                                  configReqPtr->chTable[i].shuntVal,
-                                  configReqPtr->chTable[i].chName );
-    }
-    svc_PwrMonEh_smplFmt = configReqPtr->smplFmt;
+    svc_PwrMon_channelConfigSet( configReqPtr->smplFmt,
+                                 configReqPtr->numCh,
+                                 configReqPtr->chTable );
     return;
 }
 
@@ -222,7 +219,7 @@ svc_PwrMonEh_handlerConfigured( svc_MsgFwk_Hdr_t* msgPtr )
     {
         case SVC_PWRMONEH_START_REQ:
         {
-            svc_PwrMon_samplerStart( svc_PwrMon_channelBitmapGet(), svc_PwrMonEh_smplFmt );
+            svc_PwrMon_samplerStart( svc_PwrMon_channelBitmapGet() );
             svc_PwrMonEh_buildAndSendStartCnf( msgPtr->eh, SVC_PWRMONEH_STATUS_SUCCESS );
             SVC_PWRMON_STATE_SET( SAMPLING );
         }
@@ -263,26 +260,9 @@ svc_PwrMonEh_handlerSampling( svc_MsgFwk_Hdr_t* msgPtr )
         case SVC_PWRMONEH_DATA_IND:
         {
             BSP_TRACE_PWRMONEH_DATA_IND_ENTER();
-            svc_PwrMonEh_DataInd_t* dataPtr = (svc_PwrMonEh_DataInd_t*)msgPtr;
-            for( int smplSet = 0; smplSet < dataPtr->numSmplSet; smplSet++ )
-            {
-                for( int ch = 0; ch < dataPtr->numCh; ch++ )
-                {
-                    switch( dataPtr->smplFmt )
-                    {
-                        case SVC_PWRMONEH_SMPL_FMT0_IV:
-                        {
-                            svc_PwrMon_channelUpdate( ch,
-                                dataPtr->data[(smplSet * dataPtr->numCh) + ch].fmt0.v,
-                                dataPtr->data[(smplSet * dataPtr->numCh) + ch].fmt0.i );
-                        }
-                    }
-                }
-            }
-
             bsp_Led_setColor( BSP_PLATFORM_LED_ID_STATUS,
-                             (BSP_LED_COLOR_MASK_R | BSP_LED_COLOR_MASK_G | BSP_LED_COLOR_MASK_B) *
-                              ((svc_PwrMonEh_samplerStatsPtr->pktSndNum >> 6) & 0x01) );
+                              (BSP_LED_COLOR_MASK_R | BSP_LED_COLOR_MASK_G | BSP_LED_COLOR_MASK_B) *
+                               ((svc_PwrMonEh_channelStatsPtr->pktSndNum >> 6) & 0x01) );
             BSP_TRACE_PWRMONEH_DATA_IND_EXIT();
         }
         break;
@@ -291,7 +271,7 @@ svc_PwrMonEh_handlerSampling( svc_MsgFwk_Hdr_t* msgPtr )
             // Stop sampling, update config and restart sampling
             svc_PwrMon_samplerStop();
             svc_PwrMonEh_processConfigReq( (svc_PwrMonEh_ConfigReq_t*)msgPtr );
-            svc_PwrMon_samplerStart( svc_PwrMon_channelBitmapGet(), svc_PwrMonEh_smplFmt );
+            svc_PwrMon_samplerStart( svc_PwrMon_channelBitmapGet() );
             svc_PwrMonEh_buildAndSendConfigCnf( msgPtr->eh, SVC_PWRMONEH_STATUS_SUCCESS );
         }
         break;
@@ -300,7 +280,7 @@ svc_PwrMonEh_handlerSampling( svc_MsgFwk_Hdr_t* msgPtr )
             // Stop sampling, and restart sampling
             svc_PwrMon_samplerStop();
             svc_PwrMonEh_buildAndSendStartCnf( msgPtr->eh, SVC_PWRMONEH_STATUS_SUCCESS );
-            svc_PwrMon_samplerStart( svc_PwrMon_channelBitmapGet(), svc_PwrMonEh_smplFmt );
+            svc_PwrMon_samplerStart( svc_PwrMon_channelBitmapGet() );
         }
         break;
         case SVC_PWRMONEH_STOP_REQ:
@@ -324,9 +304,9 @@ svc_PwrMonEh_handler( svc_MsgFwk_Hdr_t* msgPtr )
     if( msgPtr->id != SVC_PWRMONEH_DATA_IND )
     {
         SVC_LOG_INFO( "[PwrMon] Received %s:0x%04X in %s State"NL,
-                    svc_PwrMonEh_msgNames[SVC_MSGFWK_MSG_ID_NUM_GET(msgPtr->id)],
-                    msgPtr->id,
-                    svc_PwrMonEh_stateNames[svc_PwrMonEh_state] );
+                      svc_PwrMonEh_msgNames[SVC_MSGFWK_MSG_ID_NUM_GET(msgPtr->id)],
+                      msgPtr->id,
+                      svc_PwrMonEh_stateNames[svc_PwrMonEh_state] );
     }
 
     // messages handled in all states
@@ -377,7 +357,7 @@ svc_PwrMonEh_handler( svc_MsgFwk_Hdr_t* msgPtr )
     if( msgPtr->id != SVC_PWRMONEH_DATA_IND )
     {
         SVC_LOG_INFO( "[PwrMon] New State: %s"NL,
-                    svc_PwrMonEh_stateNames[svc_PwrMonEh_state] );
+                      svc_PwrMonEh_stateNames[svc_PwrMonEh_state] );
     }
 
     return;
@@ -393,6 +373,7 @@ svc_PwrMonEh_init( void )
     svc_PwrMon_channelInit();
     svc_PwrMon_samplerInit();
 
+    svc_PwrMonEh_channelStatsPtr = svc_PwrMon_channelStatsPtr();
     svc_PwrMonEh_samplerStatsPtr = svc_PwrMon_samplerStatsPtr();
 }
 

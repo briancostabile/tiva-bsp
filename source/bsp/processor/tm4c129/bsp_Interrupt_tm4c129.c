@@ -324,7 +324,7 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
     // 56-59: UART3 Rx and Tx, UART4 Rx and Tx, UART5 Rx and Tx, UART6 Rx and Tx
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
     // 60-63: UART7 Rx and Tx, I2C2 Master and Slave, I2C3 Master and Slave, Timer 4 subtimer A
@@ -340,8 +340,8 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
     // 68-71: Reserved, Reserved, I2C4 Master and Slave, I2C5 Master and Slave
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 72-75: GPIO Port M, GPIO Port N, Reserved, Tamper
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
@@ -380,8 +380,8 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
     // 100-103: Wide Timer 7 subtimer A, Wide Timer 7 subtimer B, I2C6 Master and Slave, I2C7 Master and Slave
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 104-107: Reserved, 1Wire, Reserved, Reserved
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
@@ -389,8 +389,8 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
     // 108-111: Reserved, I2C8 Master and Slave, I2C9 Master and Slave, GPIO Port T
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 112-115: Reserved, Reserved, Reserved, Reserved
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),

@@ -45,7 +45,12 @@ TOOLCHAIN_CFLAGS += -ffunction-sections -fdata-sections
 TOOLCHAIN_CFLAGS += -g
 TOOLCHAIN_CFLAGS += -Wall
 
-TOOLCHAIN_LFLAGS := -Wl,-Map,"$(BUILD_DIR)/$(PRODUCT).map"
+TOOLCHAIN_LFLAGS := -mcpu=$(CPU)
+TOOLCHAIN_LFLAGS += -march=arm$(CORE)
+TOOLCHAIN_LFLAGS += -mthumb
+TOOLCHAIN_LFLAGS += -mfloat-abi=$(CORE_FLOAT_TYPE)
+TOOLCHAIN_LFLAGS += -mfpu=$(CORE_FLOAT)-d16
+TOOLCHAIN_LFLAGS += -Wl,-Map,"$(BUILD_DIR)/$(PRODUCT).map"
 TOOLCHAIN_LFLAGS += -nostartfiles
 TOOLCHAIN_LFLAGS += -Wl,--gc-sections
 

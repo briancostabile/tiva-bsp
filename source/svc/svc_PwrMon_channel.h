@@ -40,19 +40,25 @@ svc_PwrMon_channelInit( void );
 
 /*============================================================================*/
 void
-svc_PwrMon_channelConfig( dev_PwrMon_ChannelId_t chId,
-                          dev_PwrMon_ShuntVal_t  shuntVal,
-                          char*                  name );
+svc_PwrMon_channelConfigSet( svc_PwrMonEh_SmplFmt_t  smplFmt,
+                             uint8_t                 numCh,
+                             svc_PwrMonEh_ChEntry_t* chTable );
 
 /*============================================================================*/
 void
-svc_PwrMon_channelUpdate( dev_PwrMon_ChannelId_t chId,
-                          dev_PwrMon_Data_t      voltage,
-                          dev_PwrMon_Data_t      current );
+svc_PwrMon_channelProcessSampleSet( uint16_t                   numCh,
+                                    uint32_t                   seq,
+                                    uint32_t                   ioBitmap,
+                                    svc_PwrMonEh_ChBitmap_t    chBitmap,
+                                    svc_PwrMonEh_SampleData_t* dataPtr );
 
 /*============================================================================*/
 void
 svc_PwrMon_channelAvgReset( dev_PwrMon_ChannelId_t chId );
+
+/*============================================================================*/
+const char*
+svc_PwrMon_channelName( dev_PwrMon_ChannelId_t chId );
 
 /*============================================================================*/
 void
@@ -61,11 +67,12 @@ svc_PwrMon_channelAvgResetAll( void );
 /*============================================================================*/
 void
 svc_PwrMon_channelAvgGet( dev_PwrMon_ChannelId_t chId,
-                          dev_PwrMon_Data_t*     vPtr,
-                          dev_PwrMon_Data_t*     iPtr );
+                          int32_t*               vBusPtr,
+                          int32_t*               vShuntPtr,
+                          int32_t*               iShuntPtr );
 
 /*============================================================================*/
-void
+uint8_t
 svc_PwrMon_channelAvgGetAll( svc_PwrMonEh_ChAvgInfo_t* dataBuffer );
 
 /*============================================================================*/
@@ -75,3 +82,7 @@ svc_PwrMon_channelBitmapGet( void );
 /*============================================================================*/
 uint8_t
 svc_PwrMon_channelCntGet( void );
+
+/*============================================================================*/
+svc_PwrMonEh_ChannelStats_t*
+svc_PwrMon_channelStatsPtr( void );

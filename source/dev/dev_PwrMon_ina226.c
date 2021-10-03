@@ -30,6 +30,7 @@
 #include "bsp_Reset.h"
 #include "bsp_Mcu.h"
 #include "bsp_Clk.h"
+#include "bsp_Gpio.h"
 #include "bsp_Pragma.h"
 #include "bsp_I2c.h"
 #include "dev_PwrMon.h"
@@ -62,6 +63,7 @@ typedef uint8_t dev_PwrMon_RegType_t;
                                                                      (((_sConv) & 0x07) << 3) | \
                                                                      (((_bConv) & 0x07) << 6) | \
                                                                      ((  (_avg) & 0x07) << 9))
+#define DEV_PWRMON_REG_ALERT_MASK_CVRF(_reg) ((((uint16_t)(_reg) >> 3) & 0x01) == 0x01)
 #define DEV_PWRMON_REG_CONFIG_RESET 0x8000
 
 /*=============================================================================
@@ -120,6 +122,8 @@ typedef struct dev_PwrMon_ChannelInfo_s
     dev_PwrMon_DevId_t vShunt;
     dev_PwrMon_DevId_t current;
     dev_PwrMon_DevId_t power;
+    bsp_Gpio_PortId_t  calPort;
+    bsp_Gpio_BitMask_t calMask;
 } dev_PwrMon_ChannelInfo_t;
 
 
@@ -200,6 +204,8 @@ dev_PwrMon_i2cRegWrite( const dev_PwrMon_DeviceInfo_t* devPtr,
     devPtr->ctx->wBuffer[0] = regId;
     devPtr->ctx->wBuffer[1] = ((regValue >> 8) & 0xFF);
     devPtr->ctx->wBuffer[2] = ((regValue >> 0) & 0xFF);
+
+    devPtr->ctx->prevRegId = regId;
 
     devPtr->ctx->i2cTrans.type     = BSP_I2C_TRANS_TYPE_WRITE;
     devPtr->ctx->i2cTrans.wLen     = 3; // All writable registers are 2 bytes plus 1 byte address
@@ -345,6 +351,18 @@ dev_PwrMon_alertMaskSet( dev_PwrMon_DevId_t     devId,
 
 /*===========================================================================*/
 static void
+dev_PwrMon_alertMaskGet( dev_PwrMon_DevId_t     devId,
+                         uint8_t*               dataPtr,
+                         dev_PwrMon_Callback_t  callback,
+                         void*                  cbData )
+{
+    dev_PwrMon_commonRead( DEV_PWRMON_REG_MASK_EN,
+                           devId, dataPtr, callback, cbData );
+    return;
+}
+
+/*===========================================================================*/
+static void
 dev_PwrMon_configSet( dev_PwrMon_DevId_t     devId,
                       dev_PwrMon_Data_t      data,
                       dev_PwrMon_Callback_t  callback,
@@ -373,6 +391,79 @@ dev_PwrMon_calSet( dev_PwrMon_DevId_t     devId,
     return;
 }
 
+/*===========================================================================*/
+static void
+dev_PwrMon_calInit( dev_PwrMon_ChannelId_t channelId )
+{
+    const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
+    bsp_Gpio_configOutput( channelPtr->calPort, channelPtr->calMask, false, BSP_GPIO_DRIVE_2MA );
+    bsp_Gpio_write( channelPtr->calPort, channelPtr->calMask, channelPtr->calMask );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_calEnable( dev_PwrMon_ChannelId_t channelId )
+{
+    const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
+    bsp_Gpio_write( channelPtr->calPort, channelPtr->calMask, 0 );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_calDisable( dev_PwrMon_ChannelId_t channelId )
+{
+    const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
+    bsp_Gpio_write( channelPtr->calPort, channelPtr->calMask, channelPtr->calMask );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_calDevice( dev_PwrMon_ChannelId_t channelId,
+                      dev_PwrMon_DevId_t     devId,
+                      uint8_t*               vBusPtr,
+                      uint8_t*               vShuntPtr )
+{
+    dev_PwrMon_Data_t tmpReg;
+
+    // Power off device
+    tmpReg = DEV_PWRMON_REG_CONFIG_BUILD( BSP_PWRMOMN_OP_MODE_PWR_DWN,
+                                          BSP_PWRMOMN_CONV_TIME_US_140,
+                                          BSP_PWRMOMN_CONV_TIME_US_140,
+                                          BSP_PWRMOMN_AVG_MODE_SAMPLES_1 );
+
+    dev_PwrMon_configSet( devId, tmpReg, NULL, 0 );
+
+    // Enable the Calibration IO to short VIN +/- and VBUS
+    dev_PwrMon_calEnable( channelId );
+
+    // Trigger one-shot longer conversion of Shunt and Bus
+    tmpReg = DEV_PWRMON_REG_CONFIG_BUILD( BSP_PWRMOMN_OP_MODE_TRIG_SHUNT_AND_BUS,
+                                          BSP_PWRMOMN_CONV_TIME_US_1100,
+                                          BSP_PWRMOMN_CONV_TIME_US_1100,
+                                          BSP_PWRMOMN_AVG_MODE_SAMPLES_128 );
+
+    dev_PwrMon_configSet( devId, tmpReg, NULL, 0 );
+
+    // Wait for device to complete conversions
+    tmpReg = 0;
+    while( DEV_PWRMON_REG_ALERT_MASK_CVRF( tmpReg ) == 0 )
+    {
+        dev_PwrMon_alertMaskGet( devId, (uint8_t*)&tmpReg, NULL, 0 );
+    }
+
+    // Read out Vshunt and Vbus voltages. They should be 0
+    dev_PwrMon_vBusGet( devId, vBusPtr, NULL, 0 );
+    dev_PwrMon_vShuntGet( devId, vShuntPtr, NULL, 0 );
+
+    // Disable the Calibration IO to short Vin +/-
+    dev_PwrMon_calDisable( channelId );
+
+    return;
+}
+
 /*=============================================================================
  *                                   Functions
  *===========================================================================*/
@@ -397,19 +488,39 @@ dev_PwrMon_init( void )
         dev_PwrMon_deviceId( i, &dev_PwrMon_deviceCtx[i].deviceId, NULL, NULL );
 
         // Initialize:
-        // reset each device and disable every alert
+        // reset each device and disable every alert and set each cal reg to 0
         dev_PwrMon_configSet( i, DEV_PWRMON_REG_CONFIG_RESET, NULL, NULL );
         dev_PwrMon_alertMaskSet( i, 0x0000, NULL, NULL );
+        dev_PwrMon_calSet( i, 0x0000, NULL, NULL );
     }
 
     // For each channel, configure the default settings
     for (uint8_t i=0; i<DIM(dev_PwrMon_channelInfo); i++)
     {
+        dev_PwrMon_calInit( i );
         dev_PwrMon_channelConfig( i,
-                               BSP_PWRMOMN_CONV_TIME_US_140,
-                               BSP_PWRMOMN_CONV_TIME_US_140,
-                               BSP_PWRMOMN_AVG_MODE_SAMPLES_1,
-                               NULL, NULL );
+                                  BSP_PWRMOMN_CONV_TIME_US_140,
+                                  BSP_PWRMOMN_CONV_TIME_US_140,
+                                  BSP_PWRMOMN_AVG_MODE_SAMPLES_1,
+                                  NULL, NULL );
+    }
+
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_channelOffsetCal( dev_PwrMon_ChannelId_t channelId,
+                             uint8_t*               vBusPtr,
+                             uint8_t*               vShuntPtr )
+{
+    // Loop through list of devices and measure Vbus and Vshunt offsets for each one
+    for( uint8_t i=0; i<DIM(dev_PwrMon_deviceInfo); i++ )
+    {
+        if( dev_PwrMon_deviceInfo[i].channelId == channelId )
+        {
+            dev_PwrMon_calDevice( channelId, i, vBusPtr, vShuntPtr );
+        }
     }
 
     return;
@@ -433,16 +544,18 @@ dev_PwrMon_channelConfig( dev_PwrMon_ChannelId_t channelId,
     {
         dev_PwrMon_Data_t tmpReg;
         dev_PwrMon_OpMode_t mode = BSP_PWRMOMN_OP_MODE_PWR_DWN;
-        if ((channelPtr->current == devicesPtr->devices[i]) ||
-            (channelPtr->power   == devicesPtr->devices[i]) ||
-            (channelPtr->vShunt  == devicesPtr->devices[i]))
-        {
-            mode = (channelPtr->vBus == devicesPtr->devices[i]) ?
-                        BSP_PWRMOMN_OP_MODE_CONT_SHUNT_AND_BUS : BSP_PWRMOMN_OP_MODE_CONT_SHUNT;
-        }
-        else if (channelPtr->vBus == devicesPtr->devices[i])
+        if( (channelPtr->vBus   == devicesPtr->devices[i]) &&
+            (channelPtr->vShunt == devicesPtr->devices[i]) )
         {
             mode = BSP_PWRMOMN_OP_MODE_CONT_SHUNT_AND_BUS;
+        }
+        else if( channelPtr->vBus == devicesPtr->devices[i] )
+        {
+            mode = BSP_PWRMOMN_OP_MODE_CONT_BUS;
+        }
+        else
+        {
+            mode = BSP_PWRMOMN_OP_MODE_CONT_SHUNT;
         }
         tmpReg = DEV_PWRMON_REG_CONFIG_BUILD( mode, shuntConvTime, busConvTime, avgMode );
 
@@ -457,25 +570,24 @@ dev_PwrMon_channelConfig( dev_PwrMon_ChannelId_t channelId,
 
 /*===========================================================================*/
 void
-dev_PwrMon_channelConfigShunt( dev_PwrMon_ChannelId_t channelId,
-                               dev_PwrMon_ShuntVal_t  shunt,
-                               dev_PwrMon_Callback_t  callback,
-                               void*                  cbData )
+dev_PwrMon_channelConfigCal( dev_PwrMon_ChannelId_t channelId,
+                             dev_PwrMon_Cal_t       cal,
+                             dev_PwrMon_Callback_t  callback,
+                             void*                  cbData )
 {
     const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
     const dev_PwrMon_ChannelDevices_t* devicesPtr = (const dev_PwrMon_ChannelDevices_t*)channelPtr;
 
-    for (uint8_t i=0; i<DIM(devicesPtr->devices); i++)
+    for( uint8_t i=0; i<DIM(devicesPtr->devices); i++ )
     {
-        // Only setup shunt for devices measuring current or power or shunt voltage
-        if ((channelPtr->current == devicesPtr->devices[i]) ||
-            (channelPtr->power   == devicesPtr->devices[i]) ||
-            (channelPtr->vShunt  == devicesPtr->devices[i]))
+        // Only setup shunt for devices measuring current or power
+        if( (channelPtr->current == devicesPtr->devices[i]) ||
+            (channelPtr->power   == devicesPtr->devices[i]) )
         {
             // Callback only on the last one
             dev_PwrMon_Callback_t cb;
             cb = (i == (DIM(devicesPtr->devices) - 1)) ? NULL : callback;
-            dev_PwrMon_calSet( devicesPtr->devices[i], shunt, cb, cbData );
+            dev_PwrMon_calSet( devicesPtr->devices[i], cal, cb, cbData );
         }
     }
 
