@@ -552,16 +552,6 @@
 			<locationURI>SOURCE_ROOT/svc/svc_TempEh.h</locationURI>
 		</link>
 		<link>
-			<name>source/svc/svc_TestEh.c</name>
-			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_TestEh.c</locationURI>
-		</link>
-		<link>
-			<name>source/svc/svc_TestEh.h</name>
-			<type>1</type>
-			<locationURI>SOURCE_ROOT/svc/svc_TestEh.h</locationURI>
-		</link>
-		<link>
 			<name>source/svc/svc_ThreadSensor.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_ThreadSensor.c</locationURI>
@@ -617,6 +607,16 @@
 			<locationURI>SOURCE_ROOT/tst/tst_Mem.h</locationURI>
 		</link>
 		<link>
+			<name>source/tst/tst_Pwr.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/tst/tst_Pwr.c</locationURI>
+		</link>
+		<link>
+			<name>source/tst/tst_Pwr.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/tst/tst_Pwr.h</locationURI>
+		</link>
+		<link>
 			<name>source/tst/tst_Sys.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/tst/tst_Sys.c</locationURI>
@@ -662,6 +662,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/platform/luccaproto1</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/processor/tm4c123</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -688,6 +693,11 @@
 		</link>
 		<link>
 			<name>source/osapi/product/TivaBspSensor</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/Lucca</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
@@ -842,6 +852,51 @@
 			<locationURI>SOURCE_ROOT/bsp/platform/ektm4c123sensor/bsp_Trace_ektm4c123sensor.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/platform/luccaproto1/bsp_Button_luccaproto1.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/luccaproto1/bsp_Button_luccaproto1.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/luccaproto1/bsp_Button_luccaproto1.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/luccaproto1/bsp_Button_luccaproto1.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/luccaproto1/bsp_Gpio_luccaproto1.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/luccaproto1/bsp_Gpio_luccaproto1.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/luccaproto1/bsp_Gpio_luccaproto1.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/luccaproto1/bsp_Gpio_luccaproto1.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/luccaproto1/bsp_Led_luccaproto1.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/luccaproto1/bsp_Led_luccaproto1.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/luccaproto1/bsp_Led_luccaproto1.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/luccaproto1/bsp_Led_luccaproto1.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/luccaproto1/bsp_Platform_luccaproto1.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/luccaproto1/bsp_Platform_luccaproto1.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/luccaproto1/bsp_Trace_luccaproto1.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/luccaproto1/bsp_Trace_luccaproto1.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/luccaproto1/bsp_Trace_luccaproto1.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/luccaproto1/bsp_Trace_luccaproto1.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/processor/tm4c123/bsp_Gpio_tm4c123.c</locationURI>
@@ -922,6 +977,16 @@
 			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Interrupt_tm4c129.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/processor/tm4c129/bsp_TimerGp_tm4c129.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_TimerGp_tm4c129.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_TimerGp_tm4c129.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_TimerGp_tm4c129.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/processor/tm4c129/bsp_Uart_tm4c129.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Uart_tm4c129.c</locationURI>
@@ -952,6 +1017,11 @@
 			<locationURI>SOURCE_ROOT/bsp/toolchain/gcc/bsp_Mcu_gcc.s</locationURI>
 		</link>
 		<link>
+			<name>source/osapi/product/Lucca/osapi_Lucca.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/osapi/product/Lucca/osapi_Lucca.h</locationURI>
+		</link>
+		<link>
 			<name>source/osapi/product/TIvaBspCore/osapi_TivaBspCore.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/osapi/product/TivaBspCore/osapi_TivaBspCore.h</locationURI>
@@ -962,6 +1032,31 @@
 			<locationURI>SOURCE_ROOT/osapi/product/TivaBspSensor/osapi_TivaBspSensor.h</locationURI>
 		</link>
 		<link>
+			<name>source/svc/product/Lucca/svc_CmdEh_cmds.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/Lucca/svc_CmdEh_cmds.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/Lucca/svc_CmdEh_cmds.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/Lucca/svc_CmdEh_cmds.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/Lucca/svc_CmdEh_text.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/Lucca/svc_CmdEh_text.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/Lucca/svc_CmdEh_text.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/Lucca/svc_CmdEh_text.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/Lucca/svc_EhId_Lucca.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/Lucca/svc_EhId_Lucca.h</locationURI>
+		</link>
+		<link>
 			<name>source/svc/product/TivaBspCore/svc_CmdEh_cmds.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/product/TivaBspCore/svc_CmdEh_cmds.c</locationURI>
@@ -970,6 +1065,16 @@
 			<name>source/svc/product/TivaBspCore/svc_CmdEh_cmds.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/product/TivaBspCore/svc_CmdEh_cmds.h</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspCore/svc_CmdEh_text.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/TivaBspCore/svc_CmdEh_text.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/product/TivaBspCore/svc_CmdEh_text.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/product/TivaBspCore/svc_CmdEh_text.h</locationURI>
 		</link>
 		<link>
 			<name>source/svc/product/TivaBspCore/svc_EhId_TivaBspCore.h</name>

@@ -26,6 +26,7 @@
  */
 #pragma once
 
+#include "bsp_Platform.h"
 #include "bsp_Reset.h"
 
 /*==============================================================================
@@ -45,8 +46,8 @@
  * @return None.
  */
 #if defined( BSP_ASSERT_ENABLE )
-#if BSP_ASSERT_HALT
-#warning HALT ON ASSERTION ENABLED!
+#if defined( BSP_ASSERT_HALT )
+//#warning HALT ON ASSERTION ENABLED!
 #define BSP_ASSERT( _cond )                         \
 {                                                   \
     if( !(_cond) )                                  \

@@ -121,7 +121,7 @@ svc_MsgFwk_msgAlloc( svc_EhId_t          eh,
         msgPtr->cnt = 0;
     }
     svc_MsgFwk_stats.numAlloc++;
-    BSP_ASSERT( msgPtr );
+    BSP_ASSERT( msgPtr != NULL );
     return msgPtr;
 }
 
@@ -129,6 +129,7 @@ svc_MsgFwk_msgAlloc( svc_EhId_t          eh,
 void
 svc_MsgFwk_msgSend( void* msgPtr )
 {
+    BSP_ASSERT( msgPtr != NULL );
     svc_EhId_t dstEh = (SVC_MSGFWK_MSG_ID_TYPE_GET( ((svc_MsgFwk_Hdr_t*)msgPtr)->id ) == SVC_MSGFWK_MSG_TYPE_CNF_IND) ?
                                                         ((svc_MsgFwk_Hdr_t*)msgPtr)->eh :
                                                         SVC_MSGFWK_MSG_ID_EH_GET( ((svc_MsgFwk_Hdr_t*)msgPtr)->id );
@@ -150,6 +151,7 @@ svc_MsgFwk_msgAllocAndSend( svc_EhId_t          eh,
 void
 svc_MsgFwk_msgBroadcast( void* msgPtr )
 {
+    BSP_ASSERT( msgPtr != NULL );
     if( msgPtr != NULL )
     {
         BSP_MCU_CRITICAL_SECTION_ENTER();
@@ -183,6 +185,7 @@ svc_MsgFwk_msgAllocAndBroadcast( svc_MsgFwk_MsgId_t  id,
 void
 svc_MsgFwk_msgZeroCopy( void* msgPtr )
 {
+    BSP_ASSERT( msgPtr != NULL );
     // Increment reference count before sending
     BSP_MCU_CRITICAL_SECTION_ENTER();
     ((svc_MsgFwk_Hdr_t*)msgPtr)->cnt++;
@@ -193,6 +196,7 @@ svc_MsgFwk_msgZeroCopy( void* msgPtr )
 void
 svc_MsgFwk_msgRelease( void* msgPtr )
 {
+    BSP_ASSERT( msgPtr != NULL );
     BSP_MCU_CRITICAL_SECTION_ENTER();
     ((svc_MsgFwk_Hdr_t*)msgPtr)->cnt--;
     BSP_MCU_CRITICAL_SECTION_EXIT();

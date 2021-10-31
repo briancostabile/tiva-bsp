@@ -34,12 +34,13 @@
  *============================================================================*/
 /*============================================================================*/
 #define BSP_LED_INFO_ENTRY(_name) {  \
-    BSP_PLATFORM_NAME_##_name,       \
-    BSP_PLATFORM_COLOR_##_name,      \
-    BSP_PLATFORM_PORT_ID_##_name,    \
-    BSP_PLATFORM_BASE_ADDR_##_name,  \
-    BSP_PLATFORM_BIT_MASK_##_name,   \
-    BSP_PLATFORM_DRIVE_##_name       \
+    BSP_PLATFORM_LED_NAME_##_name,       \
+    BSP_PLATFORM_LED_COLOR_##_name,      \
+    BSP_PLATFORM_LED_PORT_ID_##_name,    \
+    BSP_PLATFORM_LED_BASE_ADDR_##_name,  \
+    BSP_PLATFORM_LED_BIT_MASK_##_name,   \
+    BSP_PLATFORM_LED_DRIVE_##_name,      \
+    BSP_PLATFORM_LED_POLARITY_##_name    \
 }
 
 /*==============================================================================

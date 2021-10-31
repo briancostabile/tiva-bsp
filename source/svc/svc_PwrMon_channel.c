@@ -27,6 +27,8 @@
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
 #include "bsp_Mcu.h"
+#include "bsp_Clk.h"
+#include "bsp_Led.h"
 #include "bsp_Assert.h"
 #include "svc_EhId.h"
 #include "svc_PwrMonEh.h"
@@ -105,6 +107,21 @@ typedef struct svc_PwrMon_ChannelCtx_s
  *============================================================================*/
 svc_PwrMon_SamplerCtx_t svc_PwrMon_channelCtx;
 
+#define SVC_PWRMON_CHANNEL_LED_ACTIVE_COLOR (BSP_LED_COLOR_MASK_R | BSP_LED_COLOR_MASK_G | BSP_LED_COLOR_MASK_B)
+#define SVC_PWRMON_CHANNEL_LED_ID(_ch) (BSP_PLATFORM_LED_ID_CH0 + (_ch))
+#define SVC_PWRMON_CHANNEL_LED_BOOT_TIME_MS 500
+
+/*============================================================================*/
+void
+svc_PwrMon_channelLedAllOff( void )
+{
+    for( int i = 0; i < BSP_PLATFORM_PWRMON_NUM_CHANNELS; i++ )
+    {
+        bsp_Led_setColor( SVC_PWRMON_CHANNEL_LED_ID(i), 0 );
+    }
+    return;
+}
+
 /*==============================================================================
  *                             Public Functions
  *============================================================================*/
@@ -113,6 +130,15 @@ void
 svc_PwrMon_channelInit( void )
 {
     memset( &svc_PwrMon_channelCtx, 0, sizeof(svc_PwrMon_channelCtx) );
+
+    // Sweep through and light up the channel LEDs for a boot signal
+    svc_PwrMon_channelLedAllOff();
+    for( int i = 0; i < BSP_PLATFORM_PWRMON_NUM_CHANNELS; i++ )
+    {
+        bsp_Led_setColor( SVC_PWRMON_CHANNEL_LED_ID(i), SVC_PWRMON_CHANNEL_LED_ACTIVE_COLOR );
+        bsp_Clk_delayMs( SVC_PWRMON_CHANNEL_LED_BOOT_TIME_MS );
+        bsp_Led_setColor( SVC_PWRMON_CHANNEL_LED_ID(i), 0 );
+    }
     return;
 }
 
@@ -151,18 +177,57 @@ svc_PwrMon_channelIdToIdx( dev_PwrMon_ChannelId_t chId )
 
 /*============================================================================*/
 void
-svc_PwrMon_channelConfigSet( svc_PwrMonEh_SmplFmt_t  smplFmt,
-                             uint8_t                 numCh,
+svc_PwrMon_channelSmplFmtSet( svc_PwrMonEh_SmplFmt_t smplFmt )
+{
+    svc_PwrMon_channelCtx.smplFmt = smplFmt;
+    return;
+}
+
+/*============================================================================*/
+void
+svc_PwrMon_channelCalibrateAll( void )
+{
+    svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_channelCtx;
+
+    // Turn off all Channel LEDs
+    svc_PwrMon_channelLedAllOff();
+
+    for( int chId=0; chId < DIM(ctx->channelInfo); chId++ )
+    {
+        dev_PwrMon_channelOffsetCal( chId,
+                                     &(ctx->channelInfo[chId].offsetVbus),
+                                     &(ctx->channelInfo[chId].offsetVshunt) );
+
+        SVC_LOG_INFO( "[PwrMon Channel] dev_PwrMon_channelOffsetCal chId:%d offsetVbus:%d offsetVshunt:%d"NL,
+                      chId,
+                      ctx->channelInfo[chId].offsetVbus,
+                      ctx->channelInfo[chId].offsetVshunt );
+
+        bsp_Led_setColor( SVC_PWRMON_CHANNEL_LED_ID(chId),
+                          SVC_PWRMON_CHANNEL_LED_ACTIVE_COLOR );
+    }
+    svc_PwrMon_channelLedAllOff();
+
+    // Save cal in EEPROM so it's not needed every time
+
+    return;
+}
+
+/*============================================================================*/
+void
+svc_PwrMon_channelConfigSet( uint8_t                 numCh,
                              svc_PwrMonEh_ChEntry_t* chTable )
 {
-    BSP_ASSERT( numCh < BSP_PLATFORM_PWRMON_NUM_CHANNELS );
+    BSP_ASSERT( numCh <= BSP_PLATFORM_PWRMON_NUM_CHANNELS );
 
     svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_channelCtx;
+
+    // Turn off all Channel LEDs
+    svc_PwrMon_channelLedAllOff();
 
     /**********************
      * Copy data from channel table and cal in-use devices
      *********************/
-    ctx->smplFmt = smplFmt;
     ctx->numCh = numCh;
     ctx->chBitmap = 0;
     ctx->seq = 0;
@@ -182,12 +247,15 @@ svc_PwrMon_channelConfigSet( svc_PwrMonEh_SmplFmt_t  smplFmt,
 
         ctx->chBitmap |= (1 << chTable[chIdx].chId);
 
-        SVC_LOG_INFO( "[PwrMon Channel] dev_PwrMon_channelOffsetCal name:%s chId:%d"NL, chTable[chIdx].chName, chTable[chIdx].chId );
-        dev_PwrMon_channelOffsetCal( chTable[chIdx].chId,
-                                     (uint8_t*)&(ctx->channelInfo[chIdx].offsetVbus),
-                                     (uint8_t*)&(ctx->channelInfo[chIdx].offsetVshunt) );
+        SVC_LOG_INFO( "[PwrMon Channel] dev_PwrMon_channelOffsetCal name:%s chId:%d shunt:%ld"NL,
+                      chTable[chIdx].chName,
+                      chTable[chIdx].chId,
+                      chTable[chIdx].shuntVal );
+
+        bsp_Led_setColor( SVC_PWRMON_CHANNEL_LED_ID(chTable[chIdx].chId),
+                          SVC_PWRMON_CHANNEL_LED_ACTIVE_COLOR );
     }
-    SVC_LOG_INFO( "[PwrMon Channel] svc_PwrMon_channelConfigSet chBitmap:0x%08lX"NL, ctx->chBitmap );
+    SVC_LOG_INFO( "[PwrMon Channel] svc_PwrMon_channelConfigSet chBitmap:0x%08X"NL, ctx->chBitmap );
 
     /**********************
      * Setup DataInd buffer Packet
@@ -199,7 +267,8 @@ svc_PwrMon_channelConfigSet( svc_PwrMonEh_SmplFmt_t  smplFmt,
     // Setup static portion of headers
     for( int i=0; i<SVC_PWRMON_CHANNEL_DATA_PACKET_BUFFER_CNT; i++ )
     {
-        svc_PwrMon_ChannelDataPkt_t* pktPtr = &ctx->pktArray[ i ];
+        svc_PwrMon_ChannelDataPkt_t*     pktPtr     = &ctx->pktArray[ i ];
+        svc_PwrMon_ChannelDataPktInfo_t* pktInfoPtr = &ctx->pktInfoArray[ i ];
 
         // sysData is typically hidden behind the msgFwk allocation method
         // and is used when forwarding messages off device.
@@ -217,12 +286,14 @@ svc_PwrMon_channelConfigSet( svc_PwrMonEh_SmplFmt_t  smplFmt,
         // Fill in sample packet header information
         pktPtr->dataInd.numCh      = ctx->numCh;
         pktPtr->dataInd.numSmplSet = SVC_PWRMONEH_DATA_IND_SAMPLE_SETS_MAX;
-        pktPtr->dataInd.smplFmt    = ctx->smplFmt;
         pktPtr->dataInd.chBitmap   = ctx->chBitmap;
 
         // These fields change per packet, initialized to 0
         pktPtr->dataInd.seq          = ctx->seq;
         pktPtr->dataInd.smplStartIdx = 0;
+
+        // Reset packet info
+        pktInfoPtr->smplSet = 0;
     }
 
     return;
@@ -232,14 +303,17 @@ svc_PwrMon_channelConfigSet( svc_PwrMonEh_SmplFmt_t  smplFmt,
 void
 svc_PwrMon_channelProcessSampleSet( uint16_t                   numCh,
                                     uint32_t                   seq,
-                                    uint32_t                   ioBitmap,
+                                    svc_PwrMonEh_IoBitmap_t    ioBitmap,
                                     svc_PwrMonEh_ChBitmap_t    chBitmap,
                                     svc_PwrMonEh_SampleData_t* dataPtr )
 {
     svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_channelCtx;
 
-    BSP_ASSERT( numCh == ctx->numCh );
-    BSP_ASSERT( chBitmap == ctx->chBitmap );
+    //BSP_ASSERT( numCh == ctx->numCh );
+
+    // Uncomment to assert on errors or comment to
+    // allow errors to be detected by host
+    //BSP_ASSERT( chBitmap == ctx->chBitmap );
 
     // Figure out where this sample set goes in the packet
     svc_PwrMon_ChannelDataPkt_t*     pktPtr     = &ctx->pktArray[ ctx->pktIdx ];
@@ -253,30 +327,44 @@ svc_PwrMon_channelProcessSampleSet( uint16_t                   numCh,
 
     // For each channel in the data set, keep running average and copy formatted sample
     // to dataInd packet
-    uint16_t offsetIdx = (pktInfoPtr->smplSet * ctx->numCh);
+    uint16_t offsetIdx = (pktInfoPtr->smplSet * (ctx->numCh + 1)); // add one to make space for header
+
+    // Put in the header
+    pktPtr->dataInd.data[offsetIdx].hdr.ioBitmap = ioBitmap;
+    pktPtr->dataInd.data[offsetIdx].hdr.chBitmap = chBitmap;
+    offsetIdx += 1;
     for( uint8_t chIdx = 0; chIdx < numCh; chIdx++ )
     {
+        // Adjust vShunt and vBus by calibration offsets
+        dev_PwrMon_Data_t vShuntAdjusted;
+        dev_PwrMon_Data_t vBusAdjusted;
+
+        vShuntAdjusted = dataPtr[chIdx].vShunt - svc_PwrMon_channelCtx.channelInfo[chIdx].offsetVshunt;
+        vBusAdjusted = dataPtr[chIdx].vBus - svc_PwrMon_channelCtx.channelInfo[chIdx].offsetVbus;
+
         // Copy over to packet
-        int32_t current = (dataPtr[chIdx].vBus - dataPtr[chIdx].vShunt) / ctx->channelInfo[chIdx].shuntVal;
-        if( ctx->smplFmt == SVC_PWRMONEH_SMPL_FMT0_VV )
+        size_t dataIdx = (offsetIdx + chIdx);
+        if( ctx->smplFmt == SVC_PWRMONEH_SMPL_FMT1_VV )
         {
-            pktPtr->dataInd.data[ (offsetIdx + chIdx) ].fmt0.vShunt = dataPtr[chIdx].vShunt;
-            pktPtr->dataInd.data[ (offsetIdx + chIdx) ].fmt0.vBus = dataPtr[chIdx].vBus;
+            pktPtr->dataInd.data[dataIdx].fmt0.vShunt = vShuntAdjusted;
+            pktPtr->dataInd.data[dataIdx].fmt0.vBus = vBusAdjusted;
         }
-        else if( ctx->smplFmt == SVC_PWRMONEH_SMPL_FMT1_IOI )
+        else if( ctx->smplFmt == SVC_PWRMONEH_SMPL_FMT2_P )
         {
-            pktPtr->dataInd.data[ (offsetIdx + chIdx) ].fmt1.ioBitmap = (uint8_t)ioBitmap;
-            pktPtr->dataInd.data[ (offsetIdx + chIdx) ].fmt1.current = current;
+            int64_t mvBus = SVC_PWRMON_CHANNEL_BUS_ADC_TO_MV( vBusAdjusted );
+            int64_t uvShunt = SVC_PWRMON_CHANNEL_SHUNT_ADC_TO_UV( vShuntAdjusted );
+            int64_t uaShunt = ((uvShunt * 1000) / svc_PwrMon_channelCtx.channelInfo[chIdx].shuntVal);
+            pktPtr->dataInd.data[dataIdx].fmt1.power = (int32_t)((mvBus * uaShunt) / 1000);
         }
 
-        ctx->channelInfo[chIdx].mvBusLast = SVC_PWRMON_CHANNEL_BUS_ADC_TO_MV( dataPtr[chIdx].vBus );
-        ctx->channelInfo[chIdx].uvShuntLast = SVC_PWRMON_CHANNEL_SHUNT_ADC_TO_UV( dataPtr[chIdx].vShunt );
+        ctx->channelInfo[chIdx].mvBusLast = SVC_PWRMON_CHANNEL_BUS_ADC_TO_MV( vBusAdjusted );
+        ctx->channelInfo[chIdx].uvShuntLast = SVC_PWRMON_CHANNEL_SHUNT_ADC_TO_UV( vShuntAdjusted );
 
         // Update average counters
         ctx->channelInfo[chIdx].smplCnt++;
         ctx->channelInfo[chIdx].avgCnt++;
-        ctx->channelInfo[chIdx].mvBusSum += dataPtr[chIdx].vBus;
-        ctx->channelInfo[chIdx].uvShuntSum += dataPtr[chIdx].vShunt;
+        ctx->channelInfo[chIdx].mvBusSum += vBusAdjusted;
+        ctx->channelInfo[chIdx].uvShuntSum += vShuntAdjusted;
     }
 
     // Check to see if the packet is ready to be sent
@@ -297,9 +385,13 @@ svc_PwrMon_channelProcessSampleSet( uint16_t                   numCh,
 
         // Setup next packet header
         ctx->stats.pktSndNum++;
+        pktPtr->dataInd.smplFmt = ctx->smplFmt;
         pktPtr->dataInd.seq = ctx->stats.pktSndNum;
 
-        svc_MsgFwk_msgBroadcast( &(ctx->pktArray[ ctx->pktPrevIdx ].dataInd.hdr) );
+        if( ctx->smplFmt != SVC_PWRMONEH_SMPL_NO_STREAM )
+        {
+            svc_MsgFwk_msgBroadcast( &(ctx->pktArray[ ctx->pktPrevIdx ].dataInd.hdr) );
+        }
     }
     return;
 }
@@ -352,7 +444,8 @@ void
 svc_PwrMon_channelAvgGet( dev_PwrMon_ChannelId_t chId,
                           int32_t*               vBusPtr,
                           int32_t*               vShuntPtr,
-                          int32_t*               iShuntPtr )
+                          int32_t*               iShuntPtr,
+                          int32_t*               pPtr )
 {
     int64_t mvBusSum;
     int64_t uvShuntSum;
@@ -372,11 +465,12 @@ svc_PwrMon_channelAvgGet( dev_PwrMon_ChannelId_t chId,
     svc_PwrMon_channelCtx.channelInfo[chIdx].mvBusAvg = (int32_t)mvBusAvg;
     svc_PwrMon_channelCtx.channelInfo[chIdx].uvShuntAvg = (int32_t)uvShuntAvg;
     svc_PwrMon_channelCtx.channelInfo[chIdx].uaShuntAvg =
-            (int32_t)(uvShuntAvg / (svc_PwrMon_channelCtx.channelInfo[chIdx].shuntVal * 1000));
+            (int32_t)((uvShuntAvg * 1000) / svc_PwrMon_channelCtx.channelInfo[chIdx].shuntVal);
 
     *vBusPtr   = svc_PwrMon_channelCtx.channelInfo[chIdx].mvBusAvg;
     *vShuntPtr = svc_PwrMon_channelCtx.channelInfo[chIdx].uvShuntAvg;
     *iShuntPtr = svc_PwrMon_channelCtx.channelInfo[chIdx].uaShuntAvg;
+    *pPtr      = (*vBusPtr * *iShuntPtr) / 1000;
 
     return;
 }
@@ -397,11 +491,13 @@ svc_PwrMon_channelAvgGetAll( svc_PwrMonEh_ChAvgInfo_t* dataBuffer )
             int32_t vBus;
             int32_t vShunt;
             int32_t iShunt;
-            svc_PwrMon_channelAvgGet( chId, &vBus, &vShunt, &iShunt );
-            dataBuffer[ bufIdx ].chId = chId;
-            dataBuffer[ bufIdx ].mvBusAvg = vBus;
+            int32_t power;
+            svc_PwrMon_channelAvgGet( chId, &vBus, &vShunt, &iShunt, &power );
+            dataBuffer[ bufIdx ].chId       = chId;
+            dataBuffer[ bufIdx ].mvBusAvg   = vBus;
             dataBuffer[ bufIdx ].uvShuntAvg = vShunt;
             dataBuffer[ bufIdx ].uaShuntAvg = iShunt;
+            dataBuffer[ bufIdx ].uwAvg      = power;
             bufIdx++;
         }
         bitmap >>= 1;

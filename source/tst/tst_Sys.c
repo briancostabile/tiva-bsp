@@ -29,6 +29,7 @@
 #include "bsp_Assert.h"
 #include "bsp_Reset.h"
 #include "bsp_Build.h"
+#include "bsp_Mcu.h"
 #include "tst.h"
 #include "tst_Sys.h"
 #include "osapi.h"
@@ -115,6 +116,7 @@ tst_Sys_version( int argc, char** argv )
     printf( "Build Date: %s"NL, bsp_Build_timestamp );
     printf( "HW Version: 0x%08lX"NL, bsp_Build_versionHw );
     printf( "FW Version: 0x%08lX"NL, bsp_Build_versionFw );
+    printf( "Serial Number, 0x%08lX"NL, BSP_PLATFORM_UNIQUE32() );
     return( TST_STATUS_OK );
 }
 

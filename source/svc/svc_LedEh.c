@@ -42,7 +42,7 @@
  *                                Defines
  *============================================================================*/
 /*============================================================================*/
-#define SVC_LEDEH_PATTERN_TIMER_ID  "%d_LEDEH"
+#define SVC_LEDEH_PATTERN_TIMER_ID  "%02d_LEDEH"
 
 /*==============================================================================
  *                                Types
@@ -174,7 +174,7 @@ void
 svc_LedEh_timerCallback( osapi_Timer_t     timer,
                          osapi_TimerName_t name )
 {
-    int id = (name[0] - '0');
+    int id = (((name[0] - '0') * 10) + (name[1] - '0'));
     svc_LedEh_processPattern( &svc_LedEh_ledInfoTable[id] );
     return;
 }

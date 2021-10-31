@@ -96,6 +96,9 @@ typedef struct dev_PwrMon_DeviceCtx_s
     dev_PwrMon_AlertMask_t      alertMask;
     dev_PwrMon_DeviceId_t       deviceId;
     dev_PwrMon_ManufacturerId_t mftrId;
+
+    int16_t vBusOffset;
+    int16_t vShuntOffset;
 } dev_PwrMon_DeviceCtx_t;
 
 typedef struct dev_PwrMon_DeviceInfo_s
@@ -418,14 +421,12 @@ dev_PwrMon_calDisable( dev_PwrMon_ChannelId_t channelId )
     bsp_Gpio_write( channelPtr->calPort, channelPtr->calMask, channelPtr->calMask );
     return;
 }
-
+#define CAL_AVG_VBUS 256
 /*===========================================================================*/
-void
-dev_PwrMon_calDevice( dev_PwrMon_ChannelId_t channelId,
-                      dev_PwrMon_DevId_t     devId,
-                      uint8_t*               vBusPtr,
-                      uint8_t*               vShuntPtr )
+int16_t
+dev_PwrMon_calDeviceVbus( dev_PwrMon_DevId_t devId )
 {
+    BSP_GPIO_OUT_SET_HIGH( TPE2 );
     dev_PwrMon_Data_t tmpReg;
 
     // Power off device
@@ -436,32 +437,82 @@ dev_PwrMon_calDevice( dev_PwrMon_ChannelId_t channelId,
 
     dev_PwrMon_configSet( devId, tmpReg, NULL, 0 );
 
-    // Enable the Calibration IO to short VIN +/- and VBUS
-    dev_PwrMon_calEnable( channelId );
+    int32_t vBusSum = 0;
+    int16_t vBus;
+    for( int i=0; i<CAL_AVG_VBUS; i++ )
+    {
+        // Trigger one-shot longer conversion of Shunt and Bus
+        tmpReg = DEV_PWRMON_REG_CONFIG_BUILD( BSP_PWRMOMN_OP_MODE_TRIG_BUS,
+                                              BSP_PWRMOMN_CONV_TIME_US_332,
+                                              BSP_PWRMOMN_CONV_TIME_US_332,
+                                              BSP_PWRMOMN_AVG_MODE_SAMPLES_1 );
 
-    // Trigger one-shot longer conversion of Shunt and Bus
-    tmpReg = DEV_PWRMON_REG_CONFIG_BUILD( BSP_PWRMOMN_OP_MODE_TRIG_SHUNT_AND_BUS,
-                                          BSP_PWRMOMN_CONV_TIME_US_1100,
-                                          BSP_PWRMOMN_CONV_TIME_US_1100,
-                                          BSP_PWRMOMN_AVG_MODE_SAMPLES_128 );
+        dev_PwrMon_configSet( devId, tmpReg, NULL, 0 );
+
+        // Wait for device to complete conversions
+        tmpReg = 0;
+        while( DEV_PWRMON_REG_ALERT_MASK_CVRF( tmpReg ) == 0 )
+        {
+            dev_PwrMon_alertMaskGet( devId, (uint8_t*)&tmpReg, NULL, 0 );
+        }
+
+        // Read out Vshunt and Vbus voltages. They should be 0
+        BSP_GPIO_OUT_SET_HIGH( TPE3 );
+        dev_PwrMon_vBusGet( devId, (uint8_t*)&vBus, NULL, 0 );
+        BSP_GPIO_OUT_SET_LOW( TPE3 );
+        vBusSum += vBus;
+    }
+    vBus = (vBusSum / CAL_AVG_VBUS);
+    BSP_GPIO_OUT_SET_LOW( TPE2 );
+
+    return( vBus );
+}
+
+#define CAL_AVG_VSHUNT 256
+/*===========================================================================*/
+int16_t
+dev_PwrMon_calDeviceVshunt( dev_PwrMon_DevId_t devId )
+{
+    BSP_GPIO_OUT_SET_HIGH( TPE3 );
+    dev_PwrMon_Data_t tmpReg;
+
+    // Power off device
+    tmpReg = DEV_PWRMON_REG_CONFIG_BUILD( BSP_PWRMOMN_OP_MODE_PWR_DWN,
+                                          BSP_PWRMOMN_CONV_TIME_US_140,
+                                          BSP_PWRMOMN_CONV_TIME_US_140,
+                                          BSP_PWRMOMN_AVG_MODE_SAMPLES_1 );
 
     dev_PwrMon_configSet( devId, tmpReg, NULL, 0 );
 
-    // Wait for device to complete conversions
-    tmpReg = 0;
-    while( DEV_PWRMON_REG_ALERT_MASK_CVRF( tmpReg ) == 0 )
+    int32_t vShuntSum = 0;
+    int16_t vShunt;
+    for( int i=0; i<CAL_AVG_VSHUNT; i++ )
     {
-        dev_PwrMon_alertMaskGet( devId, (uint8_t*)&tmpReg, NULL, 0 );
+        // Trigger one-shot longer conversion of Shunt and Bus
+        tmpReg = DEV_PWRMON_REG_CONFIG_BUILD( BSP_PWRMOMN_OP_MODE_TRIG_SHUNT,
+                                              BSP_PWRMOMN_CONV_TIME_US_332,
+                                              BSP_PWRMOMN_CONV_TIME_US_332,
+                                              BSP_PWRMOMN_AVG_MODE_SAMPLES_1 );
+
+        dev_PwrMon_configSet( devId, tmpReg, NULL, 0 );
+
+        // Wait for device to complete conversions
+        tmpReg = 0;
+        while( DEV_PWRMON_REG_ALERT_MASK_CVRF( tmpReg ) == 0 )
+        {
+            dev_PwrMon_alertMaskGet( devId, (uint8_t*)&tmpReg, NULL, 0 );
+        }
+
+        // Read out Vshunt and Vbus voltages. They should be 0
+        BSP_GPIO_OUT_SET_HIGH( TPE2 );
+        dev_PwrMon_vShuntGet( devId, (uint8_t*)&vShunt, NULL, 0 );
+        BSP_GPIO_OUT_SET_LOW( TPE2 );
+        vShuntSum += vShunt;
     }
+    vShunt = (vShuntSum / CAL_AVG_VSHUNT);
+    BSP_GPIO_OUT_SET_LOW( TPE3 );
 
-    // Read out Vshunt and Vbus voltages. They should be 0
-    dev_PwrMon_vBusGet( devId, vBusPtr, NULL, 0 );
-    dev_PwrMon_vShuntGet( devId, vShuntPtr, NULL, 0 );
-
-    // Disable the Calibration IO to short Vin +/-
-    dev_PwrMon_calDisable( channelId );
-
-    return;
+    return vShunt;
 }
 
 /*=============================================================================
@@ -511,17 +562,20 @@ dev_PwrMon_init( void )
 /*===========================================================================*/
 void
 dev_PwrMon_channelOffsetCal( dev_PwrMon_ChannelId_t channelId,
-                             uint8_t*               vBusPtr,
-                             uint8_t*               vShuntPtr )
+                             dev_PwrMon_Data_t*     vBusPtr,
+                             dev_PwrMon_Data_t*     vShuntPtr )
 {
-    // Loop through list of devices and measure Vbus and Vshunt offsets for each one
-    for( uint8_t i=0; i<DIM(dev_PwrMon_deviceInfo); i++ )
-    {
-        if( dev_PwrMon_deviceInfo[i].channelId == channelId )
-        {
-            dev_PwrMon_calDevice( channelId, i, vBusPtr, vShuntPtr );
-        }
-    }
+    const dev_PwrMon_ChannelInfo_t* channelPtr = &dev_PwrMon_channelInfo[channelId];
+
+    // Enable the Calibration IO to short VIN +/- and VBUS
+    dev_PwrMon_calEnable( channelId );
+    bsp_Clk_delayMs(50);
+
+    *vShuntPtr = dev_PwrMon_calDeviceVshunt(channelPtr->vShunt);
+    *vBusPtr = dev_PwrMon_calDeviceVbus(channelPtr->vBus);
+
+    // Disable the Calibration IO to short Vin +/-
+    dev_PwrMon_calDisable( channelId );
 
     return;
 }

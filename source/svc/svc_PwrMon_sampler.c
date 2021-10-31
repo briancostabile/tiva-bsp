@@ -85,13 +85,14 @@ typedef struct svc_PwrMon_SamplerCtx_s
     bool_t                       firstSmpl;
     uint32_t                     pktLen;
     uint32_t                     seq;
+    uint32_t                     smplCnt;
 } svc_PwrMon_SamplerCtx_t;
 
 
 /*============================================================================*/
 // Define a max size packet with known pattern to test the Packet Data pipe
 #ifdef SVC_PWRMON_SAMPLER_TEST_PKT
-static const svc_PwrMonEh_SampleInd_t svc_PwrMon_tstPkt = {
+static svc_PwrMon_SamplerPkt_t svc_PwrMon_tstPkt = {
     0,
     {
         {
@@ -99,13 +100,21 @@ static const svc_PwrMonEh_SampleInd_t svc_PwrMon_tstPkt = {
             .eh = SVC_EHID_BROADCAST,
             .alloc = false,
             .cnt = 0,
-            .len = sizeof(svc_PwrMon_SamplerPkt_t)
+            .len = sizeof(svc_PwrMonEh_SampleInd_t) - sizeof(svc_PwrMonEh_SampleData_t)
         },
-        .numCh = 10,
-        .seq = 1234,
-        .ioBitmap = 0x0000000F,
-        .chBitmap = 0x000003FF,
-        { { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 },  { 4, 5 }, { 5, 6 }, { 6, 7 }, { 7, 8 }, { 8, 9 }, { 9, 10 } }
+        .numCh = 9,
+        .seq = 0,
+        .ioBitmap = 0x000F,
+        .chBitmap = 0x02FF,
+        { {   -1,   -1 },
+          {    0,    0 },
+          { 1440,  100 },
+          { 1440,  200 },
+          { 1600,  300 },
+          { 2400,  400 },
+          { 2640,  500 },
+          { 3200,  600 },
+          { 3200,  700 } }
     }
 };
 #endif
@@ -116,13 +125,14 @@ static const svc_PwrMonEh_SampleInd_t svc_PwrMon_tstPkt = {
 svc_PwrMon_SamplerCtx_t BSP_ATTR_ALIGNMENT(4) svc_PwrMon_ctx;
 svc_PwrMon_SamplerGpiInfo_t svc_PwrMon_gpiInfoTable[] = BSP_PLATFORM_PWRMON_GPI_TABLE;
 
-#define SVC_PWRMON_SAMPLER_SET_COMPLETE(_ctx)                    \
-    ( ((_ctx)->pktInfoArray[(_ctx)->pktIdx].shuntBitmap == 0) && \
-      ((_ctx)->pktInfoArray[(_ctx)->pktIdx].busBitmap == 0) )
+#define SVC_PWRMON_SAMPLER_SET_COMPLETE(_ctx)                                   \
+    ( ((_ctx)->pktInfoArray[(_ctx)->pktIdx].shuntBitmap == (_ctx)->chBitmap) && \
+      ((_ctx)->pktInfoArray[(_ctx)->pktIdx].busBitmap == (_ctx)->chBitmap) )
 
 /*==============================================================================
  *                             Local Functions
  *============================================================================*/
+/*============================================================================*/
 uint32_t
 svc_PwrMon_gpiRead( void )
 {
@@ -163,6 +173,10 @@ svc_PwrMon_smplSetStart( svc_PwrMon_SamplerCtx_t* ctx )
     ***********/
     // Grab the GPI state
     ctx->pktArray[ ctx->pktIdx ].smplInd.ioBitmap = svc_PwrMon_gpiRead();
+    // snapshot the channels that completed. This should always match the
+    // ctx->chBitmap if things are operating normally
+    ctx->pktArray[ ctx->pktIdx ].smplInd.chBitmap = ctx->pktInfoArray[ ctx->pktIdx ].shuntBitmap &
+                                                    ctx->pktInfoArray[ ctx->pktIdx ].busBitmap;
 
     /**********
     * Next Packet setup
@@ -170,7 +184,6 @@ svc_PwrMon_smplSetStart( svc_PwrMon_SamplerCtx_t* ctx )
     // Reset frame info and point to next packet
     ctx->pktPrevIdx = ctx->pktIdx;
     ctx->pktIdx     = ((ctx->pktIdx + 1) % SVC_PWRMON_SAMPLER_PACKET_BUFFER_CNT);
-
 
     // Setup next packet header
     ctx->seq++;
@@ -185,7 +198,7 @@ void svc_PwrMon_busVoltageCallback( void* cbData )
 {
     BSP_TRACE_PWRMON_SAMPLER_VOLTAGE_ENTER();
     svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_ctx;
-    ctx->pktInfoArray[ ctx->pktIdx ].busBitmap ^= (1 << (uint32_t)cbData);
+    ctx->pktInfoArray[ ctx->pktIdx ].busBitmap |= (1 << (uint32_t)cbData);
     BSP_TRACE_PWRMON_SAMPLER_VOLTAGE_EXIT();
     return;
 }
@@ -195,7 +208,7 @@ void svc_PwrMon_shuntVoltageCallback( void* cbData )
 {
     BSP_TRACE_PWRMON_SAMPLER_CURRENT_ENTER();
     svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_ctx;
-    ctx->pktInfoArray[ ctx->pktIdx ].shuntBitmap ^= (1 << (uint32_t)cbData);
+    ctx->pktInfoArray[ ctx->pktIdx ].shuntBitmap |= (1 << (uint32_t)cbData);
     BSP_TRACE_PWRMON_SAMPLER_CURRENT_EXIT();
     return;
 }
@@ -211,8 +224,8 @@ svc_PwrMon_smplSetRead( svc_PwrMon_SamplerCtx_t* ctx )
     svc_PwrMon_SamplerPktInfo_t* pktInfoPtr = &ctx->pktInfoArray[ ctx->pktIdx ];
 
     // Reset the sample set bitmaps
-    pktInfoPtr->busBitmap   = ctx->chBitmap;
-    pktInfoPtr->shuntBitmap = ctx->chBitmap;
+    pktInfoPtr->busBitmap   = 0;
+    pktInfoPtr->shuntBitmap = 0;
 
     // Request next set of samples
     uint16_t chIdx = 0;
@@ -242,7 +255,13 @@ void
 svc_PwrMon_smplSetProcess( svc_PwrMon_SamplerCtx_t* ctx )
 {
     BSP_TRACE_PWRMON_SAMPLER_SET_PROCESS_ENTER();
-    svc_PwrMon_SamplerPkt_t* pktPtr = &ctx->pktArray[ ctx->pktPrevIdx ];
+    svc_PwrMon_SamplerPkt_t* pktPtr;
+#ifdef SVC_PWRMON_SAMPLER_TEST_PKT
+    pktPtr = &svc_PwrMon_tstPkt;
+    svc_PwrMon_tstPkt.smplInd.seq++;
+#else
+    pktPtr = &ctx->pktArray[ ctx->pktPrevIdx ];
+#endif
     svc_PwrMon_channelProcessSampleSet( pktPtr->smplInd.numCh,
                                         pktPtr->smplInd.seq,
                                         pktPtr->smplInd.ioBitmap,
@@ -250,15 +269,6 @@ svc_PwrMon_smplSetProcess( svc_PwrMon_SamplerCtx_t* ctx )
                                         pktPtr->smplInd.data );
     BSP_TRACE_PWRMON_SAMPLER_SET_PROCESS_EXIT();
     return;
-}
-
-/*============================================================================*/
-void svc_PwrMon_sendTestPkt( void )
-{
-#ifdef SVC_PWRMON_SAMPLER_TEST_PKT
-    memcpy( &svc_PwrMon_ctx.pktArray[0], &svc_PwrMon_tstPkt, sizeof(svc_PwrMon_tstPkt));
-    svc_MsgFwk_msgBroadcast( &(svc_PwrMon_ctx.pktArray[0].smplInd.hdr) );
-#endif
 }
 
 /*============================================================================*/
@@ -290,6 +300,17 @@ void svc_PwrMon_samplerCallback( bsp_TimerGp_TimerId_t    timerId,
     {
         svc_PwrMon_smplSetProcess( ctx );
     }
+
+    // Auto stop when sample count is 0
+    if( ctx->smplCnt == 0 )
+    {
+        svc_PwrMon_samplerStop();
+        svc_PwrMonEh_buildAndSendStopInd( SVC_PWRMONEH_STATUS_SUCCESS );
+    }
+
+    // MaxInt smplCnt samples until manually stopped
+    ctx->smplCnt = (ctx->smplCnt == 0xFFFFFFFF) ? ctx->smplCnt : (ctx->smplCnt - 1);
+
     BSP_TRACE_PWRMON_SAMPLER_SET_EXIT();
     return;
 }
@@ -301,7 +322,6 @@ void svc_PwrMon_samplerCallback( bsp_TimerGp_TimerId_t    timerId,
 /*============================================================================*/
 void svc_PwrMon_samplerInit( void )
 {
-    BSP_ASSERT(callback != NULL);
     bsp_TimerGp_stop( SVC_PWRMON_SAMPLER_TIMER_ID );
     memset( &svc_PwrMon_ctx, 0, sizeof(svc_PwrMon_ctx) );
 
@@ -336,7 +356,8 @@ svc_PwrMon_samplerStatsReset( void )
 }
 
 /*============================================================================*/
-void svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap )
+void svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap,
+                              uint32_t                smplCnt )
 {
     svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_ctx;
     memset( &ctx->pktInfoArray[0], 0, sizeof(ctx->pktInfoArray) );
@@ -346,6 +367,9 @@ void svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap )
     ctx->firstSmpl = true;
     ctx->chBitmap  = chBitmap;
     ctx->seq       = 0;
+
+    // Set smplCnt to maxInt if passed in 0 to prevent autostop
+    ctx->smplCnt = (smplCnt == 0) ? 0xFFFFFFFF : smplCnt;
 
     // Count the channels
     ctx->numCh = 0;
@@ -379,7 +403,7 @@ void svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap )
 
         // Fill in sample packet header information
         pktPtr->smplInd.numCh    = ctx->numCh;
-        pktPtr->smplInd.chBitmap = ctx->chBitmap;
+        pktPtr->smplInd.chBitmap = 0;
 
         // These fields change per packet, initialized to 0
         pktPtr->smplInd.seq = ctx->seq;
@@ -391,10 +415,10 @@ void svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap )
         dev_PwrMon_Data_t tmp;
 
         dev_PwrMon_channelConfig( chId,
-                                BSP_PWRMOMN_CONV_TIME_US_140,
-                                BSP_PWRMOMN_CONV_TIME_US_140,
-                                BSP_PWRMOMN_AVG_MODE_SAMPLES_1,
-                                NULL, NULL );
+                                  BSP_PWRMOMN_CONV_TIME_US_332,
+                                  BSP_PWRMOMN_CONV_TIME_US_332,
+                                  BSP_PWRMOMN_AVG_MODE_SAMPLES_1,
+                                  NULL, NULL );
 
         if( (ctx->chBitmap & (1 << chId)) != 0 )
         {

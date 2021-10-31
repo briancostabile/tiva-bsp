@@ -29,6 +29,7 @@
 #include "bsp_Types.h"
 #include "bsp_Pragma.h"
 #include "bsp_Trace.h"
+#include "hw_sysctl.h"
 
 /*==============================================================================
  *                                   Macros

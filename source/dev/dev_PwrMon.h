@@ -92,8 +92,8 @@ dev_PwrMon_init( void );
 /*===========================================================================*/
 void
 dev_PwrMon_channelOffsetCal( dev_PwrMon_ChannelId_t channelId,
-                             uint8_t*               vBusPtr,
-                             uint8_t*               vShuntPtr );
+                             dev_PwrMon_Data_t*     vBusPtr,
+                             dev_PwrMon_Data_t*     vShuntPtr );
 
 /*===========================================================================*/
 void

@@ -48,6 +48,10 @@ typedef uint32_t bsp_Led_Color_t;
 /*============================================================================*/
 typedef uint32_t bsp_Led_Id_t;
 
+#define BSP_LED_POLARITY_ACTIVE_LOW  0
+#define BSP_LED_POLARITY_ACTIVE_HIGH 1
+typedef uint8_t bsp_Led_Polarity_t;
+
 /*============================================================================*/
 typedef struct {
     const char*        name;
@@ -56,6 +60,7 @@ typedef struct {
     uint32_t           portAddr;
     bsp_Gpio_BitMask_t mask;
     bsp_Gpio_Drive_t   drive;
+    bsp_Led_Polarity_t polarity;
 } bsp_Led_GroupElementInfo_t;
 
 /*============================================================================*/

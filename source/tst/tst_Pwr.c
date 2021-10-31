@@ -40,6 +40,8 @@
  *                                 Globals
  *============================================================================*/
 // String globals
+TST_STR_CMD( TST_PWR_CAL_STR_CMD,         "cal" );
+TST_STR_HLP( TST_PWR_CAL_STR_HLP,         "Calibrate Power Monitor" );
 TST_STR_CMD( TST_PWR_CONFIG_STR_CMD,      "config" );
 TST_STR_HLP( TST_PWR_CONFIG_STR_HLP,      "Config Power Monitor" );
 TST_STR_CMD( TST_PWR_START_STR_CMD,       "start" );
@@ -73,10 +75,40 @@ svc_PwrMonEh_buildAndSendStopReq( void )
 
 /*============================================================================*/
 static void
-svc_PwrMonEh_buildAndSendStartReq( void )
+svc_PwrMonEh_buildAndSendStartReq( uint8_t fmt )
 {
     svc_PwrMonEh_StartReq_t* reqPtr;
     reqPtr = svc_MsgFwk_msgAlloc( SVC_EHID_PWRMON, SVC_PWRMONEH_START_REQ, sizeof(svc_PwrMonEh_StartReq_t) );
+    reqPtr->smplFmt = fmt;
+    svc_MsgFwk_msgSend( reqPtr );
+    return;
+}
+
+/*============================================================================*/
+static void
+svc_PwrMonEh_buildAndSendCalReq( void )
+{
+    svc_PwrMonEh_CalReq_t* reqPtr;
+    reqPtr = svc_MsgFwk_msgAlloc( SVC_EHID_PWRMON, SVC_PWRMONEH_CAL_REQ, sizeof(svc_PwrMonEh_CalReq_t) );
+    svc_MsgFwk_msgSend( reqPtr );
+    return;
+}
+
+/*============================================================================*/
+static const char* tst_ch_name = "TEST_CHANNEL_0";
+static void
+svc_PwrMonEh_buildAndSendConfigReq( void )
+{
+    svc_PwrMonEh_ConfigReq_t* reqPtr;
+    reqPtr = svc_MsgFwk_msgAlloc( SVC_EHID_PWRMON,
+                                  SVC_PWRMONEH_CONFIG_REQ,
+                                  (sizeof(svc_PwrMonEh_ConfigReq_t) + sizeof(svc_PwrMonEh_ChEntry_t)) );
+
+    reqPtr->numCh               = 1;
+    reqPtr->chTable[0].chId     = 0;
+    reqPtr->chTable[0].shuntVal = 100;
+    strncpy( reqPtr->chTable[0].chName, tst_ch_name, sizeof(reqPtr->chTable[0].chName) );
+
     svc_MsgFwk_msgSend( reqPtr );
     return;
 }
@@ -85,7 +117,7 @@ svc_PwrMonEh_buildAndSendStartReq( void )
 static tst_Status_t
 tst_Pwr_config( int argc, char** argv )
 {
-    printf( "Power Monitor Config"NL );
+    svc_PwrMonEh_buildAndSendConfigReq();
     return( TST_STATUS_OK );
 }
 
@@ -93,8 +125,16 @@ tst_Pwr_config( int argc, char** argv )
 static tst_Status_t
 tst_Pwr_start( int argc, char** argv )
 {
+    uint8_t fmt;
     printf( "Power Monitor Starting"NL );
-    svc_PwrMonEh_buildAndSendStartReq();
+    if( argc < 1 )
+    {
+        printf( TST_PWR_ERROR_STR, 1 );
+        return( TST_STATUS_ERROR );
+    }
+
+    fmt = (uint32_t)strtol(argv[0], NULL, 10);
+    svc_PwrMonEh_buildAndSendStartReq( fmt );
     return( TST_STATUS_OK );
 }
 
@@ -195,6 +235,16 @@ tst_Pwr_statsReset( int argc, char** argv )
 }
 
 
+/*============================================================================*/
+static tst_Status_t
+tst_Pwr_cal( int argc, char** argv )
+{
+    printf( "Power Monitor Calibration"NL );
+    svc_PwrMonEh_buildAndSendCalReq();
+    return( TST_STATUS_OK );
+}
+
+
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
@@ -206,6 +256,7 @@ tst_Pwr_statsReset( int argc, char** argv )
 /*============================================================================*/
 const tst_TableElement_t tst_Pwr_menu[] =
 {
+    TST_PWR_CMD( CAL,         cal ),
     TST_PWR_CMD( CONFIG,      config ),
     TST_PWR_CMD( START,       start ),
     TST_PWR_CMD( STOP,        stop ),

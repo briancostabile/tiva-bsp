@@ -40,15 +40,22 @@ svc_PwrMon_channelInit( void );
 
 /*============================================================================*/
 void
-svc_PwrMon_channelConfigSet( svc_PwrMonEh_SmplFmt_t  smplFmt,
-                             uint8_t                 numCh,
+svc_PwrMon_channelCalibrateAll( void );
+
+/*============================================================================*/
+void
+svc_PwrMon_channelConfigSet( uint8_t                 numCh,
                              svc_PwrMonEh_ChEntry_t* chTable );
+
+/*============================================================================*/
+void
+svc_PwrMon_channelSmplFmtSet( svc_PwrMonEh_SmplFmt_t smplFmt );
 
 /*============================================================================*/
 void
 svc_PwrMon_channelProcessSampleSet( uint16_t                   numCh,
                                     uint32_t                   seq,
-                                    uint32_t                   ioBitmap,
+                                    svc_PwrMonEh_IoBitmap_t    ioBitmap,
                                     svc_PwrMonEh_ChBitmap_t    chBitmap,
                                     svc_PwrMonEh_SampleData_t* dataPtr );
 
@@ -69,7 +76,8 @@ void
 svc_PwrMon_channelAvgGet( dev_PwrMon_ChannelId_t chId,
                           int32_t*               vBusPtr,
                           int32_t*               vShuntPtr,
-                          int32_t*               iShuntPtr );
+                          int32_t*               iShuntPtr,
+                          int32_t*               pPtr );
 
 /*============================================================================*/
 uint8_t

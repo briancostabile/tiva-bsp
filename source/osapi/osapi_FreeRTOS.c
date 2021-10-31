@@ -509,12 +509,12 @@ void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
 /* configUSE_STATIC_ALLOCATION is set to 1, so the application must provide an
 implementation of vApplicationGetIdleTaskMemory() to provide the memory that is
 used by the Idle task. */
+StackType_t uxIdleTaskStack[ configMINIMAL_STACK_SIZE ];
 void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize )
 {
     /* If the buffers to be provided to the Idle task are declared inside this
     function then they must be declared static - otherwise they will be allocated on
     the stack and so not exists after this function exits. */
-    static StackType_t uxIdleTaskStack[ configMINIMAL_STACK_SIZE ];
 
     /* Pass out a pointer to the StaticTask_t structure in which the Idle task's
     state will be stored. */
@@ -534,13 +534,12 @@ void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackTy
 /* configUSE_STATIC_ALLOCATION and configUSE_TIMERS are both set to 1, so the
 application must provide an implementation of vApplicationGetTimerTaskMemory()
 to provide the memory that is used by the Timer service task. */
+StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
 void vApplicationGetTimerTaskMemory( StaticTask_t **ppxTimerTaskTCBBuffer, StackType_t **ppxTimerTaskStackBuffer, uint32_t *pulTimerTaskStackSize )
 {
     /* If the buffers to be provided to the Timer task are declared inside this
     function then they must be declared static - otherwise they will be allocated on
     the stack and so not exists after this function exits. */
-    static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
-
     memset( uxTimerTaskStack, 0xA5, sizeof(uxTimerTaskStack) );
 
     /* Pass out a pointer to the StaticTask_t structure in which the Timer
