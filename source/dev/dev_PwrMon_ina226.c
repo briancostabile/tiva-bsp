@@ -96,9 +96,6 @@ typedef struct dev_PwrMon_DeviceCtx_s
     dev_PwrMon_AlertMask_t      alertMask;
     dev_PwrMon_DeviceId_t       deviceId;
     dev_PwrMon_ManufacturerId_t mftrId;
-
-    int16_t vBusOffset;
-    int16_t vShuntOffset;
 } dev_PwrMon_DeviceCtx_t;
 
 typedef struct dev_PwrMon_DeviceInfo_s

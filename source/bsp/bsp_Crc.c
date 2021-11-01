@@ -21,72 +21,47 @@
  */
 /*============================================================================*/
 /**
- * @file svc_ThreadUi.c
- * @brief
+ * @file bsp_Crc.c
+ * @brief Contains Functions for configuring and accessing the System CRC
  */
-#include "bsp_Types.h"
+#include "bsp_Platform.h"
 #include "bsp_Pragma.h"
-#include "svc_ThreadUi.h"
-#include "svc_CmdEh.h"
-#include "svc_ButtonEh.h"
-#include "svc_LedEh.h"
-#include "svc_Eh.h"
-#include "svc_Nvm.h"
-#include "osapi.h"
+#include "bsp_Crc.h"
 
-#ifndef SVC_LOG_LEVEL
-#define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
-#endif
-#include "svc_Log.h"
-
+#include "driverlib/rom.h"
+#include "driverlib/rom_map.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/crc.h"
+#include "inc/hw_memmap.h"
 
 /*==============================================================================
- *                                  Defines
+ *                              Types
  *============================================================================*/
-#define SVC_THREADUI_STACK_SIZE    1024
-#define SVC_THREADUI_STACK_SIZE_32 (SVC_THREADUI_STACK_SIZE / 4)
-
-#define SVC_THREADUI_QUEUE_DEPTH 32
+ #define BSP_CRC_32P04C11DB7_SEED 0x5A5A5A5A
 
 /*==============================================================================
- *                                 Globals
+ *                            Public Functions
  *============================================================================*/
-// Total stack needed for the UI thread
-uint32_t svc_ThreadUi_stack[SVC_THREADUI_STACK_SIZE_32];
-void*    svc_ThreadUi_queue[SVC_THREADUI_QUEUE_DEPTH];
-
-
 /*============================================================================*/
-static const svc_Eh_Info_t* svc_ThreadUi_ehTable[] =
+void
+bsp_Crc_init( void )
 {
-    &svc_CmdEh_info,
-#if defined(SVC_EHID_BUTTON)
-    &svc_ButtonEh_info,
-#endif
-#if defined(SVC_EHID_LED)
-    &svc_LedEh_info,
-#endif
-};
+    MAP_SysCtlPeripheralEnable( SYSCTL_PERIPH_CCM0 );
+    while( !MAP_SysCtlPeripheralReady(SYSCTL_PERIPH_CCM0) );
 
-/*============================================================================*/
-static void
-svc_ThreadUi_threadMain( osapi_ThreadArg_t arg )
-{
-    svc_Nvm_init();
-    svc_Eh_listRun( DIM(svc_ThreadUi_ehTable),
-                    svc_ThreadUi_ehTable,
-                    SVC_THREADUI_QUEUE_DEPTH,
-                    svc_ThreadUi_queue );
+    return;
 }
 
+
 /*============================================================================*/
-const osapi_ThreadInitInfo_t BSP_ATTR_USED BSP_ATTR_SECTION(".tinit") svc_ThreadUi_threadInitInfo =
+uint32_t
+bsp_Crc_32p04C11DB7( uint32_t* dataPtr,
+                     size_t    len32 )
 {
-  .name        = "UI",
-  .handler     = svc_ThreadUi_threadMain,
-  .arg         = NULL,
-  .priority    = 3,
-  .stackSize32 = SVC_THREADUI_STACK_SIZE_32,
-  .stackPtr    = &svc_ThreadUi_stack[0]
-};
-BSP_PRAGMA_DATA_REQUIRED(svc_ThreadUi_threadInitInfo)
+    MAP_CRCConfigSet( CCM0_BASE,
+                      (CRC_CFG_INIT_SEED | CRC_CFG_TYPE_P4C11DB7 | CRC_CFG_SIZE_32BIT) );
+
+    MAP_CRCSeedSet( CCM0_BASE, BSP_CRC_32P04C11DB7_SEED );
+
+    return( MAP_CRCDataProcess(CCM0_BASE, dataPtr, len32, false) );
+}

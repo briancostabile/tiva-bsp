@@ -34,6 +34,7 @@
 #include "svc_PwrMonEh.h"
 #include "svc_PwrMon_channel.h"
 #include "dev_PwrMon.h"
+#include "svc_Nvm.h"
 
 #ifndef SVC_LOG_LEVEL
 #define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
@@ -109,7 +110,7 @@ svc_PwrMon_SamplerCtx_t svc_PwrMon_channelCtx;
 
 #define SVC_PWRMON_CHANNEL_LED_ACTIVE_COLOR (BSP_LED_COLOR_MASK_R | BSP_LED_COLOR_MASK_G | BSP_LED_COLOR_MASK_B)
 #define SVC_PWRMON_CHANNEL_LED_ID(_ch) (BSP_PLATFORM_LED_ID_CH0 + (_ch))
-#define SVC_PWRMON_CHANNEL_LED_BOOT_TIME_MS 500
+#define SVC_PWRMON_CHANNEL_LED_BOOT_TIME_MS 200
 
 /*============================================================================*/
 void
@@ -198,6 +199,11 @@ svc_PwrMon_channelCalibrateAll( void )
                                      &(ctx->channelInfo[chId].offsetVbus),
                                      &(ctx->channelInfo[chId].offsetVshunt) );
 
+        svc_Nvm_updateCalData( svc_Nvm_dataPtr(),
+                               chId,
+                               ctx->channelInfo[chId].offsetVbus,
+                               ctx->channelInfo[chId].offsetVshunt );
+
         SVC_LOG_INFO( "[PwrMon Channel] dev_PwrMon_channelOffsetCal chId:%d offsetVbus:%d offsetVshunt:%d"NL,
                       chId,
                       ctx->channelInfo[chId].offsetVbus,
@@ -207,8 +213,8 @@ svc_PwrMon_channelCalibrateAll( void )
                           SVC_PWRMON_CHANNEL_LED_ACTIVE_COLOR );
     }
     svc_PwrMon_channelLedAllOff();
+    svc_Nvm_save();
 
-    // Save cal in EEPROM so it's not needed every time
 
     return;
 }

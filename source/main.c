@@ -40,6 +40,8 @@
 #include "bsp_I2c.h"
 #include "bsp_Io.h"
 #include "bsp_Dma.h"
+#include "bsp_Crc.h"
+#include "bsp_Eeprom.h"
 
 #include "osapi.h"
 
@@ -89,6 +91,8 @@ main(void)
     bsp_Io_init();
     bsp_UsbIo_init();
     bsp_UartIo_init();
+    bsp_Crc_init();
+    bsp_Eeprom_init();
 
     // Initialize the OS
     osapi_init();
