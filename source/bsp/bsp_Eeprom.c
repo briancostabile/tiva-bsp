@@ -27,6 +27,7 @@
 #include "bsp_Platform.h"
 #include "bsp_Pragma.h"
 #include "bsp_Assert.h"
+#include "bsp_Eeprom.h"
 
 #include "driverlib/rom.h"
 #include "driverlib/rom_map.h"

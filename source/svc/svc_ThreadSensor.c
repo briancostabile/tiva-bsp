@@ -31,7 +31,9 @@
 #include "svc_TempEh.h"
 #include "svc_HumidEh.h"
 #include "svc_LightEh.h"
+#if defined(SVC_EHID_PWRMON)
 #include "svc_PwrMonEh.h"
+#endif
 #include "svc_Eh.h"
 #include "osapi.h"
 
@@ -72,7 +74,7 @@ static const svc_Eh_Info_t* svc_ThreadSensor_ehTable[] =
 //     &svc_LightEh_info,
 // #endif
 #if defined(SVC_EHID_PWRMON)
-    &svc_PwrMonEh_info
+    &svc_PwrMonEh_info,
 #endif
 };
 

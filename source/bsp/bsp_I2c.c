@@ -73,9 +73,15 @@ typedef struct bsp_I2c_MasterTransInfo_s
     bsp_I2c_MasterTrans_t* queueHeadPtr;
     bsp_I2c_MasterTrans_t* queueTailPtr;
     bsp_I2c_MasterTrans_t  active;
+    uint8_t                stopFilter;
 } bsp_I2c_MasterTransInfo_t;
 
 static bsp_I2c_MasterTransInfo_t bsp_I2c_masterTransInfo[ BSP_I2C_PLATFORM_NUM ];
+
+// Use Direct Register writes to reduce overhead
+#define BSP_I2C_FIFO_STATUS(_baseAddr)     ADDR_TO_REG((_baseAddr) + I2C_O_FIFOSTATUS)
+#define BSP_I2C_FIFO_PUT(_baseAddr, _data) ADDR_TO_REG((_baseAddr) + I2C_O_FIFODATA) = (_data)
+#define BSP_I2C_FIFO_GET(_baseAddr)        ADDR_TO_REG((_baseAddr) + I2C_O_FIFODATA)
 
 /*==============================================================================
  *                            Local Functions
@@ -95,60 +101,142 @@ static bsp_I2c_MasterTransInfo_t bsp_I2c_masterTransInfo[ BSP_I2C_PLATFORM_NUM ]
 }
 
 #if (BSP_I2C_PLATFORM_USE_FIFO == 1)
-#define BSP_I2C_NEXT_BYTE_SEND_FIFO(_baseAddr, _transPtr)               \
-{                                                                       \
-    while( ((_transPtr)->wLen > 0) &&                                   \
-           (MAP_I2CFIFOStatus(_baseAddr) &  I2C_FIFO_TX_FULL) == 0x00 ) \
-    {                                                                   \
-        MAP_I2CFIFODataPut( (_baseAddr), *(_transPtr)->wBuffer );       \
-        (_transPtr)->wBuffer = ((_transPtr)->wBuffer + 1);              \
-        (_transPtr)->wLen    = ((_transPtr)->wLen - 1);                 \
-    }                                                                   \
+#define BSP_I2C_NEXT_BYTE_SEND_FIFO(_baseAddr, _transPtr)                 \
+{                                                                         \
+    while( ((_transPtr)->wLen > 0) &&                                     \
+           (BSP_I2C_FIFO_STATUS(_baseAddr) &  I2C_FIFO_TX_FULL) == 0x00 ) \
+    {                                                                     \
+        BSP_I2C_FIFO_PUT( (_baseAddr), *(_transPtr)->wBuffer );           \
+        (_transPtr)->wBuffer = ((_transPtr)->wBuffer + 1);                \
+        (_transPtr)->wLen    = ((_transPtr)->wLen - 1);                   \
+    }                                                                     \
 }
 
-#define BSP_I2C_NEXT_BYTE_RCV_FIFO(_baseAddr, _transPtr)                \
-{                                                                       \
-    while( (MAP_I2CFIFOStatus(_baseAddr) & I2C_FIFO_RX_EMPTY) == 0x00 ) \
-    {                                                                   \
-        *(_transPtr)->rBuffer = MAP_I2CFIFODataGet( (_baseAddr) );      \
-        (_transPtr)->rBuffer  += ((_transPtr)->rReverse) ? -1 : 1;      \
-        (_transPtr)->rLen     = ((_transPtr)->rLen - 1);                \
-    }                                                                   \
+#define BSP_I2C_NEXT_BYTE_RCV_FIFO(_baseAddr, _transPtr)                  \
+{                                                                         \
+    while( (BSP_I2C_FIFO_STATUS(_baseAddr) & I2C_FIFO_RX_EMPTY) == 0x00 ) \
+    {                                                                     \
+        *(_transPtr)->rBuffer = BSP_I2C_FIFO_GET( (_baseAddr) );          \
+        (_transPtr)->rBuffer  += ((_transPtr)->rReverse) ? -1 : 1;        \
+        (_transPtr)->rLen     = ((_transPtr)->rLen - 1);                  \
+    }                                                                     \
 }
 #endif
 
+//******
+// Macros to reduce the error checking overhead built into the driverlib
+//
+//MAP_I2CMasterIntDisableEx( baseAddr, mask );
+#define BSP_I2C_MASTER_INT_DISABLE_EX( _baseAddr, _mask ) \
+{                                                         \
+    ADDR_TO_REG((_baseAddr) + I2C_O_MIMR) &= ~(_mask);    \
+}
+
+//MAP_I2CMasterIntDisableEx( baseAddr, 0xFFFFFFFF );
+//MAP_I2CMasterIntDisable( baseAddr );
+#define BSP_I2C_MASTER_INT_DISABLE_EX_ALL( _baseAddr )      \
+{                                                           \
+    BSP_I2C_MASTER_INT_DISABLE_EX( _baseAddr, 0xFFFFFFFF ); \
+}
+
+//MAP_I2CMasterIntEnableEx( baseAddr, mask );
+#define BSP_I2C_MASTER_INT_ENABLE_EX( _baseAddr, _mask )     \
+{                                                     \
+    ADDR_TO_REG((_baseAddr) + I2C_O_MIMR) |= (_mask); \
+}
+
+//MAP_I2CMasterIntClearEx( baseAddr, mask );
+#define BSP_I2C_MASTER_INT_CLEAR_EX( _baseAddr, _mask )     \
+{                                                    \
+    ADDR_TO_REG((_baseAddr) + I2C_O_MICR) = (_mask); \
+}
+
+//MAP_I2CMasterIntClearEx( baseAddr, 0xFFFFFFFF );
+#define BSP_I2C_MASTER_INT_CLEAR_EX_ALL( _baseAddr )      \
+{                                                  \
+    BSP_I2C_MASTER_INT_CLEAR_EX( _baseAddr, 0xFFFFFFFF ); \
+}
+
+//MAP_I2CRxFIFOConfigSet( baseAddr, val );
+#define BSP_I2C_RX_FIFO_CONFIG_SET( _baseAddr, val )        \
+{                                                           \
+    ADDR_TO_REG((_baseAddr) + I2C_O_FIFOCTL) &= 0x0000FFFF; \
+    ADDR_TO_REG((_baseAddr) + I2C_O_FIFOCTL) |= val;        \
+}
+
+//MAP_I2CTxFIFOConfigSet( baseAddr, val );
+#define BSP_I2C_TX_FIFO_CONFIG_SET( _baseAddr, val )        \
+{                                                           \
+    ADDR_TO_REG((_baseAddr) + I2C_O_FIFOCTL) &= 0xFFFF0000; \
+    ADDR_TO_REG((_baseAddr) + I2C_O_FIFOCTL) |= val;        \
+}
+
+//MAP_I2CMasterBurstLengthSet( baseAddr, val );
+#define BSP_I2C_MASTER_BURST_LEN_SET( _baseAddr, val ) \
+{                                                      \
+    ADDR_TO_REG((_baseAddr) + I2C_O_MBLEN) = val;      \
+}
+
+//MAP_I2CMasterControl( baseAddr, val );
+#define BSP_I2C_MASTER_CONTROL_SET( _baseAddr, val ) \
+{                                                    \
+    MAP_I2CMasterControl((_baseAddr), val);          \
+}
+
+//MAP_I2CMasterSlaveAddrSet( baseAddr, addr, read );
+#define BSP_I2C_MASTER_SLAVE_ADDR_SET( _baseAddr, addr, read ) \
+{                                                              \
+    ADDR_TO_REG((_baseAddr) + I2C_O_MSA) = (addr << 1) | read; \
+}
+
+#define BSP_I2C_MASTER_INT_STATUS_EX( _baseAddr, _masked ) \
+    (_masked) ?                                            \
+        ADDR_TO_REG((_baseAddr) + I2C_O_MMIS) :            \
+        ADDR_TO_REG((_baseAddr) + I2C_O_MRIS)              \
+
+//MAP_I2CRxFIFOFlush( baseAddr );
+#define BSP_I2C_RX_FIFO_FLUSH( _baseAddr )                           \
+{                                                                    \
+    ADDR_TO_REG((_baseAddr) + I2C_O_FIFOCTL) |= I2C_FIFOCTL_RXFLUSH; \
+}
+
+//MAP_I2CTxFIFOFlush( baseAddr );
+#define BSP_I2C_TX_FIFO_FLUSH( _baseAddr )                           \
+{                                                                    \
+    ADDR_TO_REG((_baseAddr) + I2C_O_FIFOCTL) |= I2C_FIFOCTL_TXFLUSH; \
+}
+
 #if (BSP_I2C_PLATFORM_USE_FIFO == 1)
 /*============================================================================*/
+// Direct register writes to reduce error checking overhead
 static void
 bsp_I2c_masterTransStartFifo( uint32_t               baseAddr,
-                              bsp_I2c_MasterTrans_t* transPtr )
+                              bsp_I2c_MasterTrans_t* transPtr,
+                              uint8_t                stopFilter )
 {
     /****** Read/Write ******/
     uint32_t intctrl;
     uint32_t ctrl;
-    MAP_I2CMasterIntDisableEx( baseAddr, 0xFFFFFFFF );
-    MAP_I2CMasterIntClearEx( baseAddr, 0xFFFFFFFF );
+    BSP_I2C_MASTER_INT_DISABLE_EX_ALL( baseAddr );
+    BSP_I2C_MASTER_INT_CLEAR_EX_ALL( baseAddr );
     if( transPtr->type == BSP_I2C_TRANS_TYPE_READ )
     {
         uint8_t rTrig = (transPtr->rLen < 8) ? transPtr->rLen : 8;
-        MAP_I2CRxFIFOConfigSet( baseAddr, (I2C_FIFO_CFG_RX_MASTER | (rTrig << 16)) );
-        MAP_I2CRxFIFOFlush( baseAddr );
-        MAP_I2CMasterBurstLengthSet( baseAddr, transPtr->rLen ); //assumes less than 256
+        BSP_I2C_RX_FIFO_CONFIG_SET( baseAddr, (I2C_FIFO_CFG_RX_MASTER | (rTrig << 16)) );
+        BSP_I2C_MASTER_BURST_LEN_SET( baseAddr, transPtr->rLen ); //assumes less than 256
         ctrl = (transPtr->rLen == 1) ? I2C_MASTER_CMD_FIFO_SINGLE_RECEIVE : I2C_MASTER_CMD_FIFO_BURST_RECEIVE_START;
         intctrl = I2C_MASTER_INT_RX_FIFO_REQ;
     }
     else
     {
-        MAP_I2CTxFIFOConfigSet( baseAddr, I2C_FIFO_CFG_TX_MASTER );
-        MAP_I2CTxFIFOFlush( baseAddr );
-        MAP_I2CMasterBurstLengthSet( baseAddr, transPtr->wLen ); //assumes less than 256
+        BSP_I2C_TX_FIFO_CONFIG_SET( baseAddr, I2C_FIFO_CFG_TX_MASTER );
+        BSP_I2C_MASTER_BURST_LEN_SET( baseAddr, transPtr->wLen ); //assumes less than 256
         BSP_I2C_NEXT_BYTE_SEND_FIFO( baseAddr, transPtr );
         ctrl = ((transPtr->wLen == 0) && (transPtr->rLen == 0)) ? I2C_MASTER_CMD_FIFO_SINGLE_SEND : I2C_MASTER_CMD_FIFO_BURST_SEND_START;
         intctrl = I2C_MASTER_INT_TX_FIFO_EMPTY;
     }
-    MAP_I2CMasterIntEnableEx( baseAddr, intctrl );
-    MAP_I2CMasterControl( baseAddr, ctrl );
-
+    BSP_I2C_MASTER_INT_ENABLE_EX( baseAddr, intctrl );
+    BSP_I2C_MASTER_CONTROL_SET( baseAddr, (ctrl & stopFilter) );
     return;
 }
 #endif
@@ -157,7 +245,8 @@ bsp_I2c_masterTransStartFifo( uint32_t               baseAddr,
 /*============================================================================*/
 static void
 bsp_I2c_masterTransStartNoFifo( uint32_t               baseAddr,
-                                bsp_I2c_MasterTrans_t* transPtr )
+                                bsp_I2c_MasterTrans_t* transPtr,
+                                uint8_t                stopFilter )
 {
     /****** Read/Write ******/
     uint32_t ctrl;
@@ -174,7 +263,7 @@ bsp_I2c_masterTransStartNoFifo( uint32_t               baseAddr,
 
     // Re-enable Master interrupts and master Mode
     MAP_I2CMasterIntEnable( baseAddr );
-    MAP_I2CMasterControl( baseAddr, ctrl );
+    BSP_I2C_MASTER_CONTROL_SET( baseAddr, (ctrl & stopFilter) );
 
     return;
 }
@@ -183,42 +272,41 @@ bsp_I2c_masterTransStartNoFifo( uint32_t               baseAddr,
 /*============================================================================*/
 static void
 bsp_I2c_masterTransStart( uint32_t               baseAddr,
-                          bsp_I2c_MasterTrans_t* transPtr )
+                          bsp_I2c_MasterTrans_t* transPtr,
+                          uint8_t                stopFilter )
 {
     BSP_TRACE_I2C_TRANS_START_ENTER();
 
     /****** Set Speed ******/
-    uint32_t clkReg = 0;
-    if (transPtr->speed == BSP_I2C_SPEED_STANDARD)
+    volatile uint32_t* clkReg = ADDR_TO_PTR(baseAddr + I2C_O_MTPR);
+    if (transPtr->speed == BSP_I2C_SPEED_HIGH)
     {
-        clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (20 * BSP_I2C_FREQUENCY_STD)) - 1);
-    }
-    else if (transPtr->speed == BSP_I2C_SPEED_FAST)
-    {
-        clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (20 * BSP_I2C_FREQUENCY_FAST)) - 1);
+        *clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (6 * BSP_I2C_FREQUENCY_HIGH)) - 1) | I2C_MTPR_HS;
     }
     else if (transPtr->speed == BSP_I2C_SPEED_FAST_PLUS)
     {
-        clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (20 * BSP_I2C_FREQUENCY_FAST_PLUS)) - 3);
+        *clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (20 * BSP_I2C_FREQUENCY_FAST_PLUS)) - 3);
     }
-    else
+    else if (transPtr->speed == BSP_I2C_SPEED_FAST)
     {
-        clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (6 * BSP_I2C_FREQUENCY_HIGH)) - 1);
-        clkReg |= I2C_MTPR_HS;
+        *clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (20 * BSP_I2C_FREQUENCY_FAST)) - 1);
     }
-    *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = clkReg;
+    else // if (transPtr->speed == BSP_I2C_SPEED_STANDARD)
+    {
+        *clkReg = ((BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ / (20 * BSP_I2C_FREQUENCY_STD)) - 1);
+    }
 
     /****** Set Address ******/
     // Set the slave address and the r/w bit
-    MAP_I2CMasterSlaveAddrSet( baseAddr,
-                               transPtr->addr,
-                               (transPtr->type == BSP_I2C_TRANS_TYPE_READ) );
+    BSP_I2C_MASTER_SLAVE_ADDR_SET( baseAddr,
+                                   transPtr->addr,
+                                   (transPtr->type == BSP_I2C_TRANS_TYPE_READ) );
 
     transPtr->rBuffer += (transPtr->rReverse) ? (transPtr->rLen - 1) : 0;
 #if (BSP_I2C_PLATFORM_USE_FIFO == 1)
-    bsp_I2c_masterTransStartFifo( baseAddr, transPtr );
+    bsp_I2c_masterTransStartFifo( baseAddr, transPtr, stopFilter );
 #else
-    bsp_I2c_masterTransStartNoFifo( baseAddr, transPtr );
+    bsp_I2c_masterTransStartNoFifo( baseAddr, transPtr, stopFilter );
 #endif
     BSP_TRACE_I2C_TRANS_START_EXIT();
     return;
@@ -249,12 +337,12 @@ bsp_I2c_transComplete( bsp_I2c_Id_t id,
             transInfoPtr->queueTailPtr = NULL;
         }
         transInfoPtr->active.nextPtr = &transInfoPtr->active;
-        bsp_I2c_masterTransStart( baseAddr, &transInfoPtr->active );
+        bsp_I2c_masterTransStart( baseAddr, &transInfoPtr->active, transInfoPtr->stopFilter );
     }
     else
     {
         /* DONE */
-        MAP_I2CMasterIntDisable( baseAddr );
+        BSP_I2C_MASTER_INT_DISABLE_EX_ALL( baseAddr );
     }
 }
 
@@ -269,32 +357,34 @@ bsp_I2c_isrMasterCommonFifo( bsp_I2c_Id_t id,
     uint32_t intctrl = 0;
     uint8_t burstLen;
     bsp_I2c_MasterTrans_t* transPtr = &bsp_I2c_masterTransInfo[id].active;
+    uint8_t stopFilter = bsp_I2c_masterTransInfo[id].stopFilter;
 
     /* TX Fifo Interrupt */
     if( (intStatus & I2C_MASTER_INT_TX_FIFO_EMPTY) != 0 )
     {
+        intStatus &= ~I2C_MASTER_INT_TX_FIFO_EMPTY;
         BSP_TRACE_I2C_STATUS_OTHER();
+        BSP_I2C_MASTER_INT_DISABLE_EX( baseAddr, I2C_MASTER_INT_TX_FIFO_EMPTY );
+        BSP_I2C_MASTER_INT_CLEAR_EX( baseAddr, I2C_MASTER_INT_TX_FIFO_EMPTY );
         if( transPtr->type == BSP_I2C_TRANS_TYPE_WRITE_READ )
         {
-            // Switch to read mode
+             // Switch to read mode
             transPtr->type = BSP_I2C_TRANS_TYPE_READ;
 
-            // Clear out TX Fifo before switching to Rx
-            MAP_I2CMasterIntDisableEx( baseAddr, I2C_MASTER_INT_TX_FIFO_EMPTY );
-            MAP_I2CTxFIFOConfigSet( baseAddr, I2C_FIFO_CFG_TX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
-            MAP_I2CTxFIFOFlush( baseAddr );
+            // Disable TX Fifo trigger before switching to Rx
+            BSP_I2C_TX_FIFO_CONFIG_SET( baseAddr, I2C_FIFO_CFG_TX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
 
             // Reset the slave address and the r/w bit
-            MAP_I2CMasterSlaveAddrSet( baseAddr, transPtr->addr, true );
+            BSP_I2C_MASTER_SLAVE_ADDR_SET( baseAddr, transPtr->addr, true );
             uint8_t rTrig = (transPtr->rLen < 8) ? transPtr->rLen : 8;
-            MAP_I2CRxFIFOConfigSet( baseAddr, I2C_FIFO_CFG_RX_MASTER | (rTrig << 16) );
-            MAP_I2CRxFIFOFlush( baseAddr );
+            BSP_I2C_RX_FIFO_CONFIG_SET( baseAddr, I2C_FIFO_CFG_RX_MASTER | (rTrig << 16) );
+            BSP_I2C_RX_FIFO_FLUSH( baseAddr );
             burstLen = (transPtr->rLen < 255) ? transPtr->rLen : 255;
-            MAP_I2CMasterBurstLengthSet( baseAddr, burstLen );
+            BSP_I2C_MASTER_BURST_LEN_SET( baseAddr, burstLen );
             ctrl = (transPtr->rLen == 1) ? I2C_MASTER_CMD_FIFO_SINGLE_RECEIVE : I2C_MASTER_CMD_FIFO_BURST_RECEIVE_START;
             intctrl = I2C_MASTER_INT_RX_FIFO_REQ;
-            MAP_I2CMasterIntEnableEx( baseAddr, intctrl );
-            MAP_I2CMasterControl( baseAddr, ctrl );
+            BSP_I2C_MASTER_INT_ENABLE_EX( baseAddr, intctrl );
+            BSP_I2C_MASTER_CONTROL_SET( baseAddr, (ctrl & stopFilter) );
         }
         else // Assume Write
         {
@@ -309,55 +399,57 @@ bsp_I2c_isrMasterCommonFifo( bsp_I2c_Id_t id,
                 if( transPtr->wLen <= 0 )
                 {
                     ctrl = I2C_MASTER_CMD_FIFO_BURST_SEND_FINISH;
-                    //ctrl = I2C_MASTER_CMD_FIFO_BURST_SEND_CONT;
                 }
                 else
                 {
                     burstLen = (transPtr->wLen < 255) ? transPtr->wLen : 255;
-                    MAP_I2CMasterBurstLengthSet( baseAddr, burstLen );
+                    BSP_I2C_MASTER_BURST_LEN_SET( baseAddr, burstLen );
                     ctrl = (transPtr->wLen == 1) ? I2C_MASTER_CMD_FIFO_SINGLE_SEND : I2C_MASTER_CMD_FIFO_BURST_SEND_CONT;
                 }
                 intctrl = I2C_MASTER_INT_TX_FIFO_EMPTY;
-                MAP_I2CMasterIntEnableEx( baseAddr, intctrl );
-                MAP_I2CMasterControl( baseAddr, ctrl );
+                BSP_I2C_MASTER_INT_ENABLE_EX( baseAddr, intctrl );
+                BSP_I2C_MASTER_CONTROL_SET( baseAddr, (ctrl & stopFilter) );
             }
         }
     }
 
     /* RX Fifo Interrupt */
-    else if( (intStatus & I2C_MASTER_INT_RX_FIFO_REQ) != 0 )
+    if( (intStatus & I2C_MASTER_INT_RX_FIFO_REQ) != 0 )
     {
+        intStatus &= ~I2C_MASTER_INT_RX_FIFO_REQ;
         BSP_TRACE_I2C_STATUS_OTHER();
         BSP_TRACE_I2C_STATUS_OTHER();
         BSP_I2C_NEXT_BYTE_RCV_FIFO( baseAddr, transPtr );
 
         if( transPtr->rLen <= 0 )
         {
-            MAP_I2CRxFIFOConfigSet( baseAddr, I2C_FIFO_CFG_RX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
-            MAP_I2CRxFIFOFlush( baseAddr );
-            MAP_I2CMasterIntDisableEx( baseAddr, I2C_MASTER_INT_RX_FIFO_REQ );
-            MAP_I2CMasterIntClearEx( baseAddr, I2C_MASTER_INT_RX_FIFO_REQ );
-            MAP_I2CMasterControl( baseAddr, I2C_MASTER_CMD_BURST_SEND_STOP );
+            BSP_I2C_RX_FIFO_CONFIG_SET( baseAddr, I2C_FIFO_CFG_RX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
+            BSP_I2C_RX_FIFO_FLUSH( baseAddr );
+            BSP_I2C_MASTER_INT_DISABLE_EX( baseAddr, I2C_MASTER_INT_RX_FIFO_REQ );
+            BSP_I2C_MASTER_INT_CLEAR_EX( baseAddr, I2C_MASTER_INT_RX_FIFO_REQ );
+            if( stopFilter == 0 )
+            {
+                BSP_I2C_MASTER_CONTROL_SET( baseAddr, I2C_MASTER_CMD_BURST_SEND_STOP );
+            }
 
             bsp_I2c_transComplete( id, baseAddr );
         }
         else
         {
             burstLen = (transPtr->rLen < 255) ? transPtr->rLen : 255;
-            MAP_I2CMasterBurstLengthSet( baseAddr, burstLen );
+            BSP_I2C_MASTER_BURST_LEN_SET( baseAddr, burstLen );
             ctrl = (transPtr->wLen == 1) ? I2C_MASTER_CMD_FIFO_SINGLE_RECEIVE : I2C_MASTER_CMD_FIFO_BURST_RECEIVE_CONT;
-            MAP_I2CMasterControl( baseAddr, ctrl );
+            BSP_I2C_MASTER_CONTROL_SET( baseAddr, (ctrl & stopFilter) );
         }
     }
 
     /* Unexpected Interrupt */
-    else
+    if( intStatus != 0 )
     {
         BSP_TRACE_I2C_STATUS_OTHER();
         BSP_TRACE_I2C_STATUS_OTHER();
         BSP_TRACE_I2C_STATUS_OTHER();
     }
-
 
     return;
 }
@@ -399,7 +491,7 @@ bsp_I2c_isrMasterCommonNoFifo( bsp_I2c_Id_t id,
             transPtr->type = BSP_I2C_TRANS_TYPE_READ;
 
             // Reset the slave address and the r/w bit
-            MAP_I2CMasterSlaveAddrSet( baseAddr, transPtr->addr, true );
+            BSP_I2C_MASTER_SLAVE_ADDR_SET( baseAddr, transPtr->addr, true );
 
             i2cCmd = I2C_MASTER_CMD_BURST_RECEIVE_START;
         }
@@ -449,8 +541,8 @@ bsp_I2c_isrCommon( bsp_I2c_Id_t id )
     uint32_t baseAddr = bsp_I2c_staticInfo[id].baseAddr;
 
     // Read out and clear the masked interrupt status registers
-    uint32_t intStatusMaster = MAP_I2CMasterIntStatusEx( baseAddr, true );
-    MAP_I2CMasterIntClearEx( baseAddr, intStatusMaster );
+    uint32_t intStatusMaster = BSP_I2C_MASTER_INT_STATUS_EX( baseAddr, true );
+    BSP_I2C_MASTER_INT_CLEAR_EX( baseAddr, intStatusMaster );
     if( intStatusMaster != 0 )
     {
         BSP_TRACE_I2C_ISR_MASTER_ENTER();
@@ -499,9 +591,9 @@ bsp_I2c_init( void )
 
         MAP_SysCtlPeripheralEnable( infoPtr->sysCtrlAddr );
 
-        MAP_I2CMasterIntDisable( infoPtr->baseAddr );
+        BSP_I2C_MASTER_INT_DISABLE_EX_ALL( infoPtr->baseAddr );
         MAP_I2CMasterIntClear( infoPtr->baseAddr );
-        MAP_I2CMasterIntDisableEx( infoPtr->baseAddr, 0xFFFFFFFF );
+        BSP_I2C_MASTER_INT_DISABLE_EX( infoPtr->baseAddr, 0xFFFFFFFF );
 
         MAP_I2CSlaveIntDisable( infoPtr->baseAddr );
         MAP_I2CSlaveIntClear( infoPtr->baseAddr );
@@ -525,10 +617,10 @@ bsp_I2c_init( void )
                                     pinInfoPtrSda->mask,
                                     pinInfoPtrSda->altFuncId );
 #if (BSP_I2C_PLATFORM_USE_FIFO == 1)
-        MAP_I2CRxFIFOConfigSet( infoPtr->baseAddr, I2C_FIFO_CFG_RX_MASTER | I2C_FIFO_CFG_RX_NO_TRIG );
-        MAP_I2CRxFIFOFlush( infoPtr->baseAddr );
-        MAP_I2CTxFIFOConfigSet( infoPtr->baseAddr, I2C_FIFO_CFG_TX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
-        MAP_I2CTxFIFOFlush( infoPtr->baseAddr );
+        BSP_I2C_RX_FIFO_CONFIG_SET( infoPtr->baseAddr, I2C_FIFO_CFG_RX_MASTER | I2C_FIFO_CFG_RX_NO_TRIG );
+        BSP_I2C_RX_FIFO_FLUSH( infoPtr->baseAddr );
+        BSP_I2C_TX_FIFO_CONFIG_SET( infoPtr->baseAddr, I2C_FIFO_CFG_TX_MASTER | I2C_FIFO_CFG_TX_NO_TRIG );
+        BSP_I2C_TX_FIFO_FLUSH( infoPtr->baseAddr );
 #endif
         /* Enable I2C interrupt at the NVIC */
         bsp_Interrupt_enable( infoPtr->intId );
@@ -548,13 +640,17 @@ bsp_I2c_masterControl( bsp_I2c_Id_t      id,
     BSP_MCU_CRITICAL_SECTION_ENTER();
 
     // Disable and clear all Master interrupts
-    MAP_I2CMasterIntDisable( baseAddr );
+    BSP_I2C_MASTER_INT_DISABLE_EX_ALL( baseAddr );
     MAP_I2CMasterIntClear( baseAddr );
 
     // Disable Master mode interrupts
-    MAP_I2CMasterIntDisableEx( baseAddr, 0xFFFFFFFF );
+    BSP_I2C_MASTER_INT_DISABLE_EX_ALL( baseAddr );
     // Enable/Disable HW block
-    if( control == BSP_I2C_CONTROL_ENABLE )
+    if( control == BSP_I2C_CONTROL_DISABLE )
+    {
+        MAP_I2CMasterDisable( baseAddr );
+    }
+    else
     {
         MAP_I2CMasterEnable( baseAddr );
 
@@ -563,14 +659,18 @@ bsp_I2c_masterControl( bsp_I2c_Id_t      id,
                                  MAP_SysCtlClockGet(),
                                  false );
 
-        // *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = 11;
-        // *(volatile uint32_t*)(baseAddr + I2C_O_MSA) = 0x08;
-        // MAP_I2CMasterControl( baseAddr, 0x13 );
-        // while(MAP_I2CMasterBusy( baseAddr ));
-    }
-    else
-    {
-        MAP_I2CMasterDisable( baseAddr );
+        if( control == BSP_I2C_CONTROL_ENABLE_HS )
+        {
+            *(volatile uint32_t*)(baseAddr + I2C_O_MTPR) = 11;
+            *(volatile uint32_t*)(baseAddr + I2C_O_MSA) = 0x08;
+            BSP_I2C_MASTER_CONTROL_SET( baseAddr, I2C_MASTER_CMD_HS_MASTER_CODE_SEND );
+            while(MAP_I2CMasterBusy( baseAddr ));
+            bsp_I2c_masterTransInfo[id].stopFilter = ~I2C_MASTER_CMD_BURST_SEND_STOP;
+        }
+        else
+        {
+            bsp_I2c_masterTransInfo[id].stopFilter = 0;
+        }
     }
 
     BSP_MCU_CRITICAL_SECTION_EXIT();
@@ -601,7 +701,7 @@ bsp_I2c_masterTransQueue( bsp_I2c_Id_t           id,
     {
         memcpy( &transInfoPtr->active, transPtr, sizeof(bsp_I2c_MasterTrans_t) );
         transInfoPtr->active.nextPtr = &transInfoPtr->active;
-        bsp_I2c_masterTransStart( bsp_I2c_staticInfo[id].baseAddr, &transInfoPtr->active );
+        bsp_I2c_masterTransStart( bsp_I2c_staticInfo[id].baseAddr, &transInfoPtr->active, transInfoPtr->stopFilter );
     }
     else
     {

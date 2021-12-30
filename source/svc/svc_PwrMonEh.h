@@ -256,8 +256,8 @@ typedef struct BSP_ATTR_PACKED svc_PwrMonEh_DataInd_s
 // is not "sent", it's processed through a direct callback
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_SampleData_s
 {
-    int16_t vBus;
-    int16_t vShunt;
+    int32_t vBus;
+    int32_t vShunt;
 } svc_PwrMonEh_SampleData_t;
 
 typedef struct BSP_ATTR_PACKED svc_PwrMonEh_SampleInd_s

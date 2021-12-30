@@ -31,7 +31,7 @@
 /*==============================================================================
  *                                   Types
  *============================================================================*/
-// Signed Fixed point 10.6 values
+// Signed Fixed point Q10.6 values
 typedef int16_t dev_Temp_MeasTemperature_t;
 
 typedef void (*dev_Temp_MeasCallback_t)( dev_Temp_MeasTemperature_t temp );

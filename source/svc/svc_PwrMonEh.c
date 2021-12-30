@@ -32,12 +32,13 @@
 #include "dev_PwrMon.h"
 #include "osapi.h"
 #include "svc_MsgFwk.h"
+#include "svc_SerioEh.h"
 #include "svc_PwrMonEh.h"
 #include "svc_PwrMon_sampler.h"
 #include "svc_PwrMon_channel.h"
 
 #ifndef SVC_LOG_LEVEL
-#define SVC_LOG_LEVEL SVC_LOG_LEVEL_NONE
+#define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
 #endif
 #include "svc_Log.h"
 
@@ -69,8 +70,9 @@ typedef enum svc_PwrMon_State_e {
 /*============================================================================*/
 #define SVC_PWRMON_MSG_SND( _msgPtr )                                                  \
 {                                                                                      \
-    SVC_LOG_INFO( "[PwrMon] Sending: %s"NL,                                            \
-                  svc_PwrMonEh_msgNames[SVC_MSGFWK_MSG_ID_NUM_GET(_msgPtr->hdr.id)] ); \
+    SVC_LOG_INFO( "[PwrMon] Sending: %s to 0x%04X"NL,                                  \
+                  svc_PwrMonEh_msgNames[SVC_MSGFWK_MSG_ID_NUM_GET(_msgPtr->hdr.id)],   \
+                  _msgPtr->hdr.eh);                                                    \
     svc_MsgFwk_msgSend( _msgPtr );                                                     \
 }
 
@@ -93,7 +95,8 @@ typedef enum svc_PwrMon_State_e {
 const svc_MsgFwk_MsgId_t svc_PwrMonEh_bcastMsgIds[] =
 {
     SVC_PWRMONEH_DATA_IND,
-    SVC_PWRMONEH_STOP_IND
+    SVC_PWRMONEH_STOP_IND,
+    SVC_SERIOEH_CONNECT_IND
 };
 
 const char* svc_PwrMonEh_stateNames[] =
@@ -392,6 +395,16 @@ svc_PwrMonEh_handlerSampling( svc_MsgFwk_Hdr_t* msgPtr )
             svc_PwrMonEh_buildAndSendCalCnf( msgPtr->eh, SVC_PWRMONEH_STATUS_SUCCESS );
             svc_PwrMonEh_statusLedConfigured();
             SVC_PWRMON_STATE_SET( CONFIGURED );
+        }
+        break;
+        case SVC_SERIOEH_CONNECT_IND:
+        {
+            if( ((svc_SerIoEh_ConnectInd_t*)msgPtr)->connected == false)
+            {
+                svc_PwrMon_samplerStop();
+                svc_PwrMonEh_statusLedConfigured();
+                SVC_PWRMON_STATE_SET( CONFIGURED );
+            }
         }
         break;
         default:

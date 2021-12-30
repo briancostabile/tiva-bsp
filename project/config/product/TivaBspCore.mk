@@ -23,6 +23,6 @@ FILENAME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 $(info Including:$(FILENAME))
 
 # Default platform for BspCore
-PLATFORM ?= ektm4c123gxl
+PLATFORM ?= dktm4c129x
 PRODUCT_DFLAGS += PRODUCT=$(PRODUCT)
 include ./project/config/platform/$(PLATFORM).mk

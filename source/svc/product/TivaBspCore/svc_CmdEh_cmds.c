@@ -45,7 +45,7 @@ svc_CmdEh_handlerBinary( svc_CmdEh_CmdHdr_t*            cmdPtr,
         case SVC_CMDEH_CMD_ID_VERSION:
         {
             svc_CmdEh_CmdVersionCnf_t cnf;
-            cnf.hdr.len   = sizeof(cnf);
+            cnf.hdr.len   = sizeof(cnf) - sizeof(uint16_t);
             cnf.hdr.cmdId = SVC_CMDEH_CMD_ID_VERSION;
             cnf.verHw = bsp_Build_versionHw;
             cnf.verFw = bsp_Build_versionFw;
@@ -56,7 +56,7 @@ svc_CmdEh_handlerBinary( svc_CmdEh_CmdHdr_t*            cmdPtr,
         case SVC_CMDEH_CMD_ID_EHSTATS:
         {
             svc_CmdEh_CmdEhStatsCnf_t cnf;
-            cnf.hdr.len   = sizeof(cnf);
+            cnf.hdr.len   = sizeof(cnf) - sizeof(uint16_t);
             cnf.hdr.cmdId = SVC_CMDEH_CMD_ID_EHSTATS;
             svc_MsgFwk_Stats_t* statsPtr = svc_MsgFwk_getStats();
             memcpy(&cnf.stats, statsPtr, sizeof(svc_MsgFwk_Stats_t));
@@ -67,7 +67,7 @@ svc_CmdEh_handlerBinary( svc_CmdEh_CmdHdr_t*            cmdPtr,
         case SVC_CMDEH_CMD_ID_BCAST_REG:
         {
             svc_CmdEh_CmdBcastRegCnf_t cnf;
-            cnf.hdr.len   = sizeof(cnf);
+            cnf.hdr.len   = sizeof(cnf) - sizeof(uint16_t);
             cnf.hdr.cmdId = SVC_CMDEH_CMD_ID_BCAST_REG;
             svc_MsgFwk_registerMsg( ((svc_CmdEh_CmdBcastRegReq_t*)cmdPtr)->eh,
                                     ((svc_CmdEh_CmdBcastRegReq_t*)cmdPtr)->msgId );

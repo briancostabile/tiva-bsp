@@ -40,6 +40,7 @@
 // Event handler message IDs
 #define SVC_SERIOEH_DATA_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_SERIO, 0 )
 #define SVC_SERIOEH_BULK_DATA_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_SERIO, 1 )
+#define SVC_SERIOEH_CONNECT_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_SERIO, 2 )
 
 
 /*==============================================================================
@@ -51,3 +52,11 @@ typedef struct BSP_ATTR_PACKED svc_SerIoEh_DataInd_s
 {
     svc_MsgFwk_Hdr_t hdr;
 } svc_SerIoEh_DataInd_t;
+
+/*============================================================================*/
+// Event handler message structures
+typedef struct BSP_ATTR_PACKED svc_SerIoEh_ConnectInd_s
+{
+    svc_MsgFwk_Hdr_t hdr;
+    bool             connected;
+} svc_SerIoEh_ConnectInd_t;

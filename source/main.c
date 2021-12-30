@@ -42,6 +42,7 @@
 #include "bsp_Dma.h"
 #include "bsp_Crc.h"
 #include "bsp_Eeprom.h"
+#include "bsp_Ssi.h"
 
 #include "osapi.h"
 
@@ -93,6 +94,7 @@ main(void)
     bsp_UartIo_init();
     bsp_Crc_init();
     bsp_Eeprom_init();
+    bsp_Ssi_init();
 
     // Initialize the OS
     osapi_init();

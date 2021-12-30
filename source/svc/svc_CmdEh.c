@@ -477,6 +477,16 @@ svc_CmdEh_ioCallbackBulk( size_t cnt )
 
 
 /*============================================================================*/
+void svc_CmdEh_usbConnectCallback( bool connected )
+{
+    svc_SerIoEh_ConnectInd_t ind;
+    ind.connected = connected;
+    svc_MsgFwk_msgAllocAndBroadcast( SVC_SERIOEH_CONNECT_IND,
+                                     sizeof(svc_SerIoEh_ConnectInd_t),
+                                     SVC_MSGFWK_MSG_PAYLOAD_PTR(&ind) );
+}
+
+/*============================================================================*/
 static void
 svc_CmdEh_init( void )
 {
@@ -495,6 +505,7 @@ svc_CmdEh_init( void )
 
     ctx->fdUsb = bsp_UsbBulk_open();
     bsp_UsbBulk_registerCallbackDataAvailable( ctx->fdUsb, svc_CmdEh_ioCallbackBulk );
+    bsp_UsbBulk_registerCallbackConnection( ctx->fdUsb, svc_CmdEh_usbConnectCallback );
 
     // Register this event handler as the proxy for unhandled messages
     svc_MsgFwk_registerProxyEh( SVC_EHID_CMD );

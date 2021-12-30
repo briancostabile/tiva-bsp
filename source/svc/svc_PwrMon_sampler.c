@@ -122,8 +122,7 @@ static svc_PwrMon_SamplerPkt_t svc_PwrMon_tstPkt = {
 /*==============================================================================
  *                                Globals
  *============================================================================*/
-svc_PwrMon_SamplerCtx_t BSP_ATTR_ALIGNMENT(4) svc_PwrMon_ctx;
-svc_PwrMon_SamplerGpiInfo_t svc_PwrMon_gpiInfoTable[] = BSP_PLATFORM_PWRMON_GPI_TABLE;
+svc_PwrMon_SamplerCtx_t BSP_ATTR_ALIGNMENT(4) svc_PwrMon_samplerCtx;
 
 #define SVC_PWRMON_SAMPLER_SET_COMPLETE(_ctx)                                   \
     ( ((_ctx)->pktInfoArray[(_ctx)->pktIdx].shuntBitmap == (_ctx)->chBitmap) && \
@@ -132,22 +131,6 @@ svc_PwrMon_SamplerGpiInfo_t svc_PwrMon_gpiInfoTable[] = BSP_PLATFORM_PWRMON_GPI_
 /*==============================================================================
  *                             Local Functions
  *============================================================================*/
-/*============================================================================*/
-uint32_t
-svc_PwrMon_gpiRead( void )
-{
-    uint32_t gpiVal = 0;
-    uint32_t tmp = 0;
-
-    for( uint8_t i=0; i<DIM(svc_PwrMon_gpiInfoTable); i++ )
-    {
-        tmp = bsp_Gpio_read( svc_PwrMon_gpiInfoTable[i].portId, svc_PwrMon_gpiInfoTable[i].mask );
-        gpiVal |= (tmp != 0) ? (1 << i) : 0;
-    }
-
-    return( gpiVal );
-}
-
 /*============================================================================*/
 // Called at the beginning of the fixed time sampling callback, before making all i2c requests
 void
@@ -172,7 +155,7 @@ svc_PwrMon_smplSetStart( svc_PwrMon_SamplerCtx_t* ctx )
     * Packet Update
     ***********/
     // Grab the GPI state
-    ctx->pktArray[ ctx->pktIdx ].smplInd.ioBitmap = svc_PwrMon_gpiRead();
+    ctx->pktArray[ ctx->pktIdx ].smplInd.ioBitmap = 0;
     // snapshot the channels that completed. This should always match the
     // ctx->chBitmap if things are operating normally
     ctx->pktArray[ ctx->pktIdx ].smplInd.chBitmap = ctx->pktInfoArray[ ctx->pktIdx ].shuntBitmap &
@@ -197,7 +180,7 @@ svc_PwrMon_smplSetStart( svc_PwrMon_SamplerCtx_t* ctx )
 void svc_PwrMon_busVoltageCallback( void* cbData )
 {
     BSP_TRACE_PWRMON_SAMPLER_VOLTAGE_ENTER();
-    svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_ctx;
+    svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_samplerCtx;
     ctx->pktInfoArray[ ctx->pktIdx ].busBitmap |= (1 << (uint32_t)cbData);
     BSP_TRACE_PWRMON_SAMPLER_VOLTAGE_EXIT();
     return;
@@ -207,7 +190,7 @@ void svc_PwrMon_busVoltageCallback( void* cbData )
 void svc_PwrMon_shuntVoltageCallback( void* cbData )
 {
     BSP_TRACE_PWRMON_SAMPLER_CURRENT_ENTER();
-    svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_ctx;
+    svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_samplerCtx;
     ctx->pktInfoArray[ ctx->pktIdx ].shuntBitmap |= (1 << (uint32_t)cbData);
     BSP_TRACE_PWRMON_SAMPLER_CURRENT_EXIT();
     return;
@@ -229,6 +212,7 @@ svc_PwrMon_smplSetRead( svc_PwrMon_SamplerCtx_t* ctx )
 
     // Request next set of samples
     uint16_t chIdx = 0;
+    BSP_GPIO_OUT_SET_HIGH( TPA3 );
     for( dev_PwrMon_ChannelId_t chId = 0; chId < BSP_PLATFORM_PWRMON_NUM_CHANNELS; chId++ )
     {
         if( (ctx->chBitmap & (1 << chId)) != 0 )
@@ -245,6 +229,7 @@ svc_PwrMon_smplSetRead( svc_PwrMon_SamplerCtx_t* ctx )
             chIdx++;
         }
     }
+    BSP_GPIO_OUT_SET_LOW( TPA3 );
     BSP_TRACE_PWRMON_SAMPLER_SET_READ_EXIT();
     return;
 }
@@ -255,6 +240,7 @@ void
 svc_PwrMon_smplSetProcess( svc_PwrMon_SamplerCtx_t* ctx )
 {
     BSP_TRACE_PWRMON_SAMPLER_SET_PROCESS_ENTER();
+
     svc_PwrMon_SamplerPkt_t* pktPtr;
 #ifdef SVC_PWRMON_SAMPLER_TEST_PKT
     pktPtr = &svc_PwrMon_tstPkt;
@@ -278,7 +264,8 @@ void svc_PwrMon_samplerCallback( bsp_TimerGp_TimerId_t    timerId,
                                  uint32_t                 mask )
 {
     BSP_TRACE_PWRMON_SAMPLER_SET_ENTER();
-    svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_ctx;
+    BSP_GPIO_OUT_SET_HIGH( TPA2 );
+    svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_samplerCtx;
 
     // Wrap up previous samples
     bool_t procSmpls = true;
@@ -304,13 +291,13 @@ void svc_PwrMon_samplerCallback( bsp_TimerGp_TimerId_t    timerId,
     // Auto stop when sample count is 0
     if( ctx->smplCnt == 0 )
     {
-        svc_PwrMon_samplerStop();
+        bsp_TimerGp_stop( SVC_PWRMON_SAMPLER_TIMER_ID );
         svc_PwrMonEh_buildAndSendStopInd( SVC_PWRMONEH_STATUS_SUCCESS );
     }
 
     // MaxInt smplCnt samples until manually stopped
     ctx->smplCnt = (ctx->smplCnt == 0xFFFFFFFF) ? ctx->smplCnt : (ctx->smplCnt - 1);
-
+    BSP_GPIO_OUT_SET_LOW( TPA2 );
     BSP_TRACE_PWRMON_SAMPLER_SET_EXIT();
     return;
 }
@@ -323,35 +310,27 @@ void svc_PwrMon_samplerCallback( bsp_TimerGp_TimerId_t    timerId,
 void svc_PwrMon_samplerInit( void )
 {
     bsp_TimerGp_stop( SVC_PWRMON_SAMPLER_TIMER_ID );
-    memset( &svc_PwrMon_ctx, 0, sizeof(svc_PwrMon_ctx) );
-
-    /* For each GPI, configure as input no pull */
-    for( uint8_t i=0; i<DIM(svc_PwrMon_gpiInfoTable); i++ )
-    {
-        bsp_Gpio_configInput( svc_PwrMon_gpiInfoTable[i].portId,
-                              svc_PwrMon_gpiInfoTable[i].mask,
-                              FALSE, BSP_GPIO_PULL_NONE );
-    }
+    memset( &svc_PwrMon_samplerCtx, 0, sizeof(svc_PwrMon_samplerCtx) );
 }
 
 /*============================================================================*/
 void svc_PwrMon_samplerStop( void )
 {
-    bsp_TimerGp_stop( SVC_PWRMON_SAMPLER_TIMER_ID );
+    svc_PwrMon_samplerCtx.smplCnt = 0;
 }
 
 /*============================================================================*/
 svc_PwrMonEh_SamplerStats_t*
 svc_PwrMon_samplerStatsPtr( void )
 {
-    return( &svc_PwrMon_ctx.stats );
+    return( &svc_PwrMon_samplerCtx.stats );
 }
 
 /*============================================================================*/
 void
 svc_PwrMon_samplerStatsReset( void )
 {
-    memset( &svc_PwrMon_ctx.stats, 0, sizeof(svc_PwrMon_ctx.stats) );
+    memset( &svc_PwrMon_samplerCtx.stats, 0, sizeof(svc_PwrMon_samplerCtx.stats) );
     return;
 }
 
@@ -359,7 +338,7 @@ svc_PwrMon_samplerStatsReset( void )
 void svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap,
                               uint32_t                smplCnt )
 {
-    svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_ctx;
+    svc_PwrMon_SamplerCtx_t* ctx = &svc_PwrMon_samplerCtx;
     memset( &ctx->pktInfoArray[0], 0, sizeof(ctx->pktInfoArray) );
     svc_PwrMon_samplerStatsReset();
 
@@ -413,12 +392,6 @@ void svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap,
     for( dev_PwrMon_ChannelId_t chId = 0; chId < BSP_PLATFORM_PWRMON_NUM_CHANNELS; chId++ )
     {
         dev_PwrMon_Data_t tmp;
-
-        dev_PwrMon_channelConfig( chId,
-                                  BSP_PWRMOMN_CONV_TIME_US_332,
-                                  BSP_PWRMOMN_CONV_TIME_US_332,
-                                  BSP_PWRMOMN_AVG_MODE_SAMPLES_1,
-                                  NULL, NULL );
 
         if( (ctx->chBitmap & (1 << chId)) != 0 )
         {

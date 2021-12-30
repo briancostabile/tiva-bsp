@@ -48,9 +48,6 @@
 /*============================================================================*/
 #define SVC_PWRMON_CHANNEL_DATA_PACKET_BUFFER_CNT 2
 
-#define SVC_PWRMON_CHANNEL_BUS_ADC_TO_MV(_val) (((_val) * 1250) / 1000)
-#define SVC_PWRMON_CHANNEL_SHUNT_ADC_TO_UV(_val) (((_val) * 25) / 10)
-
 /*==============================================================================
  *                                Types
  *============================================================================*/
@@ -60,8 +57,8 @@ typedef struct svc_PwrMon_ChannelInfo_s
     svc_PwrMonEh_ShuntVal_t shuntVal;
     char                    name[SVC_PWRMONEH_CH_NAME_LEN+1];
 
-    int16_t                 offsetVbus;
-    int16_t                 offsetVshunt;
+    int32_t                 offsetVbus;
+    int32_t                 offsetVshunt;
 
     uint32_t                smplCnt;
     uint32_t                avgCnt;
@@ -199,6 +196,9 @@ svc_PwrMon_channelCalibrateAll( void )
                                      &(ctx->channelInfo[chId].offsetVbus),
                                      &(ctx->channelInfo[chId].offsetVshunt) );
 
+        ctx->channelInfo[chId].offsetVbus = dev_PwrMon_vBusFormat(chId, ctx->channelInfo[chId].offsetVbus);
+        ctx->channelInfo[chId].offsetVshunt = dev_PwrMon_vShuntFormat(chId, ctx->channelInfo[chId].offsetVshunt);
+
         svc_Nvm_updateCalData( svc_Nvm_dataPtr(),
                                chId,
                                ctx->channelInfo[chId].offsetVbus,
@@ -215,9 +215,37 @@ svc_PwrMon_channelCalibrateAll( void )
     svc_PwrMon_channelLedAllOff();
     svc_Nvm_save();
 
-
     return;
 }
+
+
+/*============================================================================*/
+void
+svc_PwrMon_channelConfigSave( svc_PwrMon_ChannelInfo_t* chInfoPtr,
+                              char*                     name,
+                              dev_PwrMon_ChannelId_t    id,
+                              svc_PwrMonEh_ShuntVal_t   shuntVal )
+{
+    strncpy( chInfoPtr->name, name, SVC_PWRMONEH_CH_NAME_LEN );
+    chInfoPtr->name[SVC_PWRMONEH_CH_NAME_LEN] = 0;
+
+    chInfoPtr->chId       = id;
+    chInfoPtr->shuntVal   = shuntVal;
+    chInfoPtr->smplCnt    = 0;
+    chInfoPtr->avgCnt     = 0;
+    chInfoPtr->mvBusSum   = 0;
+    chInfoPtr->uvShuntSum = 0;
+
+    SVC_LOG_INFO( "[PwrMon Channel] svc_PwrMon_channelConfigSet name:%s chId:%d shunt:%ld"NL,
+                  name,
+                  id,
+                  shuntVal );
+
+    bsp_Led_setColor( SVC_PWRMON_CHANNEL_LED_ID(id),
+                      SVC_PWRMON_CHANNEL_LED_ACTIVE_COLOR );
+    return;
+}
+
 
 /*============================================================================*/
 void
@@ -234,32 +262,25 @@ svc_PwrMon_channelConfigSet( uint8_t                 numCh,
     /**********************
      * Copy data from channel table and cal in-use devices
      *********************/
-    ctx->numCh = numCh;
+    ctx->numCh = (numCh == 0) ? 1 : numCh;
     ctx->chBitmap = 0;
     ctx->seq = 0;
     SVC_LOG_INFO( "[PwrMon Channel] svc_PwrMon_channelConfigSet numCh:%d"NL, numCh );
 
-    for( int chIdx=0; chIdx < numCh; chIdx++ )
-    {
-        strncpy( ctx->channelInfo[chIdx].name, chTable[chIdx].chName, SVC_PWRMONEH_CH_NAME_LEN );
-        ctx->channelInfo[chIdx].name[SVC_PWRMONEH_CH_NAME_LEN] = 0;
+    // Zero index is always the power supply, don't copy that from the passed in chTable
+    int chInfoIdx = 0;
+    svc_PwrMon_channelConfigSave( &ctx->channelInfo[chInfoIdx], "Power Supply", 0, 100 );
+    ctx->chBitmap |= 0x01;
 
-        ctx->channelInfo[chIdx].chId       = chTable[chIdx].chId;
-        ctx->channelInfo[chIdx].shuntVal   = chTable[chIdx].shuntVal;
-        ctx->channelInfo[chIdx].smplCnt    = 0;
-        ctx->channelInfo[chIdx].avgCnt     = 0;
-        ctx->channelInfo[chIdx].mvBusSum   = 0;
-        ctx->channelInfo[chIdx].uvShuntSum = 0;
+    chInfoIdx++;
+    for( int chIdx=1; chIdx < numCh; chIdx++ )
+    {
+        svc_PwrMon_channelConfigSave(&ctx->channelInfo[chInfoIdx],
+                                     chTable[chIdx].chName,
+                                     chTable[chIdx].chId,
+                                     chTable[chIdx].shuntVal);
 
         ctx->chBitmap |= (1 << chTable[chIdx].chId);
-
-        SVC_LOG_INFO( "[PwrMon Channel] dev_PwrMon_channelOffsetCal name:%s chId:%d shunt:%ld"NL,
-                      chTable[chIdx].chName,
-                      chTable[chIdx].chId,
-                      chTable[chIdx].shuntVal );
-
-        bsp_Led_setColor( SVC_PWRMON_CHANNEL_LED_ID(chTable[chIdx].chId),
-                          SVC_PWRMON_CHANNEL_LED_ACTIVE_COLOR );
     }
     SVC_LOG_INFO( "[PwrMon Channel] svc_PwrMon_channelConfigSet chBitmap:0x%08X"NL, ctx->chBitmap );
 
@@ -268,7 +289,7 @@ svc_PwrMon_channelConfigSet( uint8_t                 numCh,
      *********************/
     // Compute the packet length in bytes
     ctx->pktLen = ( (sizeof(svc_PwrMonEh_DataInd_t) - sizeof(svc_MsgFwk_Hdr_t)) -
-                    ((SVC_PWRMONEH_DATA_IND_CHANNELS_MAX - ctx->numCh) * sizeof(svc_PwrMonEh_SmplData_t)) );
+                    (SVC_PWRMONEH_DATA_IND_SAMPLE_SETS_MAX * (SVC_PWRMONEH_DATA_IND_CHANNELS_MAX - ctx->numCh) * sizeof(svc_PwrMonEh_SmplData_t)) );
 
     // Setup static portion of headers
     for( int i=0; i<SVC_PWRMON_CHANNEL_DATA_PACKET_BUFFER_CNT; i++ )
@@ -342,11 +363,11 @@ svc_PwrMon_channelProcessSampleSet( uint16_t                   numCh,
     for( uint8_t chIdx = 0; chIdx < numCh; chIdx++ )
     {
         // Adjust vShunt and vBus by calibration offsets
-        dev_PwrMon_Data_t vShuntAdjusted;
-        dev_PwrMon_Data_t vBusAdjusted;
-
-        vShuntAdjusted = dataPtr[chIdx].vShunt - svc_PwrMon_channelCtx.channelInfo[chIdx].offsetVshunt;
-        vBusAdjusted = dataPtr[chIdx].vBus - svc_PwrMon_channelCtx.channelInfo[chIdx].offsetVbus;
+        dev_PwrMon_ChannelId_t chId = ctx->channelInfo[chIdx].chId;
+        dev_PwrMon_Data_t vShuntAdjusted = dev_PwrMon_vShuntFormat(chId, dataPtr[chIdx].vShunt);
+        dev_PwrMon_Data_t vBusAdjusted   = dev_PwrMon_vBusFormat(chId, dataPtr[chIdx].vBus);
+        vShuntAdjusted -= svc_PwrMon_channelCtx.channelInfo[chIdx].offsetVshunt;
+        vBusAdjusted -= svc_PwrMon_channelCtx.channelInfo[chIdx].offsetVbus;
 
         // Copy over to packet
         size_t dataIdx = (offsetIdx + chIdx);
@@ -357,14 +378,15 @@ svc_PwrMon_channelProcessSampleSet( uint16_t                   numCh,
         }
         else if( ctx->smplFmt == SVC_PWRMONEH_SMPL_FMT2_P )
         {
-            int64_t mvBus = SVC_PWRMON_CHANNEL_BUS_ADC_TO_MV( vBusAdjusted );
-            int64_t uvShunt = SVC_PWRMON_CHANNEL_SHUNT_ADC_TO_UV( vShuntAdjusted );
+            int64_t mvBus = (int64_t)dev_PwrMon_vBusConvert(chId, vBusAdjusted);
+            int64_t uvShunt =  (int64_t)dev_PwrMon_vShuntConvert(chId, vShuntAdjusted);
             int64_t uaShunt = ((uvShunt * 1000) / svc_PwrMon_channelCtx.channelInfo[chIdx].shuntVal);
             pktPtr->dataInd.data[dataIdx].fmt1.power = (int32_t)((mvBus * uaShunt) / 1000);
+
         }
 
-        ctx->channelInfo[chIdx].mvBusLast = SVC_PWRMON_CHANNEL_BUS_ADC_TO_MV( vBusAdjusted );
-        ctx->channelInfo[chIdx].uvShuntLast = SVC_PWRMON_CHANNEL_SHUNT_ADC_TO_UV( vShuntAdjusted );
+        ctx->channelInfo[chIdx].mvBusLast = (int64_t)dev_PwrMon_vBusConvert(chId, vBusAdjusted);
+        ctx->channelInfo[chIdx].uvShuntLast = (int64_t)dev_PwrMon_vShuntConvert(chId, vShuntAdjusted);
 
         // Update average counters
         ctx->channelInfo[chIdx].smplCnt++;
@@ -391,8 +413,9 @@ svc_PwrMon_channelProcessSampleSet( uint16_t                   numCh,
 
         // Setup next packet header
         ctx->stats.pktSndNum++;
+        ctx->seq++;
         pktPtr->dataInd.smplFmt = ctx->smplFmt;
-        pktPtr->dataInd.seq = ctx->stats.pktSndNum;
+        pktPtr->dataInd.seq = ctx->seq;
 
         if( ctx->smplFmt != SVC_PWRMONEH_SMPL_NO_STREAM )
         {
@@ -464,8 +487,8 @@ svc_PwrMon_channelAvgGet( dev_PwrMon_ChannelId_t chId,
     uvShuntSum = svc_PwrMon_channelCtx.channelInfo[chIdx].uvShuntSum;
     BSP_MCU_CRITICAL_SECTION_EXIT();
 
-    int64_t mvBusAvg = SVC_PWRMON_CHANNEL_BUS_ADC_TO_MV( (mvBusSum / cnt) );
-    int64_t uvShuntAvg = SVC_PWRMON_CHANNEL_SHUNT_ADC_TO_UV( (uvShuntSum / cnt) );
+    int64_t mvBusAvg = (int64_t)dev_PwrMon_vBusConvert(chIdx, (mvBusSum / cnt));
+    int64_t uvShuntAvg = (int64_t)dev_PwrMon_vShuntConvert(chIdx, (uvShuntSum / cnt));
 
     // Save last calculations in global context
     svc_PwrMon_channelCtx.channelInfo[chIdx].mvBusAvg = (int32_t)mvBusAvg;
