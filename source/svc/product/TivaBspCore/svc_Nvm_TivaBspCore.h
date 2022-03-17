@@ -21,67 +21,61 @@
  */
 /*============================================================================*/
 /**
- * @file svc_SamplerEh.c
- * @brief Contains the Event handler for Service layer Sampler messages
+ * @file svc_Nvm_TivaBspCore.h
+ * @brief Contains the NVM structure
  */
-#include "bsp_Types.h"
-#include "bsp_Platform.h"
-#include "bsp_Mcu.h"
-#include "svc_SamplerEh.h"
-#include "svc_MsgFwk.h"
-#include "osapi.h"
-#if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
-#include "dev_PwrMon.h"
-#endif
-#ifndef SVC_LOG_LEVEL
-#define SVC_LOG_LEVEL SVC_LOG_LEVEL_NONE
-#endif
-#include "svc_Log.h"
+#pragma once
 
-#if defined(SVC_EHID_SAMPLER)
-/*==============================================================================
- *                                Defines
- *============================================================================*/
+#include "bsp_Pragma.h"
+#include "bsp_Platform.h"
+#include "bsp_Assert.h"
 
 /*==============================================================================
  *                                Types
  *============================================================================*/
 
-/*==============================================================================
- *                                Globals
- *============================================================================*/
+#define SVC_NVM_DATA_TYPE      0x1111
+#define SVC_NVM_DATA_FORMAT_V1 0x0001
 
-/*==============================================================================
- *                            Local Functions
- *============================================================================*/
+typedef struct svc_Nvm_DataV1_s {
+    uint32_t tmp;
+} svc_Nvm_DataV1_t;
+
+typedef struct svc_Nvm_Data_s {
+    svc_Nvm_DataHdr_t hdr;
+    union {
+        svc_Nvm_DataV1_t v1;
+    } data;
+} svc_Nvm_Data_t;
 
 /*============================================================================*/
-static void
-svc_SamplerEh_msgHandler( svc_MsgFwk_Hdr_t* msgPtr )
+static inline bool svc_Nvm_validData( void* dataPtr )
 {
+    svc_Nvm_DataHdr_t* hdrPtr = ((svc_Nvm_DataHdr_t*)dataPtr);
+
+    return( (hdrPtr->signature == SVC_NVM_DATA_SIGNATURE) &&
+            (hdrPtr->type      == SVC_NVM_DATA_TYPE) &&
+            (hdrPtr->version   == SVC_NVM_DATA_FORMAT_V1) &&
+            (hdrPtr->len       == sizeof(svc_Nvm_DataV1_t)) );
+}
+
+/*============================================================================*/
+static inline void svc_Nvm_setHdr( void* dataPtr )
+{
+    svc_Nvm_DataHdr_t* hdrPtr = ((svc_Nvm_DataHdr_t*)dataPtr);
+    hdrPtr->signature = SVC_NVM_DATA_SIGNATURE;
+    hdrPtr->type      = SVC_NVM_DATA_TYPE;
+    hdrPtr->version   = SVC_NVM_DATA_FORMAT_V1;
+    hdrPtr->len       = sizeof(svc_Nvm_DataV1_t);
     return;
 }
 
 /*============================================================================*/
-static void
-svc_SamplerEh_init( void )
+static inline void svc_Nvm_initData( void* dataPtr )
 {
-#if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA226)
-    dev_PwrMon_init();
-#endif
+    svc_Nvm_DataV1_t* dataPtrV1 = &((svc_Nvm_Data_t*)dataPtr)->data.v1;
+    memset( dataPtrV1, 0, sizeof(svc_Nvm_DataV1_t) );
+    dataPtrV1->tmp = 0x12345678;
+    return;
 }
 
-
-/*==============================================================================
- *                            Public Functions
- *============================================================================*/
-/*============================================================================*/
-const svc_Eh_Info_t svc_SamplerEh_info =
-{
-    SVC_EHID_SAMPLER,
-    0,    // bcastListLen
-    NULL, // bcastList
-    svc_SamplerEh_init,
-    svc_SamplerEh_msgHandler  // msgHandler
-};
-#endif

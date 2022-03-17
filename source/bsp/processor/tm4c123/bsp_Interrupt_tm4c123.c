@@ -299,7 +299,7 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 20-23: Timer 0 subtimer B, Timer 1 subtimer A, Timer 1 subtimer B, Timer 2 subtimer A
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
@@ -322,7 +322,7 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
     // 36-39: Timer 3 subtimer B, I2C1 Master and Slave, Quadrature Encoder 1, CAN0
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
     // 40-43: CAN1, CAN2, Reserved, Hibernate

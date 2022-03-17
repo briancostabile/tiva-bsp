@@ -90,6 +90,13 @@
 
 
 /*============================================================================*/
+#define BSP_UARTIO_RX_BUFFER_NUM_DATA( _infoPtr )                                                       \
+( ((_infoPtr)->rxBufInfo.readIdx >= (_infoPtr)->rxBufInfo.writeIdx) ?                                   \
+      (((_infoPtr)->rxBufInfo.size - (_infoPtr)->rxBufInfo.readIdx)) + (_infoPtr)->rxBufInfo.writeIdx : \
+      ((_infoPtr)->rxBufInfo.writeIdx - (_infoPtr)->rxBufInfo.readIdx) )
+
+
+/*============================================================================*/
 #define BSP_UARTIO_RX_BUFFER_READ( _infoPtr, _nBytes )                        \
 {                                                                             \
     if( (_nBytes) > 0 )                                                       \
@@ -290,7 +297,7 @@ bsp_UartIo_rxHandler( void*  arg,
 
     if( infoPtr->dataAvailCallback != NULL )
     {
-        infoPtr->dataAvailCallback();
+        infoPtr->dataAvailCallback( BSP_UARTIO_RX_BUFFER_NUM_DATA(infoPtr) );
     }
 
     return;

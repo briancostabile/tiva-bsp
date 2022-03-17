@@ -21,18 +21,17 @@
  */
 /*============================================================================*/
 /**
- * @file svc_Periph.h
- * @brief Contains the API for the Peripheral Service thread
+ * @file dev_PwrMon_ina228.h
+ * @brief Contains Macros, defines, and prototypes for the Power Monitor ADCs.
  */
 #pragma once
 
 #include "bsp_Types.h"
-#include "bsp_Platform.h"
-#include "svc_Eh.h"
-#include <stdint.h>
+#include "dev_PwrMon.h"
+#include "dev_PwrMon_ina.h"
 
 /*==============================================================================
- *                                 Globals
+ *                               Prototypes
  *============================================================================*/
-/*============================================================================*/
-extern const svc_Eh_Info_t svc_TestEh_info;
+
+extern dev_PwrMon_DeviceApi_t dev_PwrMon_ina228_deviceApi;

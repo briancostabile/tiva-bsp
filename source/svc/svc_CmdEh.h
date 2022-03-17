@@ -29,6 +29,7 @@
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
 #include "svc_Eh.h"
+#include "svc_CmdEh_cmds.h"
 
 /*==============================================================================
  *                                 Globals

@@ -57,7 +57,7 @@ endif
 
 # Product and Build options typically passed in on command line
 ifndef PRODUCT
-PRODUCT := TivaBspSensor
+PRODUCT := TivaBspCore
 endif
 
 # gcc or ccs

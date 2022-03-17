@@ -43,16 +43,17 @@
  * Fast-Plus - 1Mbps
  * High      - 3.3Mbps
  */
-#define BSP_I2C_SPEED_STANDARD  ((bsp_I2c_Id_t)0)
-#define BSP_I2C_SPEED_FAST      ((bsp_I2c_Id_t)1)
-#define BSP_I2C_SPEED_FAST_PLUS ((bsp_I2c_Id_t)2)
-#define BSP_I2C_SPEED_HIGH      ((bsp_I2c_Id_t)3)
+#define BSP_I2C_SPEED_STANDARD  ((bsp_I2c_Speed_t)0)
+#define BSP_I2C_SPEED_FAST      ((bsp_I2c_Speed_t)1)
+#define BSP_I2C_SPEED_FAST_PLUS ((bsp_I2c_Speed_t)2)
+#define BSP_I2C_SPEED_HIGH      ((bsp_I2c_Speed_t)3)
 typedef uint8_t bsp_I2c_Speed_t;
 
 
 /*============================================================================*/
-#define BSP_I2C_CONTROL_DISABLE  ((bsp_I2c_Control_t)0)
-#define BSP_I2C_CONTROL_ENABLE   ((bsp_I2c_Control_t)1)
+#define BSP_I2C_CONTROL_DISABLE    ((bsp_I2c_Control_t)0)
+#define BSP_I2C_CONTROL_ENABLE     ((bsp_I2c_Control_t)1)
+#define BSP_I2C_CONTROL_ENABLE_HS  ((bsp_I2c_Control_t)2)
 typedef uint8_t bsp_I2c_Control_t;
 
 /*============================================================================*/
@@ -79,6 +80,7 @@ typedef struct bsp_I2c_MasterTrans_n
     bsp_I2c_TransType_t           type;
     bsp_I2c_Speed_t               speed;
     bsp_I2c_Addr_t                addr;
+    bool_t                        rReverse;
     size_t                        rLen;
     uint8_t*                      rBuffer;
     size_t                        wLen;

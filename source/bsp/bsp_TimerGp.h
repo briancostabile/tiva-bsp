@@ -79,3 +79,6 @@ bsp_TimerGp_startCountdown( bsp_TimerGp_TimerId_t        timerId,
                             bsp_TimerGp_Timeout_t        timeout, //in microseconds
                             bsp_TimerGp_TimeoutHandler_t callback );
 
+/*============================================================================*/
+void
+bsp_TimerGp_stop( bsp_TimerGp_TimerId_t timerId );

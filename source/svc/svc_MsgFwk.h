@@ -51,6 +51,7 @@
 #define SVC_MSGFWK_MSG_ID_NUM_GET( _id )  (((_id) & 0x007F) >> 0)
 
 #define SVC_MSGFWK_MSG_PAYLOAD_PTR( _hdr )  (uint8_t*)(((svc_MsgFwk_Hdr_t*)(_hdr)) + 1)
+#define SVC_MSGFWK_MSG_SYSTEM_PTR( _hdr )   (uint8_t*)(((uint8_t*)(_hdr)) - sizeof(svc_MsgFwk_SysData_t))
 
 
 /*==============================================================================
@@ -60,16 +61,32 @@ typedef uint8_t  svc_MsgFwk_MsgNum_t;
 typedef uint16_t svc_MsgFwk_MsgLen_t;
 typedef uint8_t  svc_MsgFwk_MsgType_t;
 typedef uint8_t  svc_MsgFwk_RefCnt_t;
+typedef uint8_t  svc_MsgFwk_Alloc_t;
 typedef uint16_t svc_MsgFwk_MsgId_t;
+typedef uint32_t svc_MsgFwk_SysData_t;
+
 
 typedef struct BSP_ATTR_PACKED svc_MsgFwk_Hdr_s
 {
     svc_MsgFwk_MsgId_t   id;
     svc_EhId_t           eh;
-    svc_MsgFwk_RefCnt_t  cnt;
+    svc_MsgFwk_Alloc_t   alloc : 1;
+    svc_MsgFwk_RefCnt_t  cnt   : 7;
     svc_MsgFwk_MsgLen_t  len;
 } svc_MsgFwk_Hdr_t;
 
+typedef struct BSP_ATTR_PACKED svc_MsgFwk_Stats_s
+{
+    uint32_t numAlloc;
+    uint32_t numFree;
+    uint32_t numSend;
+    uint32_t numBcast;
+    uint8_t  bcastMapTotal;
+    uint8_t  bcastMapAvail;
+    uint8_t  numEhId;
+} svc_MsgFwk_Stats_t;
+
+typedef void(*svc_MsgFwk_LoggerCallback_t)(svc_MsgFwk_Hdr_t* msgPtr);
 
 /*============================================================================*/
 void*
@@ -115,3 +132,19 @@ svc_MsgFwk_registerMsg( svc_EhId_t         eh,
 void
 svc_MsgFwk_registerEh( svc_EhId_t    eh,
                        osapi_Queue_t queue );
+
+/*============================================================================*/
+void
+svc_MsgFwk_registerProxyEh( svc_EhId_t eh );
+
+/*============================================================================*/
+svc_EhId_t
+svc_MsgFwk_getProxyEh( void );
+
+/*============================================================================*/
+void
+svc_MsgFwk_registerLogger( svc_MsgFwk_LoggerCallback_t cb );
+
+/*============================================================================*/
+svc_MsgFwk_Stats_t*
+svc_MsgFwk_getStats( void );

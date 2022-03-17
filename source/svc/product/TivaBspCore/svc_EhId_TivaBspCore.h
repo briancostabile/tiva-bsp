@@ -32,5 +32,4 @@
 #define SVC_EHID_TIMER     3
 #define SVC_EHID_BUTTON    4
 #define SVC_EHID_LED       5
-#define SVC_EHID_TEST      6
-#define SVC_EHID_NUM_EHIDS 7
+#define SVC_EHID_NUM_EHIDS 6

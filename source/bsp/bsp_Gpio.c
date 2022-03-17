@@ -49,41 +49,44 @@ bsp_Gpio_init( void )
     /* Every port is enabled and the interrupts cleared */
     for( portId=0; portId<DIM(bsp_Gpio_platformPortInfoTable); portId++ )
     {
-        /* Enable all of the GPIO peripheral blocks */
-        MAP_SysCtlPeripheralEnable( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr );
-
-        if( bsp_Gpio_platformPortInfoTable[portId].bitInterruptable == TRUE )
+        if( MAP_SysCtlPeripheralPresent( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr ) == true )
         {
-            numInts = BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT;
+            /* Enable all of the GPIO peripheral blocks */
+            MAP_SysCtlPeripheralEnable( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr );
+
+            if( bsp_Gpio_platformPortInfoTable[portId].bitInterruptable == TRUE )
+            {
+                numInts = BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT;
+            }
+            else
+            {
+                numInts = 1;
+            }
+
+            /* Disable and clear all interrupts */
+            for( i=0; i<numInts; i++ )
+            {
+                bsp_Interrupt_disable( (bsp_Gpio_platformPortInfoTable[portId].intId + i) );
+                bsp_Interrupt_clearPending( (bsp_Gpio_platformPortInfoTable[portId].intId + i));
+            }
+
+            /* Clear the callback table */
+            memset( bsp_Gpio_platformPortInfoTable[portId].handlerTable,
+                    0,
+                    BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT );
+
+            /* Re-Enable all interrupts */
+            for( i=0; i<numInts; i++ )
+            {
+                bsp_Interrupt_enable( (bsp_Gpio_platformPortInfoTable[portId].intId + i) );
+            }
+
+            /* Wait for the peripheral to be ready in the system controller before moving on */
+            while( MAP_SysCtlPeripheralReady( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr ) == FALSE );
+
+            /* Unlock All pins */
+            MAP_GPIOUnlockPin( bsp_Gpio_platformPortInfoTable[portId].baseAddr, 0xFF );
         }
-        else
-        {
-            numInts = 1;
-        }
-
-        /* Disable and clear all interrupts */
-        for( i=0; i<numInts; i++ )
-        {
-            bsp_Interrupt_disable( (bsp_Gpio_platformPortInfoTable[portId].intId + i) );
-            bsp_Interrupt_clearPending( (bsp_Gpio_platformPortInfoTable[portId].intId + i));
-        }
-
-        /* Clear the callback table */
-        memset( bsp_Gpio_platformPortInfoTable[portId].handlerTable,
-                0,
-                BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT );
-
-        /* Re-Enable all interrupts */
-        for( i=0; i<numInts; i++ )
-        {
-            bsp_Interrupt_enable( (bsp_Gpio_platformPortInfoTable[portId].intId + i) );
-        }
-
-        /* Wait for the peripheral to be ready in the system controller before moving on */
-        while( MAP_SysCtlPeripheralReady( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr ) == FALSE );
-
-        /* Unlock All pins */
-        MAP_GPIOUnlockPin( bsp_Gpio_platformPortInfoTable[portId].baseAddr, 0xFF );
     }
 
     bsp_Gpio_initPlatform();

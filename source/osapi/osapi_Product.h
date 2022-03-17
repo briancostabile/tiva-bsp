@@ -42,7 +42,7 @@ uint32_t  osapi_MemoryPool##_size[ ((_cnt) * ((_size + OSAPI_MEMORY_HDR_SIZE_8) 
 uint32_t* osapi_MemoryPoolFree##_size;
 
 #define OSAPI_MEMORY_POOL_INFO_ELEMENT( _size ) \
-{ ((_size) + OSAPI_MEMORY_HDR_SIZE_8),  sizeof(osapi_MemoryPool##_size),   osapi_MemoryPool##_size,   &osapi_MemoryPoolFree##_size   }
+{ (_size),  sizeof(osapi_MemoryPool##_size),   osapi_MemoryPool##_size,   &osapi_MemoryPoolFree##_size   }
 
 
 #if defined(PRODUCT)

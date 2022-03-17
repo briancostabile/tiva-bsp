@@ -87,7 +87,8 @@ svc_Eh_msgHandler( const svc_Eh_Info_t* infoPtr,
                                msgPtr->eh :
                                SVC_MSGFWK_MSG_ID_EH_GET(msgPtr->id);
 
-        if( (dstEh == SVC_EHID_BROADCAST) || (dstEh == infoPtr->eh) )
+        if( (dstEh == SVC_EHID_BROADCAST) || (dstEh == infoPtr->eh) ||
+            ((dstEh >= SVC_EHID_NUM_EHIDS) && (infoPtr->eh == svc_MsgFwk_getProxyEh())) )
         {
             infoPtr->msgHandler( msgPtr );
         }

@@ -36,6 +36,7 @@
 #include "bsp_Uart.h"
 #include "bsp_Usb.h"
 #include "bsp_TimerGp.h"
+#include "bsp_Ssi.h"
 
 
 /*==============================================================================
@@ -116,7 +117,7 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
     bsp_Gpio_interruptHandlerPortE,           // GPIO Port E
     bsp_Uart_interruptHandler0,               // UART0 Rx and Tx
     bsp_Uart_interruptHandler1,               // UART1 Rx and Tx
-    bsp_Interrupt_defaultHandler,             // SSI0 Rx and Tx
+    bsp_Ssi_interruptHandler0,                // SSI0 Rx and Tx
     bsp_I2c_interruptHandler0,                // I2C0 Master and Slave
     bsp_Interrupt_defaultHandler,             // PWM Fault
     bsp_Interrupt_defaultHandler,             // PWM Generator 0
@@ -143,7 +144,7 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
     bsp_Gpio_interruptHandlerPortG,           // GPIO Port G
     bsp_Gpio_interruptHandlerPortH,           // GPIO Port H
     bsp_Uart_interruptHandler2,               // UART2 Rx and Tx
-    bsp_Interrupt_defaultHandler,             // SSI1 Rx and Tx
+    bsp_Ssi_interruptHandler1,                // SSI1 Rx and Tx
     bsp_TimerGp_interruptHandlerTimer3A,      // Timer 3 subtimer A
     bsp_TimerGp_interruptHandlerTimer3B,      // Timer 3 subtimer B
     bsp_I2c_interruptHandler1,                // I2C1 Master and Slave
@@ -163,8 +164,8 @@ const bsp_Interrupt_VectorHandler_t BSP_ATTR_SECTION(".vecsInterrupt") BSP_ATTR_
     bsp_Gpio_interruptHandlerPortJ,           // GPIO Port J
     bsp_Gpio_interruptHandlerPortK,           // GPIO Port K
     bsp_Gpio_interruptHandlerPortL,           // GPIO Port L
-    bsp_Interrupt_defaultHandler,             // SSI2 Rx and Tx
-    bsp_Interrupt_defaultHandler,             // SSI3 Rx and Tx
+    bsp_Ssi_interruptHandler2,                // SSI2 Rx and Tx
+    bsp_Ssi_interruptHandler3,                // SSI3 Rx and Tx
     bsp_Uart_interruptHandler3,               // UART3 Rx and Tx
     bsp_Uart_interruptHandler4,               // UART4 Rx and Tx
     bsp_Uart_interruptHandler5,               // UART5 Rx and Tx
@@ -261,7 +262,7 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 8-11: I2C0 Master and Slave, PWM Fault, PWM Generator 0, PWM Generator 1
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
@@ -276,14 +277,14 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 6, 6 ) ),
     // 20-23: Timer 0 subtimer B, Timer 1 subtimer A, Timer 1 subtimer B, Timer 2 subtimer A
-    BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+    BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 24-27: Timer 2 subtimer B, Analog Comparator 0, Analog Comparator 1, Analog Comparator 2
-    BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+    BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
@@ -295,11 +296,11 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
     // 32-35: GPIO Port H, UART2 Rx and Tx, SSI1 Rx and Tx, Timer 3 subtimer A
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 36-39: Timer 3 subtimer B, I2C1 Master and Slave, CAN0, CAN1
-    BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+    BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
     // 40-43: Ethernet MAC, Hibernate, USB0 MAC, PWM Generator 3
@@ -320,28 +321,28 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
     // 52-55: GPIO Port K, GPIO Port L, SSI2 Rx and Tx, SSI3 Rx and Tx
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 56-59: UART3 Rx and Tx, UART4 Rx and Tx, UART5 Rx and Tx, UART6 Rx and Tx
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
     // 60-63: UART7 Rx and Tx, I2C2 Master and Slave, I2C3 Master and Slave, Timer 4 subtimer A
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 64-67: Timer 4 subtimer B, Timer 5 subtimer A, Timer 5 subtimer B, FPU Exception
-    BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+    BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
     // 68-71: Reserved, Reserved, I2C4 Master and Slave, I2C5 Master and Slave
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 72-75: GPIO Port M, GPIO Port N, Reserved, Tamper
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
@@ -375,13 +376,13 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
     // 96-99: DES, LCD, Wide Timer 6 subtimer A, Wide Timer 6 subtimer B
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 100-103: Wide Timer 7 subtimer A, Wide Timer 7 subtimer B, I2C6 Master and Slave, I2C7 Master and Slave
-    BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
+    BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 104-107: Reserved, 1Wire, Reserved, Reserved
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
@@ -389,8 +390,8 @@ const uint32_t bsp_Interrupt_groupPriorityTableInterrupts[] =
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ) ),
     // 108-111: Reserved, I2C8 Master and Slave, I2C9 Master and Slave, GPIO Port T
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
-                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
+                                 BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ),
                                  BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 5, 5 ) ),
     // 112-115: Reserved, Reserved, Reserved, Reserved
     BSP_INTERRUPT_BUILD_PRI_REG( BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( 1, 1 ),

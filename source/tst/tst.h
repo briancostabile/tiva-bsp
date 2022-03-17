@@ -71,5 +71,3 @@ typedef struct tst_TableElement_s {
     };
     bool_t is_menu;
 } tst_TableElement_t;
-
-extern const tst_TableElement_t tst_MenuTable[];

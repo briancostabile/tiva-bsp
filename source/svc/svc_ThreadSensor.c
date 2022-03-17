@@ -31,7 +31,9 @@
 #include "svc_TempEh.h"
 #include "svc_HumidEh.h"
 #include "svc_LightEh.h"
-#include "svc_SamplerEh.h"
+#if defined(SVC_EHID_PWRMON)
+#include "svc_PwrMonEh.h"
+#endif
 #include "svc_Eh.h"
 #include "osapi.h"
 
@@ -47,7 +49,7 @@
 /*==============================================================================
  *                                  Defines
  *============================================================================*/
-#define SVC_THREADSENSOR_STACK_SIZE    2048
+#define SVC_THREADSENSOR_STACK_SIZE    1024
 #define SVC_THREADSENSOR_STACK_SIZE_32 (SVC_THREADSENSOR_STACK_SIZE / 4)
 
 #define SVC_THREADSENSOR_QUEUE_DEPTH 10
@@ -71,8 +73,8 @@ static const svc_Eh_Info_t* svc_ThreadSensor_ehTable[] =
 // #if defined(SVC_EHID_LIGHT)
 //     &svc_LightEh_info,
 // #endif
-#if defined(SVC_EHID_SAMPLER)
-    &svc_SamplerEh_info
+#if defined(SVC_EHID_PWRMON)
+    &svc_PwrMonEh_info,
 #endif
 };
 

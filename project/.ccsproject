@@ -3,5 +3,5 @@
 <projectOptions>
 	<deviceFamily value="TMS470"/>
 	<isTargetManual value="false"/>
-	<connection value="common/targetdb/connections/Stellaris_ICDI_Connection.xml"/>
+	<connection value="common/targetdb/connections/segger_j-link_connection.xml"/>
 </projectOptions>

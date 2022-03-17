@@ -28,10 +28,10 @@
 #include "bsp_Pragma.h"
 #include "svc_ThreadUi.h"
 #include "svc_CmdEh.h"
-#include "svc_TestEh.h"
 #include "svc_ButtonEh.h"
 #include "svc_LedEh.h"
 #include "svc_Eh.h"
+#include "svc_Nvm.h"
 #include "osapi.h"
 
 #ifndef SVC_LOG_LEVEL
@@ -43,7 +43,7 @@
 /*==============================================================================
  *                                  Defines
  *============================================================================*/
-#define SVC_THREADUI_STACK_SIZE    2048
+#define SVC_THREADUI_STACK_SIZE    1024
 #define SVC_THREADUI_STACK_SIZE_32 (SVC_THREADUI_STACK_SIZE / 4)
 
 #define SVC_THREADUI_QUEUE_DEPTH 32
@@ -60,9 +60,6 @@ void*    svc_ThreadUi_queue[SVC_THREADUI_QUEUE_DEPTH];
 static const svc_Eh_Info_t* svc_ThreadUi_ehTable[] =
 {
     &svc_CmdEh_info,
-#if defined(SVC_EHID_TEST)
-    &svc_TestEh_info,
-#endif
 #if defined(SVC_EHID_BUTTON)
     &svc_ButtonEh_info,
 #endif
@@ -75,6 +72,7 @@ static const svc_Eh_Info_t* svc_ThreadUi_ehTable[] =
 static void
 svc_ThreadUi_threadMain( osapi_ThreadArg_t arg )
 {
+    svc_Nvm_init();
     svc_Eh_listRun( DIM(svc_ThreadUi_ehTable),
                     svc_ThreadUi_ehTable,
                     SVC_THREADUI_QUEUE_DEPTH,

@@ -565,8 +565,8 @@ bsp_UsbCdc_close( int fd )
 /*============================================================================*/
 int
 bsp_UsbCdc_read( int    fd,
-                char*  buffer,
-                size_t count )
+                 char*  buffer,
+                 size_t count )
 {
     bsp_UsbCdc_InternalInfo_t* internalInfoPtr;
     internalInfoPtr = (bsp_UsbCdc_InternalInfo_t*)fd;
@@ -577,8 +577,8 @@ bsp_UsbCdc_read( int    fd,
 /*============================================================================*/
 int
 bsp_UsbCdc_write( int         fd,
-                 const char* buffer,
-                 size_t      count )
+                  const char* buffer,
+                  size_t      count )
 {
     bsp_UsbCdc_InternalInfo_t* internalInfoPtr;
     internalInfoPtr = (bsp_UsbCdc_InternalInfo_t*)fd;

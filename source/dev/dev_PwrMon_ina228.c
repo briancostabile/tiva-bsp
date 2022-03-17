@@ -33,89 +33,98 @@
 #include "bsp_Pragma.h"
 #include "bsp_I2c.h"
 #include "dev_PwrMon.h"
-
-#define DEV_PWRMON_I2C_ID0     0
-#define DEV_PWRMON_I2C_ADDR0   ((bsp_I2c_Addr_t)0x40)
-#define DEV_PWRMON_I2C_SPEED0  BSP_I2C_SPEED_HIGH
-#define DEV_PWRMON_I2C_ID1     1
-#define DEV_PWRMON_I2C_ADDR1   ((bsp_I2c_Addr_t)0x40)
-#define DEV_PWRMON_I2C_SPEED1  BSP_I2C_SPEED_HIGH
-#define DEV_PWRMON_NUM_DEVICES 2
+#include "dev_PwrMon_ina.h"
+#include "dev_PwrMon_ina228.h"
 
 #if defined(BSP_PLATFORM_ENABLE_DEV_PWRMON_INA228)
 /*=============================================================================
  *                                   Defines
  *===========================================================================*/
-
-// Configuration defines
-#define DEV_PWRMON_I2C_ADDR   ((bsp_I2c_Addr_t)0x40)
-#define DEV_PWRMON_I2C_SPEED  BSP_I2C_SPEED_HIGH
-
-#define DEV_PWRMON_REG_CONFIG       ((bsp_PwrMon_I2cCmd_t)0x00)
-#define DEV_PWRMON_REG_ADC_CONFIG   ((bsp_PwrMon_I2cCmd_t)0x01)
-#define DEV_PWRMON_REG_SHUNT_CAL    ((bsp_PwrMon_I2cCmd_t)0x02)
-#define DEV_PWRMON_REG_SHUNT_TEMPCO ((bsp_PwrMon_I2cCmd_t)0x03)
-#define DEV_PWRMON_REG_VSHUNT       ((bsp_PwrMon_I2cCmd_t)0x04)
-#define DEV_PWRMON_REG_VBUS         ((bsp_PwrMon_I2cCmd_t)0x05)
-#define DEV_PWRMON_REG_DIETEMP      ((bsp_PwrMon_I2cCmd_t)0x06)
-#define DEV_PWRMON_REG_CURRENT      ((bsp_PwrMon_I2cCmd_t)0x07)
-#define DEV_PWRMON_REG_POWER        ((bsp_PwrMon_I2cCmd_t)0x08)
-#define DEV_PWRMON_REG_ENERGY       ((bsp_PwrMon_I2cCmd_t)0x09)
-#define DEV_PWRMON_REG_CHARGE       ((bsp_PwrMon_I2cCmd_t)0x0A)
-#define DEV_PWRMON_REG_DIAG_ALRT    ((bsp_PwrMon_I2cCmd_t)0x0B)
-#define DEV_PWRMON_REG_SOVL         ((bsp_PwrMon_I2cCmd_t)0x0C)
-#define DEV_PWRMON_REG_SUVL         ((bsp_PwrMon_I2cCmd_t)0x0D)
-#define DEV_PWRMON_REG_BOVL         ((bsp_PwrMon_I2cCmd_t)0x0E)
-#define DEV_PWRMON_REG_BUVL         ((bsp_PwrMon_I2cCmd_t)0x0F)
-#define DEV_PWRMON_TEMP_LIMIT       ((bsp_PwrMon_I2cCmd_t)0x10)
-#define DEV_PWRMON_PWR_LIMIT        ((bsp_PwrMon_I2cCmd_t)0x11)
-#define DEV_PWRMON_MFGR_ID          ((bsp_PwrMon_I2cCmd_t)0x3E)
-#define DEV_PWRMON_DEV_ID           ((bsp_PwrMon_I2cCmd_t)0x3F)
-typedef uint8_t bsp_PwrMon_I2cCmd_t;
-
-#define DEV_PWRMON_REG_TYPE_RO true
-#define DEV_PWRMON_REG_TYPE_RW false
-typedef uint8_t bsp_PwrMon_RegType_t;
-
-
-/*=============================================================================
- *                                   Types
- *===========================================================================*/
-/*===========================================================================*/
-typedef uint16_t dev_PwrMon_Reg_t;
-
-typedef struct dev_PwrMon_RegInfo_s
+enum
 {
-    bsp_PwrMon_I2cCmd_t cmd;
-    uint8_t             len;
-    bool                rdOnly;
-} dev_PwrMon_RegInfo_t;
+    DEV_PWRMON_AVG_MODE_SAMPLES_1    = 0x00,
+    DEV_PWRMON_AVG_MODE_SAMPLES_4    = 0x01,
+    DEV_PWRMON_AVG_MODE_SAMPLES_16   = 0x02,
+    DEV_PWRMON_AVG_MODE_SAMPLES_64   = 0x03,
+    DEV_PWRMON_AVG_MODE_SAMPLES_128  = 0x04,
+    DEV_PWRMON_AVG_MODE_SAMPLES_256  = 0x05,
+    DEV_PWRMON_AVG_MODE_SAMPLES_512  = 0x06,
+    DEV_PWRMON_AVG_MODE_SAMPLES_1024 = 0x07
+};
+typedef uint8_t dev_PwrMon_AvgMode_t;
 
-typedef struct dev_PwrMon_DeviceCtx_s
+enum
 {
-    bsp_I2c_MasterTrans_t     i2cTrans;
-    uint8_t                   wLen;
-    uint8_t                   wBuffer[3];
-    uint8_t                   rLen;
-    void*                     rPtr;
-    dev_PwrMon_ReadCallback_t callback;
-    dev_PwrMon_Reg_t          prevRegId;
-    dev_PwrMon_DeviceId_t     deviceId;
-    dev_PwrMon_ManufacturerId_t mftrId;
-} dev_PwrMon_DeviceCtx_t;
+    DEV_PWRMON_CONV_TIME_US_50   = 0x00,
+    DEV_PWRMON_CONV_TIME_US_84   = 0x01,
+    DEV_PWRMON_CONV_TIME_US_150  = 0x02,
+    DEV_PWRMON_CONV_TIME_US_280  = 0x03,
+    DEV_PWRMON_CONV_TIME_US_540  = 0x04,
+    DEV_PWRMON_CONV_TIME_US_1052 = 0x05,
+    DEV_PWRMON_CONV_TIME_US_2074 = 0x06,
+    DEV_PWRMON_CONV_TIME_US_4120 = 0x07
+};
+typedef uint8_t dev_PwrMon_ConvTime_t;
 
-typedef struct dev_PwrMon_DeviceInfo_s
+enum
 {
-    bsp_I2c_Id_t            i2cId;
-    bsp_I2c_Addr_t          i2cAddr;
-    bsp_I2c_Speed_t         i2cSpeed;
-    dev_PwrMon_DeviceCtx_t* ctx;
-} dev_PwrMon_DeviceInfo_t;
+    DEV_PWRMON_OP_MODE_PWR_DWN             = 0x00,
+
+    DEV_PWRMON_OP_MODE_TRIG_BUS            = 0x01,
+    DEV_PWRMON_OP_MODE_TRIG_SHUNT          = 0x02,
+    DEV_PWRMON_OP_MODE_TRIG_SHUNT_BUS      = 0x03,
+    DEV_PWRMON_OP_MODE_TRIG_TEMP           = 0x04,
+    DEV_PWRMON_OP_MODE_TRIG_TEMP_BUS       = 0x05,
+    DEV_PWRMON_OP_MODE_TRIG_TEMP_SHUNT     = 0x06,
+    DEV_PWRMON_OP_MODE_TRIG_TEMP_SHUNT_BUS = 0x07,
+
+    DEV_PWRMON_OP_MODE_CONT_BUS            = 0x09,
+    DEV_PWRMON_OP_MODE_CONT_SHUNT          = 0x0A,
+    DEV_PWRMON_OP_MODE_CONT_SHUNT_BUS      = 0x0B,
+    DEV_PWRMON_OP_MODE_CONT_TEMP           = 0x0C,
+    DEV_PWRMON_OP_MODE_CONT_TEMP_BUS       = 0x0D,
+    DEV_PWRMON_OP_MODE_CONT_TEMP_SHUNT     = 0x0E,
+    DEV_PWRMON_OP_MODE_CONT_TEMP_SHUNT_BUS = 0x0F
+};
+typedef uint8_t dev_PwrMon_OpMode_t;
 
 
-// The User Data parameter for I2C transactions is a callback that this
-// driver uses to chain I2C transactions together
-typedef void (*dev_PwrMon_UsrDataCallback_t)( void );
+#define DEV_PWRMON_REG_CONFIG       ((dev_PwrMon_I2cCmd_t)0x00)
+#define DEV_PWRMON_REG_ADC_CONFIG   ((dev_PwrMon_I2cCmd_t)0x01)
+#define DEV_PWRMON_REG_SHUNT_CAL    ((dev_PwrMon_I2cCmd_t)0x02)
+#define DEV_PWRMON_REG_SHUNT_TEMPCO ((dev_PwrMon_I2cCmd_t)0x03)
+#define DEV_PWRMON_REG_VSHUNT       ((dev_PwrMon_I2cCmd_t)0x04)
+#define DEV_PWRMON_REG_VBUS         ((dev_PwrMon_I2cCmd_t)0x05)
+#define DEV_PWRMON_REG_DIETEMP      ((dev_PwrMon_I2cCmd_t)0x06)
+#define DEV_PWRMON_REG_CURRENT      ((dev_PwrMon_I2cCmd_t)0x07)
+#define DEV_PWRMON_REG_POWER        ((dev_PwrMon_I2cCmd_t)0x08)
+#define DEV_PWRMON_REG_ENERGY       ((dev_PwrMon_I2cCmd_t)0x09)
+#define DEV_PWRMON_REG_CHARGE       ((dev_PwrMon_I2cCmd_t)0x0A)
+#define DEV_PWRMON_REG_DIAG_ALRT    ((dev_PwrMon_I2cCmd_t)0x0B)
+#define DEV_PWRMON_REG_SOVL         ((dev_PwrMon_I2cCmd_t)0x0C)
+#define DEV_PWRMON_REG_SUVL         ((dev_PwrMon_I2cCmd_t)0x0D)
+#define DEV_PWRMON_REG_BOVL         ((dev_PwrMon_I2cCmd_t)0x0E)
+#define DEV_PWRMON_REG_BUVL         ((dev_PwrMon_I2cCmd_t)0x0F)
+#define DEV_PWRMON_REG_TEMP_LIMIT   ((dev_PwrMon_I2cCmd_t)0x10)
+#define DEV_PWRMON_REG_PWR_LIMIT    ((dev_PwrMon_I2cCmd_t)0x11)
+#define DEV_PWRMON_REG_MFTR_ID      ((dev_PwrMon_I2cCmd_t)0x3E)
+#define DEV_PWRMON_REG_DEV_ID       ((dev_PwrMon_I2cCmd_t)0x3F)
+
+
+#define DEV_PWRMON_REG_CONFIG_BUILD( _rst, _rstAcc, _convDly, _tComp, _adcRng ) ((((_adcRng)  & 0x01) <<  4) | \
+                                                                                 (((_tComp)   & 0x01) <<  5) | \
+                                                                                 (((_convDly) & 0xFF) <<  6) | \
+                                                                                 (((_rstAcc)  & 0x01) << 14) | \
+                                                                                 (((_rst)     & 0x01) << 15))
+
+#define DEV_PWRMON_REG_ADC_CONFIG_BUILD( _mode, _sConv, _bConv, _tConv, _avg )  ((((_avg)   & 0x07) <<  0) | \
+                                                                                 (((_tConv) & 0x07) <<  3) | \
+                                                                                 (((_sConv) & 0x07) <<  6) | \
+                                                                                 (((_bConv) & 0x07) <<  9) | \
+                                                                                 (((_mode)  & 0x0F) << 12))
+
+#define DEV_PWRMON_REG_ALERT_MASK_CVRF(_reg) ((((uint16_t)(_reg) >> 1) & 0x01) == 0x01)
+#define DEV_PWRMON_REG_CONFIG_RESET DEV_PWRMON_REG_CONFIG_BUILD(1,1,0,0,0)
 
 /*=============================================================================
  *                                   Globals
@@ -138,177 +147,488 @@ static const dev_PwrMon_RegInfo_t dev_PwrMon_regInfo[] =
     { DEV_PWRMON_REG_SUVL,         2, DEV_PWRMON_REG_TYPE_RW },
     { DEV_PWRMON_REG_BOVL,         2, DEV_PWRMON_REG_TYPE_RW },
     { DEV_PWRMON_REG_BUVL,         2, DEV_PWRMON_REG_TYPE_RW },
-    { DEV_PWRMON_TEMP_LIMIT,       2, DEV_PWRMON_REG_TYPE_RW },
-    { DEV_PWRMON_PWR_LIMIT,        2, DEV_PWRMON_REG_TYPE_RW },
-    { DEV_PWRMON_MFGR_ID,          2, DEV_PWRMON_REG_TYPE_RO },
-    { DEV_PWRMON_DEV_ID,           2, DEV_PWRMON_REG_TYPE_RO },
+    { DEV_PWRMON_REG_TEMP_LIMIT,   2, DEV_PWRMON_REG_TYPE_RW },
+    { DEV_PWRMON_REG_PWR_LIMIT,    2, DEV_PWRMON_REG_TYPE_RW },
+    { DEV_PWRMON_REG_MFTR_ID,      2, DEV_PWRMON_REG_TYPE_RO },
+    { DEV_PWRMON_REG_DEV_ID,       2, DEV_PWRMON_REG_TYPE_RO },
 };
-
-dev_PwrMon_DeviceCtx_t dev_PwrMon_deviceCtx[DEV_PWRMON_NUM_DEVICES];
-
-const dev_PwrMon_DeviceInfo_t dev_PwrMon_deviceInfo[] =
-{
-    { DEV_PWRMON_I2C_ID0, DEV_PWRMON_I2C_ADDR0, DEV_PWRMON_I2C_SPEED0, &dev_PwrMon_deviceCtx[0] },
-    { DEV_PWRMON_I2C_ID1, DEV_PWRMON_I2C_ADDR1, DEV_PWRMON_I2C_SPEED1, &dev_PwrMon_deviceCtx[1] }
-};
-
 
 /*=============================================================================
  *                              Local Functions
  *===========================================================================*/
 static inline const dev_PwrMon_RegInfo_t*
-dev_PwrMon_getRegInfo( bsp_PwrMon_I2cCmd_t regId )
+dev_PwrMon_ina228_getRegInfo( dev_PwrMon_I2cCmd_t regId )
 {
-    if( regId <= DEV_PWRMON_PWR_LIMIT )
+    if( regId <= DEV_PWRMON_REG_PWR_LIMIT )
     {
         return( &dev_PwrMon_regInfo[regId] );
     }
     else
     {
-        volatile uint32_t idx = (DEV_PWRMON_PWR_LIMIT + 1) + (regId - DEV_PWRMON_MFGR_ID);
+        volatile uint32_t idx = (DEV_PWRMON_REG_PWR_LIMIT + 1) + (regId - DEV_PWRMON_REG_MFTR_ID);
         return(&dev_PwrMon_regInfo[idx]);
     }
 }
 
 /*===========================================================================*/
-// Wrapper callback for all I2C transactions
 static void
-dev_PwrMon_i2cTransCallback( bsp_I2c_Status_t status, void* usrData )
+dev_PwrMon_ina228_manufacturerId( const dev_PwrMon_DeviceInfo_t* devPtr,
+                                  dev_PwrMon_ManufacturerId_t*   dataPtr,
+                                  dev_PwrMon_Callback_t          callback,
+                                  void*                          cbData )
 {
-    dev_PwrMon_DeviceCtx_t* ctx = (dev_PwrMon_DeviceCtx_t*)usrData;
-    if( ctx->callback != NULL ) { ctx->callback(); }
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_MFTR_ID;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
     return;
 }
 
 /*===========================================================================*/
-// Wrapper function to setup the I2C transaction structure and queue it
-static void
-dev_PwrMon_i2cTransQueue( const dev_PwrMon_DeviceInfo_t* devPtr )
+void
+dev_PwrMon_ina228_deviceId( const dev_PwrMon_DeviceInfo_t* devPtr,
+                            dev_PwrMon_DeviceId_t*         dataPtr,
+                            dev_PwrMon_Callback_t          callback,
+                            void*                          cbData )
 {
-    devPtr->ctx->i2cTrans.speed    = devPtr->i2cSpeed;
-    devPtr->ctx->i2cTrans.addr     = devPtr->i2cAddr;
-    devPtr->ctx->i2cTrans.callback = dev_PwrMon_i2cTransCallback;
-    devPtr->ctx->i2cTrans.usrData  = devPtr->ctx;
-    bsp_I2c_masterTransQueue( devPtr->i2cId, &devPtr->ctx->i2cTrans );
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_DEV_ID;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_vShuntGet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                             uint8_t*                       dataPtr,
+                             dev_PwrMon_Callback_t          callback,
+                             void*                          cbData )
+{
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_VSHUNT;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_vBusGet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                           uint8_t*                       dataPtr,
+                           dev_PwrMon_Callback_t          callback,
+                           void*                          cbData )
+{
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_VBUS;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_dieTempGet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                              uint8_t*                       dataPtr,
+                              dev_PwrMon_Callback_t          callback,
+                              void*                          cbData )
+{
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_DIETEMP;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_currentGet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                              uint8_t*                       dataPtr,
+                              dev_PwrMon_Callback_t          callback,
+                              void*                          cbData )
+{
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_CURRENT;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_powerGet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                            uint8_t*                       dataPtr,
+                            dev_PwrMon_Callback_t          callback,
+                            void*                          cbData )
+{
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_POWER;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_energyGet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                            uint8_t*                       dataPtr,
+                            dev_PwrMon_Callback_t          callback,
+                            void*                          cbData )
+{
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_ENERGY;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_chargeGet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                             uint8_t*                       dataPtr,
+                             dev_PwrMon_Callback_t          callback,
+                             void*                          cbData )
+{
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_CHARGE;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_alertMaskGet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                                uint8_t*                       dataPtr,
+                                dev_PwrMon_Callback_t          callback,
+                                void*                          cbData )
+{
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_DIAG_ALRT;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
     return;
 }
 
 /*===========================================================================*/
-// Wrapper to write to the config register on the INA228.
-static void
-dev_PwrMon_i2cRegWrite( const dev_PwrMon_DeviceInfo_t* devPtr,
-                        bsp_PwrMon_I2cCmd_t            regId,
-                        uint16_t                       regValue )
+void
+dev_PwrMon_ina228_configGet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                             uint8_t*                       dataPtr,
+                             dev_PwrMon_Callback_t          callback,
+                             void*                          cbData )
 {
-    devPtr->ctx->wBuffer[0] = regId;
-    devPtr->ctx->wBuffer[1] = ((regValue >> 0) & 0xFF);
-    devPtr->ctx->wBuffer[2] = ((regValue >> 8) & 0xFF);
+    dev_PwrMon_I2cCmd_t         regId = DEV_PWRMON_REG_CONFIG;
+    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_ina228_getRegInfo( regId );
+    dev_PwrMon_commonRead( devPtr, regId, regInfoPtr->len, dataPtr, callback, cbData );
+    return;
+}
 
-    devPtr->ctx->i2cTrans.type    = BSP_I2C_TRANS_TYPE_WRITE;
-    devPtr->ctx->i2cTrans.wLen    = 3; // All writable registers are 2 bytes plus 1 byte address
-    devPtr->ctx->i2cTrans.wBuffer = devPtr->ctx->wBuffer;
-    devPtr->ctx->i2cTrans.rLen    = 0;
-    devPtr->ctx->i2cTrans.rBuffer = NULL;
-    dev_PwrMon_i2cTransQueue( devPtr );
+
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_configSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                             dev_PwrMon_WriteData_t         data,
+                             dev_PwrMon_Callback_t          callback,
+                             void*                          cbData )
+{
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_CONFIG, data, callback, cbData );
+    return;
 }
 
 /*===========================================================================*/
-// Wrapper to read data from the INA228.
-static void
-dev_PwrMon_i2cRegRead( const dev_PwrMon_DeviceInfo_t* devPtr,
-                       bsp_PwrMon_I2cCmd_t            regId )
+void
+dev_PwrMon_ina228_adcConfigSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                                dev_PwrMon_WriteData_t         data,
+                                dev_PwrMon_Callback_t          callback,
+                                void*                          cbData )
 {
-    const dev_PwrMon_RegInfo_t* regInfoPtr = dev_PwrMon_getRegInfo( regId );
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_ADC_CONFIG, data, callback, cbData );
+    return;
+}
 
-    devPtr->ctx->i2cTrans.rLen    = regInfoPtr->len;
-    devPtr->ctx->i2cTrans.rBuffer = devPtr->ctx->rPtr;
-    if( regId != devPtr->ctx->prevRegId )
-    {
-        devPtr->ctx->wBuffer[0]       = regId;
-        devPtr->ctx->i2cTrans.type    = BSP_I2C_TRANS_TYPE_WRITE_READ;
-        devPtr->ctx->i2cTrans.wLen    = 1;
-        devPtr->ctx->i2cTrans.wBuffer = devPtr->ctx->wBuffer;
-    }
-    else
-    {
-        devPtr->ctx->i2cTrans.type    = BSP_I2C_TRANS_TYPE_READ;
-        devPtr->ctx->i2cTrans.wLen    = 0;
-        devPtr->ctx->i2cTrans.wBuffer = NULL;
-    }
-    devPtr->ctx->prevRegId = regId;
-    dev_PwrMon_i2cTransQueue( devPtr );
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_calSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                          dev_PwrMon_WriteData_t         data,
+                          dev_PwrMon_Callback_t          callback,
+                          void*                          cbData )
+{
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_SHUNT_CAL, data, callback, cbData );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_shuntTempcoSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                                  dev_PwrMon_WriteData_t         data,
+                                  dev_PwrMon_Callback_t          callback,
+                                  void*                          cbData )
+{
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_SHUNT_TEMPCO, data, callback, cbData );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_alertMaskSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                                dev_PwrMon_WriteData_t         data,
+                                dev_PwrMon_Callback_t          callback,
+                                void*                          cbData )
+{
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_DIAG_ALRT, data, callback, cbData );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_shuntOverVSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                                 dev_PwrMon_WriteData_t         data,
+                                 dev_PwrMon_Callback_t          callback,
+                                 void*                          cbData )
+{
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_SOVL, data, callback, cbData );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_shuntUnderVSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                                  dev_PwrMon_WriteData_t         data,
+                                  dev_PwrMon_Callback_t          callback,
+                                  void*                          cbData )
+{
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_SUVL, data, callback, cbData );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_busOverVSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                               dev_PwrMon_WriteData_t         data,
+                               dev_PwrMon_Callback_t          callback,
+                               void*                          cbData )
+{
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_BOVL, data, callback, cbData );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_busUnderVSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                                dev_PwrMon_WriteData_t         data,
+                                dev_PwrMon_Callback_t          callback,
+                                void*                          cbData )
+{
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_BUVL, data, callback, cbData );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_tempLimitSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                                dev_PwrMon_WriteData_t         data,
+                                dev_PwrMon_Callback_t          callback,
+                                void*                          cbData )
+{
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_TEMP_LIMIT, data, callback, cbData );
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_pwrLimitSet( const dev_PwrMon_DeviceInfo_t* devPtr,
+                                dev_PwrMon_WriteData_t         data,
+                                dev_PwrMon_Callback_t          callback,
+                                void*                          cbData )
+{
+    dev_PwrMon_commonWrite( devPtr, DEV_PWRMON_REG_PWR_LIMIT, data, callback, cbData );
+    return;
 }
 
 
 /*=============================================================================
  *                                   Functions
  *===========================================================================*/
-void dev_PwrMon_mftrCallback( void )
-{
-    dev_PwrMon_deviceId( 0, &dev_PwrMon_deviceCtx[0].deviceId, NULL );
-}
 /*===========================================================================*/
 void
-dev_PwrMon_init( void )
+dev_PwrMon_ina228_init( const dev_PwrMon_DeviceInfo_t* devPtr )
 {
-    BSP_GPIO_OUT_SET_HIGH( TPN0 );
-    for( int i=0; i < DIM(dev_PwrMon_deviceInfo); i++ )
+    // Read out the device and manufacturer Ids
+    dev_PwrMon_ina228_manufacturerId( devPtr, &devPtr->ctx->mftrId, NULL, NULL );
+    dev_PwrMon_ina228_deviceId( devPtr, &devPtr->ctx->deviceId, NULL, NULL );
+
+    // reset device, disable alert and set each cal reg to 0
+    dev_PwrMon_ina228_configSet( devPtr, DEV_PWRMON_REG_CONFIG_RESET, NULL, NULL );
+    dev_PwrMon_ina228_alertMaskSet( devPtr, 0x0000, NULL, NULL );
+    dev_PwrMon_ina228_calSet( devPtr, 0x0000, NULL, NULL );
+    dev_PwrMon_ina228_configSet( devPtr, DEV_PWRMON_REG_CONFIG_BUILD(0,0,0,0,1), NULL, NULL );
+
+    return;
+}
+
+/*===========================================================================*/
+void
+dev_PwrMon_ina228_config( const dev_PwrMon_DeviceInfo_t* devPtr,
+                          dev_PwrMon_DevModeMask_t       modeMask,
+                          dev_PwrMon_Callback_t          callback,
+                          void*                          cbData )
+{
+    uint16_t tmpReg;
+    dev_PwrMon_OpMode_t mode = DEV_PWRMON_OP_MODE_PWR_DWN;
+
+    if( (modeMask & DEV_PWR_MON_DEVICE_MODE_MASK_SHUNT) &&
+        (modeMask & DEV_PWR_MON_DEVICE_MODE_MASK_BUS) )
     {
-        dev_PwrMon_deviceCtx[i].prevRegId = 0xFF;
-        dev_PwrMon_deviceCtx[i].callback  = NULL;
-        bsp_I2c_masterControl( dev_PwrMon_deviceInfo[i].i2cId, BSP_I2C_CONTROL_ENABLE );
-
-       // dev_PwrMon_manufacturerId( i, &dev_PwrMon_deviceCtx[i].deviceId, NULL );
-        //dev_PwrMon_deviceId( i, &dev_PwrMon_deviceCtx[i].mfgrId, NULL );
+        mode = DEV_PWRMON_OP_MODE_CONT_SHUNT_BUS;
     }
-    dev_PwrMon_manufacturerId( 0, &dev_PwrMon_deviceCtx[0].mftrId, dev_PwrMon_mftrCallback );
+    else if( modeMask & DEV_PWR_MON_DEVICE_MODE_MASK_BUS )
+    {
+        mode = DEV_PWRMON_OP_MODE_CONT_BUS;
+    }
+    else
+    {
+        mode = DEV_PWRMON_OP_MODE_CONT_SHUNT;
+    }
+    // DEV_PWRMON_CONV_TIME_US_50   = 0x00,
+    // DEV_PWRMON_CONV_TIME_US_84   = 0x01,
+    // DEV_PWRMON_CONV_TIME_US_150  = 0x02,
+    // DEV_PWRMON_CONV_TIME_US_280  = 0x03,
+    // DEV_PWRMON_CONV_TIME_US_540  = 0x04,
+    // DEV_PWRMON_CONV_TIME_US_1052 = 0x05,
+    // DEV_PWRMON_CONV_TIME_US_2074 = 0x06,
+    // DEV_PWRMON_CONV_TIME_US_4120 = 0x07
 
-    BSP_GPIO_OUT_SET_LOW( TPN0 );
-    // Configure all devices
+    tmpReg = DEV_PWRMON_REG_ADC_CONFIG_BUILD( mode,
+                                              DEV_PWRMON_CONV_TIME_US_84,
+                                              DEV_PWRMON_CONV_TIME_US_84,
+                                              DEV_PWRMON_CONV_TIME_US_84,
+                                              DEV_PWRMON_AVG_MODE_SAMPLES_4 );
+
+    dev_PwrMon_ina228_adcConfigSet( devPtr, tmpReg, callback, cbData );
 
     return;
+}
+
+#define CAL_AVG_VBUS 256
+/*===========================================================================*/
+int32_t
+dev_PwrMon_ina228_vBusCal( const dev_PwrMon_DeviceInfo_t* devPtr )
+{
+    uint16_t tmpReg;
+
+    // Power off device
+    tmpReg = DEV_PWRMON_REG_ADC_CONFIG_BUILD( DEV_PWRMON_OP_MODE_PWR_DWN,
+                                              DEV_PWRMON_CONV_TIME_US_280,
+                                              DEV_PWRMON_CONV_TIME_US_280,
+                                              DEV_PWRMON_CONV_TIME_US_280,
+                                              DEV_PWRMON_AVG_MODE_SAMPLES_1 );
+
+    dev_PwrMon_ina228_adcConfigSet( devPtr, tmpReg, NULL, 0 );
+
+    int32_t vBusSum = 0;
+    int32_t vBus;
+    for( int i=0; i<CAL_AVG_VBUS; i++ )
+    {
+        // Trigger one-shot longer conversion of Shunt and Bus
+        tmpReg = DEV_PWRMON_REG_ADC_CONFIG_BUILD( DEV_PWRMON_OP_MODE_TRIG_BUS,
+                                                  DEV_PWRMON_CONV_TIME_US_280,
+                                                  DEV_PWRMON_CONV_TIME_US_280,
+                                                  DEV_PWRMON_CONV_TIME_US_280,
+                                                  DEV_PWRMON_AVG_MODE_SAMPLES_1 );
+
+        dev_PwrMon_ina228_adcConfigSet( devPtr, tmpReg, NULL, 0 );
+
+        // Wait for device to complete conversions
+        tmpReg = 0;
+        while( DEV_PWRMON_REG_ALERT_MASK_CVRF( tmpReg ) == 0 )
+        {
+            dev_PwrMon_ina228_alertMaskGet( devPtr, (uint8_t*)&tmpReg, NULL, 0 );
+        }
+
+        // Read out Vshunt and Vbus voltages. They should be 0
+        dev_PwrMon_ina228_vBusGet( devPtr, (uint8_t*)&vBus, NULL, 0 );
+        vBusSum += (vBus >> 10);
+    }
+    vBus = (vBusSum / CAL_AVG_VBUS);
+
+    return( (int32_t)vBus );
+}
+
+#define CAL_AVG_VSHUNT 256
+/*===========================================================================*/
+int32_t
+dev_PwrMon_ina228_vShuntCal( const dev_PwrMon_DeviceInfo_t* devPtr )
+{
+    dev_PwrMon_Data_t tmpReg;
+
+    // Power off device
+    tmpReg = DEV_PWRMON_REG_ADC_CONFIG_BUILD( DEV_PWRMON_OP_MODE_PWR_DWN,
+                                              DEV_PWRMON_CONV_TIME_US_280,
+                                              DEV_PWRMON_CONV_TIME_US_280,
+                                              DEV_PWRMON_CONV_TIME_US_280,
+                                              DEV_PWRMON_AVG_MODE_SAMPLES_1 );
+
+    dev_PwrMon_ina228_adcConfigSet( devPtr, tmpReg, NULL, 0 );
+
+    int32_t vShuntSum = 0;
+    int32_t vShunt;
+    for( int i=0; i<CAL_AVG_VSHUNT; i++ )
+    {
+        // Trigger one-shot longer conversion of Shunt and Bus
+        tmpReg = DEV_PWRMON_REG_ADC_CONFIG_BUILD( DEV_PWRMON_OP_MODE_TRIG_SHUNT,
+                                                  DEV_PWRMON_CONV_TIME_US_280,
+                                                  DEV_PWRMON_CONV_TIME_US_280,
+                                                  DEV_PWRMON_CONV_TIME_US_280,
+                                                  DEV_PWRMON_AVG_MODE_SAMPLES_1 );
+
+        dev_PwrMon_ina228_adcConfigSet( devPtr, tmpReg, NULL, 0 );
+
+        // Wait for device to complete conversions
+        tmpReg = 0;
+        while( DEV_PWRMON_REG_ALERT_MASK_CVRF( tmpReg ) == 0 )
+        {
+            dev_PwrMon_ina228_alertMaskGet( devPtr, (uint8_t*)&tmpReg, NULL, 0 );
+        }
+
+        // Read out Vshunt and Vbus voltages. They should be 0
+        dev_PwrMon_ina228_vShuntGet( devPtr, (uint8_t*)&vShunt, NULL, 0 );
+        vShuntSum += (vShunt >> 10);
+    }
+    vShunt = (vShuntSum / CAL_AVG_VSHUNT);
+
+    return( (int32_t)vShunt );
+}
+
+#define SVC_PWRMON_CHANNEL_BUS_ADC_TO_MV(_val) (((_val) * 1953125) / 10000000)
+/*===========================================================================*/
+int32_t
+dev_PwrMon_ina228_vBusConvert( int32_t val )
+{
+    return( SVC_PWRMON_CHANNEL_BUS_ADC_TO_MV(val) );
+}
+
+#define SVC_PWRMON_CHANNEL_SHUNT_ADC_TO_UV(_val) (((_val) * 3125) / 10000)
+#define SVC_PWRMON_CHANNEL_SHUNT_HIGH_RES_ADC_TO_UV(_val) (((_val) * 78125) / 1000000)
+/*===========================================================================*/
+int32_t
+dev_PwrMon_ina228_vShuntConvert( int32_t val )
+{
+    // Todo:Check configured ADC range
+    int64_t tmp = SVC_PWRMON_CHANNEL_SHUNT_HIGH_RES_ADC_TO_UV((int64_t)(val));
+    return( (int32_t)tmp );
 }
 
 /*===========================================================================*/
-void
-dev_PwrMon_manufacturerId( bsp_PwrMon_DevId_t           devId,
-                           dev_PwrMon_ManufacturerId_t* dataPtr,
-                           dev_PwrMon_ReadCallback_t    callback )
+int32_t
+dev_PwrMon_ina228_format( int32_t val )
 {
-    const dev_PwrMon_DeviceInfo_t* devPtr = &dev_PwrMon_deviceInfo[devId];
-    devPtr->ctx->callback = callback;
-    devPtr->ctx->rLen     = sizeof(dev_PwrMon_ManufacturerId_t);
-    devPtr->ctx->rPtr     = dataPtr;
-    dev_PwrMon_i2cRegRead( devPtr, DEV_PWRMON_DEV_ID );
-    return;
+    // Sign extend: If 20th bit is 1 then it's negative
+    if( (val & 0x00800000) != 0 )
+    {
+        val |= 0xFF000000;
+    }
+    return( (val >> 4) );
 }
 
 /*===========================================================================*/
-void
-dev_PwrMon_deviceId( bsp_PwrMon_DevId_t        devId,
-                     dev_PwrMon_DeviceId_t*    dataPtr,
-                     dev_PwrMon_ReadCallback_t callback )
+dev_PwrMon_DeviceApi_t dev_PwrMon_ina228_deviceApi =
 {
-    const dev_PwrMon_DeviceInfo_t* devPtr = &dev_PwrMon_deviceInfo[devId];
-    devPtr->ctx->callback = callback;
-    devPtr->ctx->rLen     = sizeof(dev_PwrMon_DeviceId_t);
-    devPtr->ctx->rPtr     = dataPtr;
-    dev_PwrMon_i2cRegRead( devPtr, DEV_PWRMON_MFGR_ID );
-    return;
-}
-
-/*===========================================================================*/
-void
-dev_PwrMon_sample( bsp_PwrMon_DevId_t        devId,
-                   dev_PwrMon_Sample_t*      dataPtr,
-                   dev_PwrMon_ReadCallback_t callback )
-{
-    const dev_PwrMon_DeviceInfo_t* devPtr = &dev_PwrMon_deviceInfo[devId];
-    devPtr->ctx->callback = callback;
-    devPtr->ctx->rLen     = sizeof(dev_PwrMon_Sample_t);
-    devPtr->ctx->rPtr     = dataPtr;
-    dev_PwrMon_i2cRegRead( devPtr, DEV_PWRMON_REG_CURRENT );
-    return;
-}
-
+    dev_PwrMon_ina228_init,
+    dev_PwrMon_ina228_config,
+    {
+        dev_PwrMon_ina228_vBusGet,
+        dev_PwrMon_ina228_vBusCal,
+        dev_PwrMon_ina228_format,
+        dev_PwrMon_ina228_vBusConvert
+    },
+    {
+        dev_PwrMon_ina228_vShuntGet,
+        dev_PwrMon_ina228_vShuntCal,
+        dev_PwrMon_ina228_format,
+        dev_PwrMon_ina228_vShuntConvert
+    }
+};
 #endif

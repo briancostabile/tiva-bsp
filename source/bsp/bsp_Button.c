@@ -31,6 +31,8 @@
 #include "bsp_Button.h"
 #include "bsp_Gpio.h"
 
+#if (BSP_PLATFORM_IO_BUTTON_NUM > 0)
+
 /*==============================================================================
  *                                Types
  *============================================================================*/
@@ -179,4 +181,8 @@ bsp_Button_state( bsp_Button_Id_t id )
     return( ((bsp_Button_ioInfoTable[id].pressPolarity == BSP_BUTTON_PRESS_POLARITY_LOW) && (mask == 0)) ?
                 BSP_BUTTON_STATE_PRESSED : BSP_BUTTON_STATE_NOT_PRESSED );
 }
+#else
+/*============================================================================*/
+void bsp_Button_init( void ){return;}
+#endif
 

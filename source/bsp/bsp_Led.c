@@ -52,7 +52,7 @@ bsp_Led_init( void )
             /* For each port configure the LED IO as output and set to low */
             const bsp_Led_GroupElementInfo_t* ledPtr = &bsp_Led_infoTable[i].groupTable[j];
             bsp_Gpio_configOutput( ledPtr->portId, ledPtr->mask, FALSE, ledPtr->drive );
-            bsp_Gpio_write( ledPtr->portId, ledPtr->mask, 0 );
+            bsp_Gpio_write( ledPtr->portId, ledPtr->mask, (!(ledPtr->polarity) * ledPtr->mask) );
         }
     }
     return;
@@ -68,7 +68,10 @@ bsp_Led_setColor( bsp_Led_Id_t    id,
     for( uint8_t j=0; j<bsp_Led_infoTable[id].cnt; j++ )
     {
         ledPtr = &bsp_Led_infoTable[id].groupTable[j];
-        bsp_Gpio_write( ledPtr->portId, ledPtr->mask, (color & ledPtr->color) ? ledPtr->mask : 0 );
+        bsp_Gpio_write( ledPtr->portId, ledPtr->mask,
+                        (color & ledPtr->color) ?
+                            ((ledPtr->polarity) * ledPtr->mask) :
+                            (!(ledPtr->polarity) * ledPtr->mask) );
     }
     return;
 }
