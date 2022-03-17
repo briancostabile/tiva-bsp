@@ -56,6 +56,7 @@
 #define BSP_PLATFORM_LED_BIT_MASK_LED_2   BSP_GPIO_BIT_MASK_LED_G
 #define BSP_PLATFORM_LED_DRIVE_LED_2      BSP_GPIO_DRIVE_2MA
 #define BSP_PLATFORM_LED_POLARITY_LED_2   1
+#define BSP_PLATFORM_LED_POLARITY_LED_2   1
 
 /*==============================================================================
  *                            Public Functions

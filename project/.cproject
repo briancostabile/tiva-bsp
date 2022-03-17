@@ -381,7 +381,7 @@
 						</tool>
 					</fileInfo>
 					<sourceEntries>
-						<entry excluding="tm4c123gh6pm.lds|TivaBspSensor_tm4c123gh6pm_gcc.lds|TivaBspSensor_tm4c123gh6pm_ccs.cmd|tm4c123gh6pm.cmd|TivaBspCore_tm4c123gh6pm_gcc.lds|TivaBspCore_tm4c123gh6pm_ccs.cmd|tm4c129xnczad.lds|tm4c129xnczad.cmd|TivaBspCore_tm4c129xnczad_ccs.cmd|TivaBspCommon.cmd|TivaBspCommon.lds|source/bsp/platform/ektm4c123sensor|source/bsp/processor/tm4c123|source/bsp/platform/ektm4c123gxl|third_party/FreeRTOS/FreeRTOSv202107.00/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Lucca_tm4c129xnczad_gcc.lds|source/svc/product/TivaBspSensor|source/svc/product/Lucca|source/bsp/platform/luccaproto1|tm4c123gh6pm.lds|TivaBspSensor_tm4c123gh6pm_gcc.lds|TivaBspSensor_tm4c123gh6pm_ccs.cmd|tm4c123gh6pm.cmd|TivaBspCore_tm4c123gh6pm_gcc.lds|TivaBspCore_tm4c123gh6pm_ccs.cmd|tm4c129xnczad.lds|tm4c129xnczad.cmd|TivaBspCore_tm4c129xnczad_ccs.cmd|TivaBspCommon.cmd|TivaBspCommon.lds|source/bsp/platform/ektm4c123sensor|source/bsp/processor/tm4c123|source/bsp/platform/ektm4c123gxl|third_party/FreeRTOS/FreeRTOSv202107.00/Source/portable/CCS|source/bsp/toolchain/ccs|source/bsp/bsp_Gpio_ektm4c123gxlSensorHub.c|source/bsp/bsp_Interrupt_ektm4c123gxlSensorHub.c|lm4f232h5bb_startup_ccs.c|third_party/TI/TivaWare_C_Series-2.2.0.295/driverlib/epi_workaround_ccs.s" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

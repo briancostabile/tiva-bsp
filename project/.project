@@ -182,6 +182,16 @@
 			<locationURI>SOURCE_ROOT/bsp/bsp_Clk.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/bsp_Crc.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Crc.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_Crc.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Crc.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/bsp_Dma.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/bsp_Dma.c</locationURI>
@@ -190,6 +200,16 @@
 			<name>source/bsp/bsp_Dma.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/bsp_Dma.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_Eeprom.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Eeprom.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_Eeprom.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Eeprom.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/bsp_Gpio.c</name>
@@ -260,6 +280,16 @@
 			<name>source/bsp/bsp_Reset.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/bsp_Reset.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_Ssi.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Ssi.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/bsp_Ssi.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/bsp_Ssi.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/bsp_TimerGp.c</name>
@@ -507,6 +537,16 @@
 			<locationURI>SOURCE_ROOT/svc/svc_MsgFwk.h</locationURI>
 		</link>
 		<link>
+			<name>source/svc/svc_Nvm.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_Nvm.c</locationURI>
+		</link>
+		<link>
+			<name>source/svc/svc_Nvm.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/svc/svc_Nvm.h</locationURI>
+		</link>
+		<link>
 			<name>source/svc/svc_PwrMonEh.c</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/svc/svc_PwrMonEh.c</locationURI>
@@ -747,6 +787,16 @@
 			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Gpio_dktm4c129x.h</locationURI>
 		</link>
 		<link>
+			<name>source/bsp/platform/dktm4c129x/bsp_Led_dktm4c129x.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Led_dktm4c129x.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/platform/dktm4c129x/bsp_Led_dktm4c129x.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Led_dktm4c129x.h</locationURI>
+		</link>
+		<link>
 			<name>source/bsp/platform/dktm4c129x/bsp_Platform_dktm4c129x.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/platform/dktm4c129x/bsp_Platform_dktm4c129x.h</locationURI>
@@ -975,6 +1025,16 @@
 			<name>source/bsp/processor/tm4c129/bsp_Interrupt_tm4c129.h</name>
 			<type>1</type>
 			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Interrupt_tm4c129.h</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_Ssi_tm4c129.c</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Ssi_tm4c129.c</locationURI>
+		</link>
+		<link>
+			<name>source/bsp/processor/tm4c129/bsp_Ssi_tm4c129.h</name>
+			<type>1</type>
+			<locationURI>SOURCE_ROOT/bsp/processor/tm4c129/bsp_Ssi_tm4c129.h</locationURI>
 		</link>
 		<link>
 			<name>source/bsp/processor/tm4c129/bsp_TimerGp_tm4c129.c</name>
