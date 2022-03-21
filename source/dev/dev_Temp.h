@@ -34,19 +34,16 @@
 // Signed Fixed point Q10.6 values
 typedef int16_t dev_Temp_MeasTemperature_t;
 
-typedef void (*dev_Temp_MeasCallback_t)( dev_Temp_MeasTemperature_t temp );
+typedef void (*dev_Temp_MeasCallback_t)(dev_Temp_MeasTemperature_t temp);
 
 /*==============================================================================
  *                               Prototypes
  *============================================================================*/
 /*===========================================================================*/
-void
-dev_Temp_init( void );
+void dev_Temp_init(void);
 
 /*===========================================================================*/
-void
-dev_Temp_measTrigger( dev_Temp_MeasCallback_t callback );
+void dev_Temp_measTrigger(dev_Temp_MeasCallback_t callback);
 
 /*===========================================================================*/
-void
-dev_Temp_measRead( dev_Temp_MeasTemperature_t* measPtr );
+void dev_Temp_measRead(dev_Temp_MeasTemperature_t *measPtr);

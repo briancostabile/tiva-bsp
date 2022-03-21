@@ -37,8 +37,14 @@
 #define SVC_NVM_DATA_TYPE      0x1111
 #define SVC_NVM_DATA_FORMAT_V1 0x0001
 
+typedef struct svc_Nvm_ChannelInfo_s {
+    int16_t vBusOffset;
+    int16_t vShuntOffset;
+} svc_Nvm_ChannelInfo_t;
+
 typedef struct svc_Nvm_DataV1_s {
-    uint32_t tmp;
+    uint32_t              numCh;
+    svc_Nvm_ChannelInfo_t channelInfo[BSP_PLATFORM_PWRMON_NUM_CHANNELS];
 } svc_Nvm_DataV1_t;
 
 typedef struct svc_Nvm_Data_s {
@@ -74,6 +80,34 @@ static inline void svc_Nvm_initData(void *dataPtr)
 {
     svc_Nvm_DataV1_t *dataPtrV1 = &((svc_Nvm_Data_t *)dataPtr)->data.v1;
     memset(dataPtrV1, 0, sizeof(svc_Nvm_DataV1_t));
-    dataPtrV1->tmp = 0x12345678;
+    dataPtrV1->numCh = BSP_PLATFORM_PWRMON_NUM_CHANNELS;
     return;
 }
+
+/*============================================================================*/
+static inline void
+svc_Nvm_updateCalData(void *dataPtr, uint32_t chIdx, int16_t vBusOffset, int16_t vShuntOffset)
+{
+    svc_Nvm_DataV1_t *dataPtrV1 = &((svc_Nvm_Data_t *)dataPtr)->data.v1;
+    BSP_ASSERT(chIdx < dataPtrV1->numCh);
+    dataPtrV1->channelInfo[chIdx].vBusOffset   = vBusOffset;
+    dataPtrV1->channelInfo[chIdx].vShuntOffset = vShuntOffset;
+    return;
+}
+
+/*============================================================================*/
+static inline int16_t svc_Nvm_getCalDataBusOffset(void *dataPtr, uint32_t chIdx)
+{
+    svc_Nvm_DataV1_t *dataPtrV1 = &((svc_Nvm_Data_t *)dataPtr)->data.v1;
+    BSP_ASSERT(chIdx < dataPtrV1->numCh);
+    return dataPtrV1->channelInfo[chIdx].vBusOffset;
+}
+
+/*============================================================================*/
+static inline int16_t svc_Nvm_getCalDataShuntOffset(void *dataPtr, uint32_t chIdx)
+{
+    svc_Nvm_DataV1_t *dataPtrV1 = &((svc_Nvm_Data_t *)dataPtr)->data.v1;
+    BSP_ASSERT(chIdx < dataPtrV1->numCh);
+    return dataPtrV1->channelInfo[chIdx].vShuntOffset;
+}
+

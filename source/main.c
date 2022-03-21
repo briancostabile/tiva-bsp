@@ -21,7 +21,6 @@
  */
 //*****************************************************************************
 
-
 #include "bsp_Types.h"
 #include "bsp_Pragma.h"
 #include "bsp_Reset.h"
@@ -43,6 +42,7 @@
 #include "bsp_Crc.h"
 #include "bsp_Eeprom.h"
 #include "bsp_Ssi.h"
+#include "bsp_Mfg.h"
 
 #include "osapi.h"
 
@@ -57,29 +57,25 @@
 #include <string.h>
 //#include <_lock.h>
 
-
 //*****************************************************************************
 //
 // The error routine that is called if the driver library encounters an error.
 //
 //*****************************************************************************
 #ifdef DEBUG
-void
-__error__(char *pcFilename, uint32_t ui32Line)
-{
-}
+void __error__(char *pcFilename, uint32_t ui32Line) {}
 #endif
 
-
 //*****************************************************************************
-int
-main(void)
+int main(void)
+
 {
-    extern int remove_device( char* devName );
+    extern int remove_device(char *devName);
 
     bsp_Clk_init();
     bsp_Reset_init();
     bsp_Interrupt_init();
+    bsp_Mfg_init();
     bsp_Dma_init();
     bsp_Gpio_init();
     bsp_Trace_init();
@@ -95,6 +91,13 @@ main(void)
     bsp_Crc_init();
     bsp_Eeprom_init();
     bsp_Ssi_init();
+
+    if ((bsp_Button_state(0) == BSP_BUTTON_STATE_PRESSED) ||
+        (bsp_Button_state(1) == BSP_BUTTON_STATE_PRESSED) ||
+        (bsp_Reset_getSwReason() == BSP_RESET_SWREASON_BOOTLOADER)) {
+        bsp_Led_setColor(BSP_PLATFORM_LED_ID_STATUS, (BSP_LED_COLOR_MASK_B | BSP_LED_COLOR_MASK_R));
+        bsp_Usb_bootloader();
+    }
 
     // Initialize the OS
     osapi_init();

@@ -35,34 +35,29 @@
 typedef int16_t dev_Humid_MeasHumidity_t;
 typedef int16_t dev_Humid_MeasTemperature_t;
 
-typedef void (*dev_Humid_MeasCallback_t)( dev_Humid_MeasHumidity_t    humidity,
-                                          dev_Humid_MeasTemperature_t temperature );
-typedef void (*dev_Humid_MeasCallbackHumidity_t)( dev_Humid_MeasHumidity_t meas );
-typedef void (*dev_Humid_MeasCallbackTemperature_t)( dev_Humid_MeasTemperature_t meas );
+typedef void (*dev_Humid_MeasCallback_t)(
+    dev_Humid_MeasHumidity_t    humidity,
+    dev_Humid_MeasTemperature_t temperature);
+typedef void (*dev_Humid_MeasCallbackHumidity_t)(dev_Humid_MeasHumidity_t meas);
+typedef void (*dev_Humid_MeasCallbackTemperature_t)(dev_Humid_MeasTemperature_t meas);
 
 /*==============================================================================
  *                               Prototypes
  *============================================================================*/
 /*===========================================================================*/
-void
-dev_Humid_init( void );
+void dev_Humid_init(void);
 
 /*===========================================================================*/
-void
-dev_Humid_measTrigger( dev_Humid_MeasCallback_t callback );
+void dev_Humid_measTrigger(dev_Humid_MeasCallback_t callback);
 
 /*===========================================================================*/
-void
-dev_Humid_measTriggerHumidity( dev_Humid_MeasCallbackHumidity_t callback );
+void dev_Humid_measTriggerHumidity(dev_Humid_MeasCallbackHumidity_t callback);
 
 /*===========================================================================*/
-void
-dev_Humid_measReadHumidity( dev_Humid_MeasHumidity_t* measPtr );
+void dev_Humid_measReadHumidity(dev_Humid_MeasHumidity_t *measPtr);
 
 /*===========================================================================*/
-void
-dev_Humid_measTriggerTemperature( dev_Humid_MeasCallbackHumidity_t callback );
+void dev_Humid_measTriggerTemperature(dev_Humid_MeasCallbackHumidity_t callback);
 
 /*===========================================================================*/
-void
-dev_Humid_measReadTemperature( dev_Humid_MeasTemperature_t* measPtr );
+void dev_Humid_measReadTemperature(dev_Humid_MeasTemperature_t *measPtr);

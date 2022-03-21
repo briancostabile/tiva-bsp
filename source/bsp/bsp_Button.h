@@ -41,11 +41,10 @@ typedef struct {
     bsp_Gpio_PortId_t          portId;
     bsp_Gpio_BitMask_t         mask;
     bsp_Button_PressPolarity_t pressPolarity;
-}bsp_Button_IoInfo_t;
-
+} bsp_Button_IoInfo_t;
 
 /* Include after defining IoInfo structure because platform depends on that structure */
-#include BUILD_INCLUDE_STRING( bsp_Button_, PLATFORM )
+#include BUILD_INCLUDE_STRING(bsp_Button_, PLATFORM)
 
 /*============================================================================*/
 typedef uint8_t bsp_Button_Id_t;
@@ -61,26 +60,19 @@ typedef uint8_t bsp_Button_Control_t;
 typedef uint8_t bsp_Button_State_t;
 
 /*============================================================================*/
-typedef void (* bsp_Button_PressHandler_t)( bsp_Button_Id_t id );
-
+typedef void (*bsp_Button_PressHandler_t)(bsp_Button_Id_t id);
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Button_init( void );
+void bsp_Button_init(void);
 
 /*============================================================================*/
-void
-bsp_Button_control( bsp_Button_Id_t      id,
-                    bsp_Button_Control_t control );
+void bsp_Button_control(bsp_Button_Id_t id, bsp_Button_Control_t control);
 
 /*============================================================================*/
-void
-bsp_Button_registerHandler( bsp_Button_Id_t           id,
-                            bsp_Button_PressHandler_t handler );
+void bsp_Button_registerHandler(bsp_Button_Id_t id, bsp_Button_PressHandler_t handler);
 
 /*============================================================================*/
-bsp_Button_State_t
-bsp_Button_state( bsp_Button_Id_t id );
+bsp_Button_State_t bsp_Button_state(bsp_Button_Id_t id);

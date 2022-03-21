@@ -37,26 +37,24 @@
 /*==============================================================================
  *                              Types
  *============================================================================*/
-typedef struct BSP_ATTR_PACKED bsp_Dma_ChDescCtrl_s
-{
-    uint32_t xferMode    : 3;
+typedef struct BSP_ATTR_PACKED bsp_Dma_ChDescCtrl_s {
+    uint32_t xferMode : 3;
     uint32_t nxtUseBurst : 1;
-    uint32_t xfersize    : 10;
-    uint32_t arbSize     : 4;
-    uint32_t srcProt     : 1;
-    uint32_t rsvd1       : 2;
-    uint32_t dstProt     : 1;
-    uint32_t rsvd2       : 2;
-    uint32_t srcSize     : 2;
-    uint32_t srcInc      : 2;
-    uint32_t dstSize     : 2;
-    uint32_t dstInc      : 2;
+    uint32_t xfersize : 10;
+    uint32_t arbSize : 4;
+    uint32_t srcProt : 1;
+    uint32_t rsvd1 : 2;
+    uint32_t dstProt : 1;
+    uint32_t rsvd2 : 2;
+    uint32_t srcSize : 2;
+    uint32_t srcInc : 2;
+    uint32_t dstSize : 2;
+    uint32_t dstInc : 2;
 } bsp_Dma_ChDescCtrl_t;
 
-typedef struct BSP_ATTR_PACKED bsp_Dma_ChDesc_s
-{
-    void*                srcPtr;
-    void*                dstPtr;
+typedef struct BSP_ATTR_PACKED bsp_Dma_ChDesc_s {
+    void *               srcPtr;
+    void *               dstPtr;
     bsp_Dma_ChDescCtrl_t ctrl;
     uint32_t             rsvd;
 } bsp_Dma_ChDesc_t;
@@ -66,34 +64,34 @@ typedef struct BSP_ATTR_PACKED bsp_Dma_ChDesc_s
  *                              Globals
  *============================================================================*/
 /*============================================================================*/
-static BSP_ATTR_ALIGNMENT(1024) bsp_Dma_ChDesc_t bsp_Dma_chDesc[BSP_DMA_CH_NUM*2];
+static BSP_ATTR_ALIGNMENT(1024) bsp_Dma_ChDesc_t bsp_Dma_chDesc[BSP_DMA_CH_NUM * 2];
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Dma_init( void )
+void bsp_Dma_init(void)
 {
-    MAP_SysCtlPeripheralEnable( SYSCTL_PERIPH_UDMA );
-    while( MAP_SysCtlPeripheralReady( SYSCTL_PERIPH_UDMA ) == FALSE );
+    MAP_SysCtlPeripheralEnable(SYSCTL_PERIPH_UDMA);
+    while (MAP_SysCtlPeripheralReady(SYSCTL_PERIPH_UDMA) == FALSE)
+        ;
     MAP_uDMAEnable();
-    MAP_uDMAControlBaseSet( bsp_Dma_chDesc );
-    MAP_uDMAIntClear( UDMA_CHIS_M );
+    MAP_uDMAControlBaseSet(bsp_Dma_chDesc);
+    MAP_uDMAIntClear(UDMA_CHIS_M);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Dma_chConfig( bsp_Dma_ChId_t      chId,
-                  bsp_Dma_XferMode_t  mode,
-                  bsp_Dma_Increment_t srcInc,
-                  bsp_Dma_Increment_t srcSize,
-                  void*               srcPtr,
-                  bsp_Dma_Increment_t dstInc,
-                  bsp_Dma_Increment_t dstSize,
-                  void*               dstPtr,
-                  size_t              size )
+void bsp_Dma_chConfig(
+    bsp_Dma_ChId_t      chId,
+    bsp_Dma_XferMode_t  mode,
+    bsp_Dma_Increment_t srcInc,
+    bsp_Dma_Increment_t srcSize,
+    void *              srcPtr,
+    bsp_Dma_Increment_t dstInc,
+    bsp_Dma_Increment_t dstSize,
+    void *              dstPtr,
+    size_t              size)
 {
     bsp_Dma_chDesc[chId].srcPtr = srcPtr;
     bsp_Dma_chDesc[chId].dstPtr = dstPtr;
@@ -113,9 +111,7 @@ bsp_Dma_chConfig( bsp_Dma_ChId_t      chId,
 }
 
 /*============================================================================*/
-void
-bsp_Dma_chStart( bsp_Dma_ChId_t             chId,
-                 bsp_Dma_XferDoneCallback_t callback )
+void bsp_Dma_chStart(bsp_Dma_ChId_t chId, bsp_Dma_XferDoneCallback_t callback)
 {
     MAP_uDMAChannelEnable((0x00000001 << chId));
     return;

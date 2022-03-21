@@ -60,7 +60,6 @@ typedef uint8_t bsp_I2c_Id_t;
 /*============================================================================*/
 #define BSP_I2C_PLATFORM_NUM 10
 
-
 /*============================================================================*/
 #define BSP_I2C_PIN_SEL_0    ((bsp_I2c_PinSel_t)0)
 #define BSP_I2C_PIN_SEL_1    ((bsp_I2c_PinSel_t)1)
@@ -81,7 +80,7 @@ typedef struct {
     bsp_Gpio_PortId_t    portId;
     bsp_Gpio_BitMask_t   mask;
     bsp_Gpio_AltFuncId_t altFuncId;
-}bsp_I2c_PinInfo_t;
+} bsp_I2c_PinInfo_t;
 
 /*============================================================================*/
 /**
@@ -92,31 +91,30 @@ typedef struct {
     uint32_t                 sysCtrlAddr;
     uint32_t                 intId;
     uint8_t                  sclPinInfoTableLen;
-    const bsp_I2c_PinInfo_t* sclPinInfoTable;
+    const bsp_I2c_PinInfo_t *sclPinInfoTable;
     uint8_t                  sdaPinInfoTableLen;
-    const bsp_I2c_PinInfo_t* sdaPinInfoTable;
-}bsp_I2c_StaticInfo_t;
+    const bsp_I2c_PinInfo_t *sdaPinInfoTable;
+} bsp_I2c_StaticInfo_t;
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 
 /*============================================================================*/
-void bsp_I2c_interruptHandler0( void );
-void bsp_I2c_interruptHandler1( void );
-void bsp_I2c_interruptHandler2( void );
-void bsp_I2c_interruptHandler3( void );
-void bsp_I2c_interruptHandler4( void );
-void bsp_I2c_interruptHandler5( void );
-void bsp_I2c_interruptHandler6( void );
-void bsp_I2c_interruptHandler7( void );
-void bsp_I2c_interruptHandler8( void );
-void bsp_I2c_interruptHandler9( void );
+void bsp_I2c_interruptHandler0(void);
+void bsp_I2c_interruptHandler1(void);
+void bsp_I2c_interruptHandler2(void);
+void bsp_I2c_interruptHandler3(void);
+void bsp_I2c_interruptHandler4(void);
+void bsp_I2c_interruptHandler5(void);
+void bsp_I2c_interruptHandler6(void);
+void bsp_I2c_interruptHandler7(void);
+void bsp_I2c_interruptHandler8(void);
+void bsp_I2c_interruptHandler9(void);
 
 /*==============================================================================
  *                                Globals
  *============================================================================*/
 
 /*============================================================================*/
-extern const bsp_I2c_StaticInfo_t bsp_I2c_staticInfo[ BSP_I2C_PLATFORM_NUM ];
-
+extern const bsp_I2c_StaticInfo_t bsp_I2c_staticInfo[BSP_I2C_PLATFORM_NUM];

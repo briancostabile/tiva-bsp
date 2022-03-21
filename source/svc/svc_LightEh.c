@@ -49,7 +49,6 @@
 #define SVC_LIGHTEH_MEAS_POLLING_PERIOD_MS 250
 #define SVC_LIGHTEH_MEAS_POLLING_TIMER_ID  "LIGHTEH"
 
-
 /*==============================================================================
  *                                Types
  *============================================================================*/
@@ -63,90 +62,79 @@ osapi_Timer_t svc_LightEh_timer;
  *============================================================================*/
 
 /*============================================================================*/
-static void
-svc_LightEh_buildAndSendMeasInd( dev_Light_MeasLight_t light )
+static void svc_LightEh_buildAndSendMeasInd(dev_Light_MeasLight_t light)
 {
     svc_LightEh_MeasInd_t measInd;
 
     measInd.light = light;
 
-    svc_MsgFwk_msgAllocAndBroadcast( SVC_LIGHTEH_MEAS_ALS_IND,
-                                     sizeof(svc_LightEh_MeasInd_t),
-                                     SVC_MSGFWK_MSG_PAYLOAD_PTR(&measInd) );
+    svc_MsgFwk_msgAllocAndBroadcast(
+        SVC_LIGHTEH_MEAS_ALS_IND,
+        sizeof(svc_LightEh_MeasInd_t),
+        SVC_MSGFWK_MSG_PAYLOAD_PTR(&measInd));
 
     return;
 }
 
 /*============================================================================*/
-static void
-svc_LightEh_measHandlerAls( dev_Light_MeasLight_t light )
+static void svc_LightEh_measHandlerAls(dev_Light_MeasLight_t light)
 {
 #if (SVC_LOG_LEVEL >= SVC_LOG_LEVEL_INFO)
-    volatile int i=0;
-    if( (i++ % 4) == 0 )
-    {
-        SVC_LOG_INFO( "als:%d.%d"NL, (light/256), (((light%256) * 100) / 256) );
+    volatile int i = 0;
+    if ((i++ % 4) == 0) {
+        SVC_LOG_INFO("als:%d.%d" NL, (light / 256), (((light % 256) * 100) / 256));
     }
 #endif
-    svc_LightEh_buildAndSendMeasInd( light );
+    svc_LightEh_buildAndSendMeasInd(light);
 }
 
 /*============================================================================*/
-static void
-svc_LightEh_measHandlerIr( dev_Light_MeasLight_t light )
+static void svc_LightEh_measHandlerIr(dev_Light_MeasLight_t light)
 {
 #if (SVC_LOG_LEVEL >= SVC_LOG_LEVEL_INFO)
-    volatile int i=0;
-    if( (i++ % 4) == 0 )
-    {
-        SVC_LOG_INFO( "ir :%d.%d"NL, (light/256), (((light%256) * 100) / 256) );
+    volatile int i = 0;
+    if ((i++ % 4) == 0) {
+        SVC_LOG_INFO("ir :%d.%d" NL, (light / 256), (((light % 256) * 100) / 256));
     }
 #endif
-    svc_LightEh_buildAndSendMeasInd( light );
+    svc_LightEh_buildAndSendMeasInd(light);
 }
 
 /*============================================================================*/
-void
-svc_LightEh_timerCallback( osapi_Timer_t     timer,
-                           osapi_TimerName_t name )
+void svc_LightEh_timerCallback(osapi_Timer_t timer, osapi_TimerName_t name)
 {
     static uint8_t i = 0;
 
     // Flip between measureing Als and Ir
-    if( i++ & 0x01 )
-    {
-        dev_Light_measTriggerAls( svc_LightEh_measHandlerAls );
+    if (i++ & 0x01) {
+        dev_Light_measTriggerAls(svc_LightEh_measHandlerAls);
     }
-    else
-    {
-        dev_Light_measTriggerIr( svc_LightEh_measHandlerIr );
+    else {
+        dev_Light_measTriggerIr(svc_LightEh_measHandlerIr);
     }
     return;
 }
 
-
 /*============================================================================*/
-static void
-svc_LightEh_init( void )
+static void svc_LightEh_init(void)
 {
     dev_Light_init();
-    svc_LightEh_timer = osapi_Timer_periodicCreate( SVC_LIGHTEH_MEAS_POLLING_TIMER_ID,
-                                                    SVC_LIGHTEH_MEAS_POLLING_PERIOD_MS,
-                                                    svc_LightEh_timerCallback );
-    osapi_Timer_periodicStart( svc_LightEh_timer );
+    svc_LightEh_timer = osapi_Timer_periodicCreate(
+        SVC_LIGHTEH_MEAS_POLLING_TIMER_ID,
+        SVC_LIGHTEH_MEAS_POLLING_PERIOD_MS,
+        svc_LightEh_timerCallback);
+    osapi_Timer_periodicStart(svc_LightEh_timer);
 }
-
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-const svc_Eh_Info_t svc_LightEh_info =
-{
+const svc_Eh_Info_t svc_LightEh_info = {
     SVC_EHID_LIGHT,
-    0,    // bcastListLen
-    NULL, // bcastList
+    0,       // bcastListLen
+    NULL,    // bcastList
     svc_LightEh_init,
-    NULL  // msgHandler
+    NULL    // msgHandler
 };
 #endif

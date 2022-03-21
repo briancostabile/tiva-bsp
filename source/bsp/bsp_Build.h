@@ -36,8 +36,8 @@ typedef uint32_t bsp_Build_Version_t;
 /*==============================================================================
  *                               Globals
  *============================================================================*/
-extern const char bsp_Build_product[];
-extern const char bsp_Build_platform[];
-extern const char bsp_Build_timestamp[];
+extern const char                bsp_Build_product[];
+extern const char                bsp_Build_platform[];
+extern const char                bsp_Build_timestamp[];
 extern const bsp_Build_Version_t bsp_Build_versionHw;
 extern const bsp_Build_Version_t bsp_Build_versionFw;

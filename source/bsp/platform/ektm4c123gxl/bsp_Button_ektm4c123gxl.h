@@ -44,8 +44,6 @@
 #define BSP_GPIO_BIT_OFFSET_BUTTON_1 BSP_GPIO_BIT_OFFSET_USR_SW2
 #define BSP_GPIO_BIT_MASK_BUTTON_1   BSP_GPIO_BIT_MASK_USR_SW2
 
-
-
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/

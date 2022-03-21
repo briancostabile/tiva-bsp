@@ -34,7 +34,6 @@
  *                                Defines
  *============================================================================*/
 
-
 /*==============================================================================
  *                                 Types
  *============================================================================*/
@@ -49,19 +48,19 @@ typedef uint8_t osapi_ThreadPriority_t;
 typedef uint32_t osapi_ThreadStackSize_t;
 
 /*============================================================================*/
-typedef void* osapi_ThreadStackPtr_t;
+typedef void *osapi_ThreadStackPtr_t;
 
 /*============================================================================*/
-typedef void* osapi_ThreadArg_t;
+typedef void *osapi_ThreadArg_t;
 
 /*============================================================================*/
-typedef char* osapi_ThreadName_t;
+typedef char *osapi_ThreadName_t;
 
 /*============================================================================*/
-typedef void (*osapi_ThreadHandler_t)( osapi_ThreadArg_t arg );
+typedef void (*osapi_ThreadHandler_t)(osapi_ThreadArg_t arg);
 
 /*============================================================================*/
-typedef void* osapi_Semaphore_t;
+typedef void *osapi_Semaphore_t;
 
 /*============================================================================*/
 typedef struct osapi_ThreadInitInfo_s {
@@ -71,137 +70,102 @@ typedef struct osapi_ThreadInitInfo_s {
     osapi_ThreadPriority_t  priority;
     osapi_ThreadStackSize_t stackSize32;
     osapi_ThreadStackPtr_t  stackPtr;
-}osapi_ThreadInitInfo_t;
+} osapi_ThreadInitInfo_t;
 
 /*============================================================================*/
 typedef struct osapi_MemoryPoolInfo_s {
-    size_t    blockSize;
-    size_t    poolSize;
-    void*     pool;
-    uint32_t** hdrPtrPtr;
-}osapi_MemoryPoolInfo_t;
+    size_t     blockSize;
+    size_t     poolSize;
+    void *     pool;
+    uint32_t **hdrPtrPtr;
+} osapi_MemoryPoolInfo_t;
 
 /*============================================================================*/
-typedef void* osapi_Queue_t;
-
+typedef void *osapi_Queue_t;
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-osapi_init( void );
+void osapi_init(void);
 
 /*============================================================================*/
-void
-osapi_Scheduler_run( void );
-
+void osapi_Scheduler_run(void);
 
 /********************
  * Thread Functions
  */
 /*============================================================================*/
-void
-osapi_Thread_create( osapi_ThreadInitInfo_t* tInitPtr );
+void osapi_Thread_create(osapi_ThreadInitInfo_t *tInitPtr);
 
 /*============================================================================*/
-void
-osapi_Thread_sleep( uint32_t sleepTimeMs );
-
+void osapi_Thread_sleep(uint32_t sleepTimeMs);
 
 /********************
  * Semaphore Functions
  */
 /*============================================================================*/
-osapi_Semaphore_t
-osapi_Semaphore_create( void );
+osapi_Semaphore_t osapi_Semaphore_create(void);
 
 /*============================================================================*/
-bool
-osapi_Semaphore_take( osapi_Semaphore_t sem,
-                      osapi_Timeout_t   timeout );
+bool osapi_Semaphore_take(osapi_Semaphore_t sem, osapi_Timeout_t timeout);
 
 /*============================================================================*/
-void
-osapi_Semaphore_give( osapi_Semaphore_t sem );
-
+void osapi_Semaphore_give(osapi_Semaphore_t sem);
 
 /********************
  * Memory Functions
  */
 /*============================================================================*/
-void*
-osapi_Memory_alloc( size_t size );
+void *osapi_Memory_alloc(size_t size);
 
 /*============================================================================*/
-void
-osapi_Memory_free( void* freePtr );
-
+void osapi_Memory_free(void *freePtr);
 
 /********************
  * Queue Functions
  */
 /*============================================================================*/
-osapi_Queue_t
-osapi_Queue_create( size_t count,
-                    size_t elementSize,
-                    void*  buf );
+osapi_Queue_t osapi_Queue_create(size_t count, size_t elementSize, void *buf);
 
 /*============================================================================*/
-bool
-osapi_Queue_dequeue( osapi_Queue_t   queue,
-                     void*           buf,
-                     osapi_Timeout_t timeout);
+bool osapi_Queue_dequeue(osapi_Queue_t queue, void *buf, osapi_Timeout_t timeout);
 
 /*============================================================================*/
-bool
-osapi_Queue_enqueue( osapi_Queue_t queue,
-                     void*         buf );
-
+bool osapi_Queue_enqueue(osapi_Queue_t queue, void *buf);
 
 /********************
  * Timer Functions
  */
-typedef void*    osapi_Timer_t;
+typedef void *osapi_Timer_t;
 
-typedef char* osapi_TimerName_t;
+typedef char *osapi_TimerName_t;
 
-typedef enum
-{
-    OSAPI_TIMER_TYPE_ONE_SHOT,
-    OSAPI_TIMER_TYPE_PERIODIC
-} osapi_TimerType_t;
+typedef enum { OSAPI_TIMER_TYPE_ONE_SHOT, OSAPI_TIMER_TYPE_PERIODIC } osapi_TimerType_t;
 
-typedef void (*osapi_TimerCallback_t)( osapi_Timer_t   timer,
-                                       osapi_TimerName_t name );
+typedef void (*osapi_TimerCallback_t)(osapi_Timer_t timer, osapi_TimerName_t name);
 
 /*============================================================================*/
-osapi_Timer_t
-osapi_Timer_create( osapi_TimerName_t       id,
-                    osapi_Timeout_t       timeout,
-                    osapi_TimerType_t     type,
-                    osapi_TimerCallback_t callback );
+osapi_Timer_t osapi_Timer_create(
+    osapi_TimerName_t     id,
+    osapi_Timeout_t       timeout,
+    osapi_TimerType_t     type,
+    osapi_TimerCallback_t callback);
 
 /*============================================================================*/
-osapi_Timer_t
-osapi_Timer_periodicCreate( osapi_TimerName_t       id,
-                            osapi_Timeout_t       timeout,
-                            osapi_TimerCallback_t callback );
+osapi_Timer_t osapi_Timer_periodicCreate(
+    osapi_TimerName_t     id,
+    osapi_Timeout_t       timeout,
+    osapi_TimerCallback_t callback);
 
 /*============================================================================*/
-bool
-osapi_Timer_periodicStart( osapi_Timer_t timer );
+bool osapi_Timer_periodicStart(osapi_Timer_t timer);
 
 /*============================================================================*/
-osapi_Timer_t
-osapi_Timer_oneShotCreate( osapi_TimerName_t       id,
-                           osapi_TimerCallback_t callback );
+osapi_Timer_t osapi_Timer_oneShotCreate(osapi_TimerName_t id, osapi_TimerCallback_t callback);
 
 /*============================================================================*/
-bool
-osapi_Timer_oneShotStart( osapi_Timer_t   timer,
-                          osapi_Timeout_t timeout );
+bool osapi_Timer_oneShotStart(osapi_Timer_t timer, osapi_Timeout_t timeout);
 
 /*============================================================================*/
-bool
-osapi_Timer_stop( osapi_Timer_t timer );
+bool osapi_Timer_stop(osapi_Timer_t timer);

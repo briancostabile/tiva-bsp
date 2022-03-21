@@ -32,13 +32,12 @@
 #include "bsp_Eeprom.h"
 #include "svc_Nvm.h"
 
-
 // Ensure Data read/written is 4-byte aligned
 BSP_ATTR_ALIGNMENT(4) svc_Nvm_Data_t svc_Nvm_data;
 
 // Ensure size is a multiple of 4
 #define SVC_NVM_DATA_SIZE32 ((sizeof(svc_Nvm_Data_t) + 3) / 4)
-#define SVC_NVM_DATA_SIZE (SVC_NVM_DATA_SIZE32 * 4)
+#define SVC_NVM_DATA_SIZE   (SVC_NVM_DATA_SIZE32 * 4)
 
 // start 256 bytes into EEPROM
 #define SVC_NVM_DATA_ADDR 0x00000100
@@ -47,28 +46,24 @@ BSP_ATTR_ALIGNMENT(4) svc_Nvm_Data_t svc_Nvm_data;
  *                              Local Functions
  *============================================================================*/
 /*============================================================================*/
-void
-svc_Nvm_init( void )
+void svc_Nvm_init(void)
 {
     // Read out structure from NVM
-    bsp_Eeprom_read( (uint32_t *)&svc_Nvm_data,
-                     SVC_NVM_DATA_ADDR,
-                     SVC_NVM_DATA_SIZE32 );
+    bsp_Eeprom_read((uint32_t *)&svc_Nvm_data, SVC_NVM_DATA_ADDR, SVC_NVM_DATA_SIZE32);
 
     bool initError = false;
 
     // Check CRC
-    uint32_t crc32 = bsp_Crc_32p04C11DB7( &((uint32_t*)&svc_Nvm_data)[1],
-                                          (SVC_NVM_DATA_SIZE32 - 1) );
+    uint32_t crc32 =
+        bsp_Crc_32p04C11DB7(&((uint32_t *)&svc_Nvm_data)[1], (SVC_NVM_DATA_SIZE32 - 1));
 
-    initError |= (((svc_Nvm_DataHdr_t*)&svc_Nvm_data)->crc != crc32);
+    initError |= (((svc_Nvm_DataHdr_t *)&svc_Nvm_data)->crc != crc32);
     initError |= (svc_Nvm_validData(&svc_Nvm_data) == false);
 
     // If invalid then initialize with product specific init data
-    if( initError )
-    {
-        svc_Nvm_setHdr( &svc_Nvm_data );
-        svc_Nvm_initData( &svc_Nvm_data );
+    if (initError) {
+        svc_Nvm_setHdr(&svc_Nvm_data);
+        svc_Nvm_initData(&svc_Nvm_data);
         svc_Nvm_save();
     }
 
@@ -76,15 +71,12 @@ svc_Nvm_init( void )
 }
 
 /*============================================================================*/
-void
-svc_Nvm_save( void )
+void svc_Nvm_save(void)
 {
-    svc_Nvm_setHdr( &svc_Nvm_data );
-    ((svc_Nvm_DataHdr_t*)&svc_Nvm_data)->crc = bsp_Crc_32p04C11DB7( &((uint32_t*)&svc_Nvm_data)[1],
-                                                (SVC_NVM_DATA_SIZE32 - 1) );
+    svc_Nvm_setHdr(&svc_Nvm_data);
+    ((svc_Nvm_DataHdr_t *)&svc_Nvm_data)->crc =
+        bsp_Crc_32p04C11DB7(&((uint32_t *)&svc_Nvm_data)[1], (SVC_NVM_DATA_SIZE32 - 1));
 
-    bsp_Eeprom_write( SVC_NVM_DATA_ADDR,
-                      (uint32_t *)&svc_Nvm_data,
-                      SVC_NVM_DATA_SIZE );
+    bsp_Eeprom_write(SVC_NVM_DATA_ADDR, (uint32_t *)&svc_Nvm_data, SVC_NVM_DATA_SIZE);
     return;
 }

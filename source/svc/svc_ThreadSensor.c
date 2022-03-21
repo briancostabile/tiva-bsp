@@ -34,9 +34,11 @@
 #if defined(SVC_EHID_PWRMON)
 #include "svc_PwrMonEh.h"
 #endif
+#if defined(SVC_EHID_PWRSUP)
+#include "svc_PwrSupEh.h"
+#endif
 #include "svc_Eh.h"
 #include "osapi.h"
-
 
 #ifndef SVC_LOG_LEVEL
 #define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
@@ -44,7 +46,6 @@
 #include "svc_Log.h"
 
 #include <stdio.h>
-
 
 /*==============================================================================
  *                                  Defines
@@ -59,11 +60,10 @@
  *============================================================================*/
 // Total stack needed for the Peripheral thread
 uint32_t svc_ThreadSensor_stack[SVC_THREADSENSOR_STACK_SIZE_32];
-void*    svc_ThreadSensor_queue[SVC_THREADSENSOR_QUEUE_DEPTH];
+void *   svc_ThreadSensor_queue[SVC_THREADSENSOR_QUEUE_DEPTH];
 
 /*============================================================================*/
-static const svc_Eh_Info_t* svc_ThreadSensor_ehTable[] =
-{
+static const svc_Eh_Info_t *svc_ThreadSensor_ehTable[] = {
 // #if defined(SVC_EHID_TEMP)
 //     &svc_TempEh_info,
 // #endif
@@ -76,30 +76,32 @@ static const svc_Eh_Info_t* svc_ThreadSensor_ehTable[] =
 #if defined(SVC_EHID_PWRMON)
     &svc_PwrMonEh_info,
 #endif
+#if defined(SVC_EHID_PWRSUP)
+    &svc_PwrSupEh_info
+#endif
 };
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-svc_ThreadSensor_threadMain( osapi_ThreadArg_t arg )
+void svc_ThreadSensor_threadMain(osapi_ThreadArg_t arg)
 {
-    svc_Eh_listRun( DIM(svc_ThreadSensor_ehTable),
-                    svc_ThreadSensor_ehTable,
-                    SVC_THREADSENSOR_QUEUE_DEPTH,
-                    svc_ThreadSensor_queue );
+    svc_Eh_listRun(
+        DIM(svc_ThreadSensor_ehTable),
+        svc_ThreadSensor_ehTable,
+        SVC_THREADSENSOR_QUEUE_DEPTH,
+        svc_ThreadSensor_queue);
     return;
 }
 
 /*============================================================================*/
-const osapi_ThreadInitInfo_t BSP_ATTR_USED BSP_ATTR_SECTION(".tinit") svc_ThreadSensor_threadInitInfo =
-{
-  .name        = "SENSOR",
-  .handler     = svc_ThreadSensor_threadMain,
-  .arg         = NULL,
-  .priority    = 2,
-  .stackSize32 = SVC_THREADSENSOR_STACK_SIZE_32,
-  .stackPtr    = &svc_ThreadSensor_stack[0]
-};
+const osapi_ThreadInitInfo_t BSP_ATTR_USED BSP_ATTR_SECTION(".tinit")
+    svc_ThreadSensor_threadInitInfo = {
+        .name        = "SENSOR",
+        .handler     = svc_ThreadSensor_threadMain,
+        .arg         = NULL,
+        .priority    = 2,
+        .stackSize32 = SVC_THREADSENSOR_STACK_SIZE_32,
+        .stackPtr    = &svc_ThreadSensor_stack[0]};
 BSP_PRAGMA_DATA_REQUIRED(svc_ThreadSensor_threadInitInfo)

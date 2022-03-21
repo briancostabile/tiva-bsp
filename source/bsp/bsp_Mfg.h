@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 Brian Costabile
+ * Copyright 2022 Brian Costabile
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,22 +21,34 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Crc.h
- * @brief Contains types and prototypes to access the CRC engine
+ * @file bsp_Mfg.h
+ * @brief Contains types and prototypes to asccess the manufacturing area of
+ *        flash. THe structure of that area is product specific
  */
 #pragma once
 
 #include "bsp_Platform.h"
 
 /*==============================================================================
- *                                Defines
- *============================================================================*/
-
-/*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void bsp_Crc_init(void);
+void bsp_Mfg_init(void);
 
 /*============================================================================*/
-uint32_t bsp_Crc_32p04C11DB7(uint32_t *dataPtr, size_t len32);
+uint32_t bsp_Mfg_getProductId(void);
+
+/*============================================================================*/
+uint16_t bsp_Mfg_getSerialNumber(void);
+
+/*============================================================================*/
+uint16_t bsp_Mfg_getHwRevision(void);
+
+/*============================================================================*/
+uint64_t bsp_Mfg_getRand0(void);
+
+/*============================================================================*/
+uint64_t bsp_Mfg_getRand1(void);
+
+/*============================================================================*/
+void const *bsp_Mfg_getUsrDataPtr(void);

@@ -43,21 +43,16 @@
  *                             Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-svc_PwrMon_samplerInit( void );
+void svc_PwrMon_samplerInit(void);
 
 /*============================================================================*/
-void
-svc_PwrMon_samplerStop( void );
+void svc_PwrMon_samplerStop(void);
 
 /*============================================================================*/
-void
-svc_PwrMon_samplerStart( svc_PwrMonEh_ChBitmap_t chBitmap, uint32_t smplcnt );
+void svc_PwrMon_samplerStart(svc_PwrMonEh_ChBitmap_t chBitmap, uint32_t smplcnt);
 
 /*============================================================================*/
-svc_PwrMonEh_SamplerStats_t*
-svc_PwrMon_samplerStatsPtr( void );
+svc_PwrMonEh_SamplerStats_t *svc_PwrMon_samplerStatsPtr(void);
 
 /*============================================================================*/
-void
-svc_PwrMon_samplerStatsReset( void );
+void svc_PwrMon_samplerStatsReset(void);

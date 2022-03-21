@@ -29,12 +29,11 @@
 #include "bsp_Types.h"
 #include "bsp_Platform.h"
 
-
 #if defined(PRODUCT)
 /* The name of the product turns into the tail end of the headerfile that is included */
 #include BUILD_INCLUDE_STRING(svc_EhId_, PRODUCT)
 #else
-# error "PRODUCT must be defined on command line"
+#error "PRODUCT must be defined on command line"
 #endif
 
 /*============================================================================*/

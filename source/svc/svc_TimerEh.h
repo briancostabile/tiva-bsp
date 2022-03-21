@@ -39,30 +39,26 @@
  *============================================================================*/
 /*============================================================================*/
 // Event handler message IDs
-#define SVC_BUTTONEH_TIMER_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_TIMER, 0 )
-
+#define SVC_BUTTONEH_TIMER_IND SVC_MSGFWK_MSG_ID_BUILD_IND(SVC_EHID_TIMER, 0)
 
 /*==============================================================================
  *                                Types
  *============================================================================*/
 /*============================================================================*/
 // Event handler message structures
-typedef struct BSP_ATTR_PACKED svc_TimerEh_TimeoutInd_s
-{
-    svc_MsgFwk_Hdr_t hdr;
-    osapi_TimerName_t  id;
+typedef struct BSP_ATTR_PACKED svc_TimerEh_TimeoutInd_s {
+    svc_MsgFwk_Hdr_t  hdr;
+    osapi_TimerName_t id;
 } svc_TimerEh_TimeoutInd_t;
-
 
 /*==============================================================================
  *                                Prototypes
  *============================================================================*/
 /*============================================================================*/
-void
-svc_TimerEh_buildAndSendTimeoutInd( osapi_TimerName_t name );
+void svc_TimerEh_buildAndSendTimeoutInd(osapi_TimerName_t name);
 
 /*============================================================================*/
-void
-svc_TimerEh_timerStart( osapi_TimerName_t   data,
-                        osapi_Timeout_t   timeout,
-                        osapi_TimerType_t type );
+void svc_TimerEh_timerStart(
+    osapi_TimerName_t data,
+    osapi_Timeout_t   timeout,
+    osapi_TimerType_t type);

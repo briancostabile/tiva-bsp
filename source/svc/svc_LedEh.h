@@ -38,11 +38,10 @@
  *============================================================================*/
 /*============================================================================*/
 // Event handler message IDs
-#define SVC_LEDEH_SET_COLOR_REQ    SVC_MSGFWK_MSG_ID_BUILD_REQ( SVC_EHID_LED, 0 )
-#define SVC_LEDEH_SET_COLOR_CNF    SVC_MSGFWK_MSG_ID_BUILD_CNF( SVC_EHID_LED, 1 )
-#define SVC_LEDEH_SET_PATTERN_REQ  SVC_MSGFWK_MSG_ID_BUILD_REQ( SVC_EHID_LED, 2 )
-#define SVC_LEDEH_SET_PATTERN_CNF  SVC_MSGFWK_MSG_ID_BUILD_CNF( SVC_EHID_LED, 3 )
-
+#define SVC_LEDEH_SET_COLOR_REQ   SVC_MSGFWK_MSG_ID_BUILD_REQ(SVC_EHID_LED, 0)
+#define SVC_LEDEH_SET_COLOR_CNF   SVC_MSGFWK_MSG_ID_BUILD_CNF(SVC_EHID_LED, 1)
+#define SVC_LEDEH_SET_PATTERN_REQ SVC_MSGFWK_MSG_ID_BUILD_REQ(SVC_EHID_LED, 2)
+#define SVC_LEDEH_SET_PATTERN_CNF SVC_MSGFWK_MSG_ID_BUILD_CNF(SVC_EHID_LED, 3)
 
 /*==============================================================================
  *                                Types
@@ -53,40 +52,33 @@ typedef uint8_t svc_LedEh_Control_t;
 
 /*============================================================================*/
 // Event handler message structures
-typedef struct BSP_ATTR_PACKED svc_LedEh_SetColorReq_s
-{
+typedef struct BSP_ATTR_PACKED svc_LedEh_SetColorReq_s {
     svc_MsgFwk_Hdr_t hdr;
     bsp_Led_Id_t     ledId;
     bsp_Led_Color_t  color;
 } svc_LedEh_SetColorReq_t;
 
-typedef struct BSP_ATTR_PACKED svc_LedEh_SetColorCnf_s
-{
+typedef struct BSP_ATTR_PACKED svc_LedEh_SetColorCnf_s {
     svc_MsgFwk_Hdr_t hdr;
     bsp_Led_Id_t     ledId;
 } svc_LedEh_SetColorCnf_t;
 
-
-typedef struct BSP_ATTR_PACKED svc_LedEh_PatternElement_s
-{
+typedef struct BSP_ATTR_PACKED svc_LedEh_PatternElement_s {
     bsp_Led_Color_t color;
     uint32_t        msTime;
 } svc_LedEh_PatternElement_t;
 
-typedef struct BSP_ATTR_PACKED svc_LedEh_SetPatternReq_s
-{
+typedef struct BSP_ATTR_PACKED svc_LedEh_SetPatternReq_s {
     svc_MsgFwk_Hdr_t           hdr;
     bsp_Led_Id_t               ledId;
     uint8_t                    cnt;
     svc_LedEh_PatternElement_t patternTable[];
 } svc_LedEh_SetPatternReq_t;
 
-typedef struct BSP_ATTR_PACKED svc_LedEh_SetPatternCnf_s
-{
+typedef struct BSP_ATTR_PACKED svc_LedEh_SetPatternCnf_s {
     svc_MsgFwk_Hdr_t hdr;
     bsp_Led_Id_t     ledId;
 } svc_LedEh_SetPatternCnf_t;
-
 
 /*==============================================================================
  *                                Globals
@@ -94,14 +86,11 @@ typedef struct BSP_ATTR_PACKED svc_LedEh_SetPatternCnf_s
 /*============================================================================*/
 extern const svc_Eh_Info_t svc_LedEh_info;
 /*============================================================================*/
-void
-svc_LedEh_buildAndSendSetColorReq( svc_EhId_t      eh,
-                                   bsp_Led_Id_t    id,
-                                   bsp_Led_Color_t color );
+void svc_LedEh_buildAndSendSetColorReq(svc_EhId_t eh, bsp_Led_Id_t id, bsp_Led_Color_t color);
 
 /*============================================================================*/
-void
-svc_LedEh_buildAndSendSetPatternReq( svc_EhId_t                  eh,
-                                     bsp_Led_Id_t                id,
-                                     uint8_t                     cnt,
-                                     svc_LedEh_PatternElement_t* patternArray );
+void svc_LedEh_buildAndSendSetPatternReq(
+    svc_EhId_t                  eh,
+    bsp_Led_Id_t                id,
+    uint8_t                     cnt,
+    svc_LedEh_PatternElement_t *patternArray);

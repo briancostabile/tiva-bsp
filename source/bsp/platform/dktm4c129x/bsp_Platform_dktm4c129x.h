@@ -23,6 +23,7 @@
 /**
  * @file bsp_Platform_dktm4c129x.h
  */
+/* clang-format off */ 
 #pragma once
 
 #include "inc/tm4c1299nczad.h"
@@ -46,11 +47,12 @@
 /*==============================================================================
  *                            IO defines
  *============================================================================*/
+//must be 9600 for Virtual Com port built into launchpad
 #define BSP_PLATFORM_IO_UART_NUM         1
 #define BSP_PLATFORM_IO_UART0_ID         0
 #define BSP_PLATFORM_IO_UART0_RX_PIN_SEL 0
 #define BSP_PLATFORM_IO_UART0_TX_PIN_SEL 0
-#define BSP_PLATFORM_IO_UART0_BAUD       (9600 * 1) //must be 9600 for Virtual Com port built into launchpad
+#define BSP_PLATFORM_IO_UART0_BAUD       (9600 * 1)
 #define BSP_PLATFORM_IO_UART0_RX_BUF_LEN 32
 #define BSP_PLATFORM_IO_UART0_TX_BUF_LEN 128
 
@@ -58,9 +60,8 @@
 #define BSP_PLATFORM_USB_ENABLED
 //#define BSP_PLATFORM_USB_CDC
 #define BSP_PLATFORM_USB_BULK
-#define BSP_PLATFORM_IO_USB0_RX_BUF_LEN  512
-#define BSP_PLATFORM_IO_USB0_TX_BUF_LEN  (32*1024)
-
+#define BSP_PLATFORM_IO_USB0_RX_BUF_LEN 512
+#define BSP_PLATFORM_IO_USB0_TX_BUF_LEN (32 * 1024)
 
 /*==============================================================================
  *                            STDIO Mapping

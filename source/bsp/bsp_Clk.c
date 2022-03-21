@@ -38,14 +38,17 @@
 #endif
 
 #if (BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ == 80000000)
-#define BSP_CLK_SYSCTL_SYSDIV SYSCTL_SYSDIV_2_5
-#define BSP_CLK_TICKS_PER_NS( _ns ) (((_ns) * 2) / 25)
+#define BSP_CLK_SYSCTL_SYSDIV     SYSCTL_SYSDIV_2_5
+#define BSP_CLK_TICKS_PER_NS(_ns) (((_ns)*2) / 25)
 #elif (BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ == 120000000)
-#define BSP_CLK_SYSCTL_SYSDIV SYSCTL_SYSDIV_2_5
-#define BSP_CLK_TICKS_PER_NS( _ns ) (((_ns) * 2) / 25)
+#define BSP_CLK_SYSCTL_SYSDIV     SYSCTL_SYSDIV_2_5
+#define BSP_CLK_TICKS_PER_NS(_ns) (((_ns)*2) / 25)
 #endif
 
-#define BSP_CLK_DELAY_NS( _ns ) { MAP_SysCtlDelay( (BSP_CLK_TICKS_PER_NS( _ns ) / 3) ); }
+#define BSP_CLK_DELAY_NS(_ns)                             \
+    {                                                     \
+        MAP_SysCtlDelay((BSP_CLK_TICKS_PER_NS(_ns) / 3)); \
+    }
 
 /*==============================================================================
  *                              Globals
@@ -57,79 +60,68 @@ uint32_t bsp_Clk_sysClk = 0;
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Clk_init( void )
+void bsp_Clk_init(void)
 {
-    MAP_SysCtlIntEnable( SYSCTL_INT_PLL_LOCK | SYSCTL_INT_MOSC_FAIL );
+    MAP_SysCtlIntEnable(SYSCTL_INT_PLL_LOCK | SYSCTL_INT_MOSC_FAIL);
 
-    MAP_SysCtlMOSCConfigSet( (SYSCTL_MOSC_VALIDATE | SYSCTL_MOSC_INTERRUPT) );
+    MAP_SysCtlMOSCConfigSet((SYSCTL_MOSC_VALIDATE | SYSCTL_MOSC_INTERRUPT));
 
-#if defined( BSP_PLATFORM_PROCESSOR_TM4C123 )
-    MAP_SysCtlClockSet( (BSP_CLK_SYSCTL_SYSDIV |
-                         SYSCTL_USE_PLL |
-                         BSP_CLK_SYSCTL_XTAL |
-                         SYSCTL_OSC_MAIN) );
+#if defined(BSP_PLATFORM_PROCESSOR_TM4C123)
+    MAP_SysCtlClockSet(
+        (BSP_CLK_SYSCTL_SYSDIV | SYSCTL_USE_PLL | BSP_CLK_SYSCTL_XTAL | SYSCTL_OSC_MAIN));
     bsp_Clk_sysClk = MAP_SysCtlClockGet();
 #else
-    bsp_Clk_sysClk = MAP_SysCtlClockFreqSet((BSP_CLK_SYSCTL_XTAL |
-                                             SYSCTL_OSC_MAIN |
-                                             SYSCTL_USE_PLL |
-                                             SYSCTL_CFG_VCO_480),
-                                            BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ);
+    bsp_Clk_sysClk = MAP_SysCtlClockFreqSet(
+        (BSP_CLK_SYSCTL_XTAL | SYSCTL_OSC_MAIN | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480),
+        BSP_PLATFORM_SYSTEM_CLK_FREQ_HZ);
 #endif
     /* Wait for PLL to lock */
-    while( SYSCTL_PLLSTAT_R == 0 );
+    while (SYSCTL_PLLSTAT_R == 0)
+        ;
 
     return;
 }
 
 /*============================================================================*/
-uint32_t
-bsp_Clk_vcoFreqGet( void )
+uint32_t bsp_Clk_vcoFreqGet(void)
 {
     uint32_t vcoFreq;
-    MAP_SysCtlVCOGet( BSP_CLK_SYSCTL_XTAL, &vcoFreq );
-    return( vcoFreq );
+    MAP_SysCtlVCOGet(BSP_CLK_SYSCTL_XTAL, &vcoFreq);
+    return (vcoFreq);
 }
 
 /*============================================================================*/
-uint32_t
-bsp_Clk_sysClkGet( void )
+uint32_t bsp_Clk_sysClkGet(void)
 {
-    return( bsp_Clk_sysClk );
+    return (bsp_Clk_sysClk);
 }
 
 /*============================================================================*/
-void
-bsp_Clk_delayNs( uint32_t ns )
+void bsp_Clk_delayNs(uint32_t ns)
 {
-    BSP_CLK_DELAY_NS( ns );
+    BSP_CLK_DELAY_NS(ns);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Clk_delayUs( uint32_t us )
+void bsp_Clk_delayUs(uint32_t us)
 {
     uint32_t i;
 
-    for(i=0; i<us; i++)
-    {
-        BSP_CLK_DELAY_NS( 1000 );
+    for (i = 0; i < us; i++) {
+        BSP_CLK_DELAY_NS(1000);
     }
 
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Clk_delayMs( uint32_t ms )
+void bsp_Clk_delayMs(uint32_t ms)
 {
     uint32_t i;
 
-    for(i=0; i<ms; i++)
-    {
-        BSP_CLK_DELAY_NS( 1000000 );
+    for (i = 0; i < ms; i++) {
+        BSP_CLK_DELAY_NS(1000000);
     }
 
     return;

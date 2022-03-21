@@ -45,7 +45,6 @@ typedef uint8_t bsp_Ssi_Id_t;
 /*============================================================================*/
 #define BSP_SSI_PLATFORM_NUM 4
 
-
 /*============================================================================*/
 #define BSP_SSI_PIN_SEL_0    ((bsp_Ssi_PinSel_t)0)
 #define BSP_SSI_PIN_SEL_1    ((bsp_Ssi_PinSel_t)1)
@@ -66,7 +65,7 @@ typedef struct {
     bsp_Gpio_PortId_t    portId;
     bsp_Gpio_BitMask_t   mask;
     bsp_Gpio_AltFuncId_t altFuncId;
-}bsp_Ssi_PinInfo_t;
+} bsp_Ssi_PinInfo_t;
 
 /*============================================================================*/
 /**
@@ -79,33 +78,32 @@ typedef struct {
     uint32_t                 dmaPerIdRx;
     uint32_t                 dmaPerIdTx;
     uint8_t                  clkPinInfoTableLen;
-    const bsp_Ssi_PinInfo_t* clkPinInfoTable;
+    const bsp_Ssi_PinInfo_t *clkPinInfoTable;
     uint8_t                  fssPinInfoTableLen;
-    const bsp_Ssi_PinInfo_t* fssPinInfoTable;
+    const bsp_Ssi_PinInfo_t *fssPinInfoTable;
     uint8_t                  dat0PinInfoTableLen;
-    const bsp_Ssi_PinInfo_t* dat0PinInfoTable;
+    const bsp_Ssi_PinInfo_t *dat0PinInfoTable;
     uint8_t                  dat1PinInfoTableLen;
-    const bsp_Ssi_PinInfo_t* dat1PinInfoTable;
+    const bsp_Ssi_PinInfo_t *dat1PinInfoTable;
     uint8_t                  dat2PinInfoTableLen;
-    const bsp_Ssi_PinInfo_t* dat2PinInfoTable;
+    const bsp_Ssi_PinInfo_t *dat2PinInfoTable;
     uint8_t                  dat3PinInfoTableLen;
-    const bsp_Ssi_PinInfo_t* dat3PinInfoTable;
-}bsp_Ssi_StaticInfo_t;
+    const bsp_Ssi_PinInfo_t *dat3PinInfoTable;
+} bsp_Ssi_StaticInfo_t;
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 
 /*============================================================================*/
-void bsp_Ssi_interruptHandler0( void );
-void bsp_Ssi_interruptHandler1( void );
-void bsp_Ssi_interruptHandler2( void );
-void bsp_Ssi_interruptHandler3( void );
+void bsp_Ssi_interruptHandler0(void);
+void bsp_Ssi_interruptHandler1(void);
+void bsp_Ssi_interruptHandler2(void);
+void bsp_Ssi_interruptHandler3(void);
 
 /*==============================================================================
  *                                Globals
  *============================================================================*/
 
 /*============================================================================*/
-extern const bsp_Ssi_StaticInfo_t bsp_Ssi_staticInfo[ BSP_SSI_PLATFORM_NUM ];
-
+extern const bsp_Ssi_StaticInfo_t bsp_Ssi_staticInfo[BSP_SSI_PLATFORM_NUM];

@@ -31,69 +31,58 @@
 #include "svc_CmdEh_cmds.h"
 #include "bsp_Build.h"
 
-
 /*==============================================================================
  *                            Local Functions
  *============================================================================*/
 /*============================================================================*/
-int32_t
-svc_CmdEh_handlerBinary( svc_CmdEh_CmdHdr_t*            cmdPtr,
-                         svc_CmdEh_binarySendCallback_t cb )
+int32_t svc_CmdEh_handlerBinary(svc_CmdEh_CmdHdr_t *cmdPtr, svc_CmdEh_binarySendCallback_t cb)
 {
-    switch(cmdPtr->cmdId)
-    {
-        case SVC_CMDEH_CMD_ID_VERSION:
-        {
+    switch (cmdPtr->cmdId) {
+        case SVC_CMDEH_CMD_ID_VERSION: {
             svc_CmdEh_CmdVersionCnf_t cnf;
             cnf.hdr.len   = sizeof(cnf) - sizeof(uint16_t);
             cnf.hdr.cmdId = SVC_CMDEH_CMD_ID_VERSION;
-            cnf.verHw = bsp_Build_versionHw;
-            cnf.verFw = bsp_Build_versionFw;
-            cb( (uint8_t*)&cnf, sizeof(cnf) );
-        }
-        break;
+            cnf.verHw     = bsp_Build_versionHw;
+            cnf.verFw     = bsp_Build_versionFw;
+            cb((uint8_t *)&cnf, sizeof(cnf));
+        } break;
 
-        case SVC_CMDEH_CMD_ID_EHSTATS:
-        {
+        case SVC_CMDEH_CMD_ID_EHSTATS: {
             svc_CmdEh_CmdEhStatsCnf_t cnf;
-            cnf.hdr.len   = sizeof(cnf) - sizeof(uint16_t);
-            cnf.hdr.cmdId = SVC_CMDEH_CMD_ID_EHSTATS;
-            svc_MsgFwk_Stats_t* statsPtr = svc_MsgFwk_getStats();
+            cnf.hdr.len                  = sizeof(cnf) - sizeof(uint16_t);
+            cnf.hdr.cmdId                = SVC_CMDEH_CMD_ID_EHSTATS;
+            svc_MsgFwk_Stats_t *statsPtr = svc_MsgFwk_getStats();
             memcpy(&cnf.stats, statsPtr, sizeof(svc_MsgFwk_Stats_t));
-            cb( (uint8_t*)&cnf, sizeof(cnf) );
-        }
-        break;
+            cb((uint8_t *)&cnf, sizeof(cnf));
+        } break;
 
-        case SVC_CMDEH_CMD_ID_BCAST_REG:
-        {
+        case SVC_CMDEH_CMD_ID_BCAST_REG: {
             svc_CmdEh_CmdBcastRegCnf_t cnf;
             cnf.hdr.len   = sizeof(cnf) - sizeof(uint16_t);
             cnf.hdr.cmdId = SVC_CMDEH_CMD_ID_BCAST_REG;
-            svc_MsgFwk_registerMsg( ((svc_CmdEh_CmdBcastRegReq_t*)cmdPtr)->eh,
-                                    ((svc_CmdEh_CmdBcastRegReq_t*)cmdPtr)->msgId );
-            cb( (uint8_t*)&cnf, sizeof(cnf) );
-        }
-        break;
+            svc_MsgFwk_registerMsg(
+                ((svc_CmdEh_CmdBcastRegReq_t *)cmdPtr)->eh,
+                ((svc_CmdEh_CmdBcastRegReq_t *)cmdPtr)->msgId);
+            cb((uint8_t *)&cnf, sizeof(cnf));
+        } break;
 
-        case SVC_CMDEH_CMD_ID_EHMSG:
-        {
-            svc_MsgFwk_Hdr_t* msgPtr;
-            svc_MsgFwk_Hdr_t* rcvMsgPtr;
-            uint16_t rcvMsgLen;
+        case SVC_CMDEH_CMD_ID_EHMSG: {
+            svc_MsgFwk_Hdr_t *msgPtr;
+            svc_MsgFwk_Hdr_t *rcvMsgPtr;
+            uint16_t          rcvMsgLen;
 
-            rcvMsgPtr = (svc_MsgFwk_Hdr_t*)(((svc_CmdEh_CmdEhMsg_t*)cmdPtr)->data);
+            rcvMsgPtr = (svc_MsgFwk_Hdr_t *)(((svc_CmdEh_CmdEhMsg_t *)cmdPtr)->data);
             rcvMsgLen = (cmdPtr->len - sizeof(uint16_t));
-            msgPtr = svc_MsgFwk_msgAlloc( rcvMsgPtr->eh, rcvMsgPtr->id, rcvMsgLen );
+            msgPtr    = svc_MsgFwk_msgAlloc(rcvMsgPtr->eh, rcvMsgPtr->id, rcvMsgLen);
 
             // Don't copy over the newly created header
-            uint8_t* dstPtr = ((uint8_t*)msgPtr + sizeof(svc_MsgFwk_Hdr_t));
-            uint8_t* srcPtr = ((uint8_t*)rcvMsgPtr + sizeof(svc_MsgFwk_Hdr_t));
+            uint8_t *dstPtr = ((uint8_t *)msgPtr + sizeof(svc_MsgFwk_Hdr_t));
+            uint8_t *srcPtr = ((uint8_t *)rcvMsgPtr + sizeof(svc_MsgFwk_Hdr_t));
             rcvMsgLen -= sizeof(svc_MsgFwk_Hdr_t);
-            memcpy( dstPtr, srcPtr, rcvMsgLen );
+            memcpy(dstPtr, srcPtr, rcvMsgLen);
 
-            svc_MsgFwk_msgSend( msgPtr );
-        }
-        break;
+            svc_MsgFwk_msgSend(msgPtr);
+        } break;
     }
-    return( 0 );
+    return (0);
 }

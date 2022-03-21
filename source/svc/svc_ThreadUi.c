@@ -28,17 +28,23 @@
 #include "bsp_Pragma.h"
 #include "svc_ThreadUi.h"
 #include "svc_CmdEh.h"
-#include "svc_ButtonEh.h"
-#include "svc_LedEh.h"
 #include "svc_Eh.h"
 #include "svc_Nvm.h"
 #include "osapi.h"
+#if defined(SVC_EHID_BUTTON)
+#include "svc_ButtonEh.h"
+#endif
+#if defined(SVC_EHID_GPIO)
+#include "svc_GpioEh.h"
+#endif
+#if defined(SVC_EHID_LED)
+#include "svc_LedEh.h"
+#endif
 
 #ifndef SVC_LOG_LEVEL
 #define SVC_LOG_LEVEL SVC_LOG_LEVEL_INFO
 #endif
 #include "svc_Log.h"
-
 
 /*==============================================================================
  *                                  Defines
@@ -53,12 +59,10 @@
  *============================================================================*/
 // Total stack needed for the UI thread
 uint32_t svc_ThreadUi_stack[SVC_THREADUI_STACK_SIZE_32];
-void*    svc_ThreadUi_queue[SVC_THREADUI_QUEUE_DEPTH];
-
+void *   svc_ThreadUi_queue[SVC_THREADUI_QUEUE_DEPTH];
 
 /*============================================================================*/
-static const svc_Eh_Info_t* svc_ThreadUi_ehTable[] =
-{
+static const svc_Eh_Info_t *svc_ThreadUi_ehTable[] = {
     &svc_CmdEh_info,
 #if defined(SVC_EHID_BUTTON)
     &svc_ButtonEh_info,
@@ -66,27 +70,29 @@ static const svc_Eh_Info_t* svc_ThreadUi_ehTable[] =
 #if defined(SVC_EHID_LED)
     &svc_LedEh_info,
 #endif
+#if defined(SVC_EHID_GPIO)
+    &svc_GpioEh_info,
+#endif
 };
 
 /*============================================================================*/
-static void
-svc_ThreadUi_threadMain( osapi_ThreadArg_t arg )
+static void svc_ThreadUi_threadMain(osapi_ThreadArg_t arg)
 {
     svc_Nvm_init();
-    svc_Eh_listRun( DIM(svc_ThreadUi_ehTable),
-                    svc_ThreadUi_ehTable,
-                    SVC_THREADUI_QUEUE_DEPTH,
-                    svc_ThreadUi_queue );
+    svc_Eh_listRun(
+        DIM(svc_ThreadUi_ehTable),
+        svc_ThreadUi_ehTable,
+        SVC_THREADUI_QUEUE_DEPTH,
+        svc_ThreadUi_queue);
 }
 
 /*============================================================================*/
-const osapi_ThreadInitInfo_t BSP_ATTR_USED BSP_ATTR_SECTION(".tinit") svc_ThreadUi_threadInitInfo =
-{
-  .name        = "UI",
-  .handler     = svc_ThreadUi_threadMain,
-  .arg         = NULL,
-  .priority    = 3,
-  .stackSize32 = SVC_THREADUI_STACK_SIZE_32,
-  .stackPtr    = &svc_ThreadUi_stack[0]
-};
+const osapi_ThreadInitInfo_t BSP_ATTR_USED BSP_ATTR_SECTION(".tinit")
+    svc_ThreadUi_threadInitInfo = {
+        .name        = "UI",
+        .handler     = svc_ThreadUi_threadMain,
+        .arg         = NULL,
+        .priority    = 3,
+        .stackSize32 = SVC_THREADUI_STACK_SIZE_32,
+        .stackPtr    = &svc_ThreadUi_stack[0]};
 BSP_PRAGMA_DATA_REQUIRED(svc_ThreadUi_threadInitInfo)

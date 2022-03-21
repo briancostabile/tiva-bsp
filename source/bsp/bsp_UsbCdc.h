@@ -31,18 +31,18 @@
 /*==================================================================================================
  *                                           Types
  *================================================================================================*/
-typedef void (* bsp_UsbCdc_DataAvailableCallback_t)( size_t cnt );
-
+typedef void (*bsp_UsbCdc_DataAvailableCallback_t)(size_t cnt);
 
 /*==================================================================================================
  *                                        Public Functions
  *================================================================================================*/
 /*============================================================================*/
-bsp_UsbCdc_DataAvailableCallback_t
-bsp_UsbCdc_registerCallbackDataAvailable( int fd, bsp_UsbCdc_DataAvailableCallback_t callback );
+bsp_UsbCdc_DataAvailableCallback_t bsp_UsbCdc_registerCallbackDataAvailable(
+    int                                fd,
+    bsp_UsbCdc_DataAvailableCallback_t callback);
 
-void* bsp_UsbCdc_init( void* compositeEntry );
-int bsp_UsbCdc_open( void );
-int bsp_UsbCdc_close( int fd );
-int bsp_UsbCdc_read( int fd, char* buffer, size_t count );
-int bsp_UsbCdc_write( int fd, const char* buffer, size_t count );
+void *bsp_UsbCdc_init(void *compositeEntry);
+int   bsp_UsbCdc_open(void);
+int   bsp_UsbCdc_close(int fd);
+int   bsp_UsbCdc_read(int fd, char *buffer, size_t count);
+int   bsp_UsbCdc_write(int fd, const char *buffer, size_t count);

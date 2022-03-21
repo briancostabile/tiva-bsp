@@ -60,7 +60,7 @@ osapi_Timer_t svc_HumidEh_timer;
  *                            Local Functions
  *============================================================================*/
 
-#if 0 // for testing
+#if 0    // for testing
 /*============================================================================*/
 static void
 svc_HumidEh_buildAndSendMeasHumidityInd( dev_Humid_MeasHumidity_t humidity )
@@ -124,70 +124,70 @@ svc_HumidEh_measHandlerTemperature( dev_Humid_MeasTemperature_t temperature )
 #endif
 
 /*============================================================================*/
-static void
-svc_HumidEh_buildAndSendMeasComboInd( dev_Humid_MeasHumidity_t    humidity,
-                                      dev_Humid_MeasTemperature_t temperature )
+static void svc_HumidEh_buildAndSendMeasComboInd(
+    dev_Humid_MeasHumidity_t    humidity,
+    dev_Humid_MeasTemperature_t temperature)
 {
     svc_HumidEh_MeasComboInd_t measInd;
 
     measInd.humidity    = humidity;
     measInd.temperature = temperature;
 
-    svc_MsgFwk_msgAllocAndBroadcast( SVC_HUMIDEH_MEAS_COMBO_IND,
-                                     sizeof(svc_HumidEh_MeasComboInd_t),
-                                     SVC_MSGFWK_MSG_PAYLOAD_PTR(&measInd) );
+    svc_MsgFwk_msgAllocAndBroadcast(
+        SVC_HUMIDEH_MEAS_COMBO_IND,
+        sizeof(svc_HumidEh_MeasComboInd_t),
+        SVC_MSGFWK_MSG_PAYLOAD_PTR(&measInd));
 
     return;
 }
 
 /*============================================================================*/
-static void
-svc_HumidEh_measHandlerCombo( dev_Humid_MeasHumidity_t    humidity,
-                              dev_Humid_MeasTemperature_t temperature )
+static void svc_HumidEh_measHandlerCombo(
+    dev_Humid_MeasHumidity_t    humidity,
+    dev_Humid_MeasTemperature_t temperature)
 {
 #if (SVC_LOG_LEVEL >= SVC_LOG_LEVEL_INFO)
-    volatile int i=0;
-    if( (i++ % 4) == 0 )
-    {
-        SVC_LOG_INFO( "humidity:%d.%d%% temperature:%d.%d"NL, (humidity/64), ((humidity%64) * 100 / 64), (temperature/64), ((temperature%64) * 100 / 64) );
+    volatile int i = 0;
+    if ((i++ % 4) == 0) {
+        SVC_LOG_INFO(
+            "humidity:%d.%d%% temperature:%d.%d" NL,
+            (humidity / 64),
+            ((humidity % 64) * 100 / 64),
+            (temperature / 64),
+            ((temperature % 64) * 100 / 64));
     }
 #endif
-    svc_HumidEh_buildAndSendMeasComboInd( humidity, temperature );
+    svc_HumidEh_buildAndSendMeasComboInd(humidity, temperature);
     return;
 }
 
-
 /*============================================================================*/
-void
-svc_HumidEh_timerCallback( osapi_Timer_t   timer,
-                           osapi_TimerName_t name )
+void svc_HumidEh_timerCallback(osapi_Timer_t timer, osapi_TimerName_t name)
 {
-    dev_Humid_measTrigger( svc_HumidEh_measHandlerCombo );
+    dev_Humid_measTrigger(svc_HumidEh_measHandlerCombo);
     return;
 }
 
 /*============================================================================*/
-static void
-svc_HumidEh_init( void )
+static void svc_HumidEh_init(void)
 {
     dev_Humid_init();
-    svc_HumidEh_timer = osapi_Timer_periodicCreate( SVC_HUMIDEH_MEAS_POLLING_TIMER_ID,
-                                                    SVC_HUMIDEH_MEAS_POLLING_PERIOD_MS,
-                                                    svc_HumidEh_timerCallback );
-    osapi_Timer_periodicStart( svc_HumidEh_timer );
+    svc_HumidEh_timer = osapi_Timer_periodicCreate(
+        SVC_HUMIDEH_MEAS_POLLING_TIMER_ID,
+        SVC_HUMIDEH_MEAS_POLLING_PERIOD_MS,
+        svc_HumidEh_timerCallback);
+    osapi_Timer_periodicStart(svc_HumidEh_timer);
 }
-
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-const svc_Eh_Info_t svc_HumidEh_info =
-{
+const svc_Eh_Info_t svc_HumidEh_info = {
     SVC_EHID_HUMID,
-    0,    // bcastListLen
-    NULL, // bcastList
+    0,       // bcastListLen
+    NULL,    // bcastList
     svc_HumidEh_init,
-    NULL  // msgHandler
+    NULL    // msgHandler
 };
 #endif

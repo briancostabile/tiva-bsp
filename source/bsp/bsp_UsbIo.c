@@ -56,100 +56,74 @@ bsp_UsbIo_descriptor_t bsp_UsbIo_descriptor;
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_UsbIo_init( void )
+void bsp_UsbIo_init(void)
 {
     char filenameBuf[5] = "usb0";
 
     bsp_UsbIo_descriptor.cdcFd = 0;
 
-    bsp_Io_addDevice( filenameBuf,
-                      &bsp_UsbIo_descriptor,
-                      bsp_UsbIo_open,
-                      bsp_UsbIo_close,
-                      bsp_UsbIo_read,
-                      bsp_UsbIo_write,
-                      bsp_UsbIo_lseek,
-                      bsp_UsbIo_unlink,
-                      bsp_UsbIo_rename );
+    bsp_Io_addDevice(
+        filenameBuf,
+        &bsp_UsbIo_descriptor,
+        bsp_UsbIo_open,
+        bsp_UsbIo_close,
+        bsp_UsbIo_read,
+        bsp_UsbIo_write,
+        bsp_UsbIo_lseek,
+        bsp_UsbIo_unlink,
+        bsp_UsbIo_rename);
 
     bsp_UsbIo_descriptor.cdcFd = bsp_UsbCdc_open();
 
     return;
 }
 
-
 /*============================================================================*/
-void
-bsp_UsbIo_registerDataAvailableCallback( int fd, bsp_UsbIo_DataAvailableCallback_t callback )
+void bsp_UsbIo_registerDataAvailableCallback(int fd, bsp_UsbIo_DataAvailableCallback_t callback)
 {
-    bsp_UsbCdc_registerCallbackDataAvailable( ((bsp_UsbIo_descriptor_t*)fd)->cdcFd,
-                                              (bsp_UsbCdc_DataAvailableCallback_t)callback );
+    bsp_UsbCdc_registerCallbackDataAvailable(
+        ((bsp_UsbIo_descriptor_t *)fd)->cdcFd, (bsp_UsbCdc_DataAvailableCallback_t)callback);
     return;
 }
 
-
 /*============================================================================*/
-int
-bsp_UsbIo_open( const char*  path,
-                unsigned int flags,
-                int          llv_fd )
+int bsp_UsbIo_open(const char *path, unsigned int flags, int llv_fd)
 {
-
-    return( (int)&bsp_UsbIo_descriptor );
+    return ((int)&bsp_UsbIo_descriptor);
 }
 
-
 /*============================================================================*/
-int
-bsp_UsbIo_close( int fd )
+int bsp_UsbIo_close(int fd)
 {
-    return( bsp_UsbCdc_close( ((bsp_UsbIo_descriptor_t*)fd)->cdcFd ) );
+    return (bsp_UsbCdc_close(((bsp_UsbIo_descriptor_t *)fd)->cdcFd));
 }
 
-
 /*============================================================================*/
-int
-bsp_UsbIo_read( int    fd,
-                char*  buffer,
-                size_t count )
+int bsp_UsbIo_read(int fd, char *buffer, size_t count)
 {
-    return( bsp_UsbCdc_read( ((bsp_UsbIo_descriptor_t*)fd)->cdcFd, buffer, count ) );
+    return (bsp_UsbCdc_read(((bsp_UsbIo_descriptor_t *)fd)->cdcFd, buffer, count));
 }
 
-
 /*============================================================================*/
-int
-bsp_UsbIo_write( int         fd,
-                 const char* buffer,
-                 size_t      count )
+int bsp_UsbIo_write(int fd, const char *buffer, size_t count)
 {
-    return( bsp_UsbCdc_write( ((bsp_UsbIo_descriptor_t*)fd)->cdcFd, buffer, count )  );
+    return (bsp_UsbCdc_write(((bsp_UsbIo_descriptor_t *)fd)->cdcFd, buffer, count));
 }
 
-
 /*============================================================================*/
-off_t
-bsp_UsbIo_lseek( int   fd,
-                 off_t offset,
-                 int   origin )
+off_t bsp_UsbIo_lseek(int fd, off_t offset, int origin)
 {
-    return( (off_t)-1 );
+    return ((off_t)-1);
 }
 
-
 /*============================================================================*/
-int
-bsp_UsbIo_unlink( const char* path )
+int bsp_UsbIo_unlink(const char *path)
 {
-    return( -1 );
+    return (-1);
 }
 
-
 /*============================================================================*/
-int
-bsp_UsbIo_rename( const char* old_name,
-                  const char* new_name )
+int bsp_UsbIo_rename(const char *old_name, const char *new_name)
 {
-    return( -1 );
+    return (-1);
 }

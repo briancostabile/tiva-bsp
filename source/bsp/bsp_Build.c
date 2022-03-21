@@ -28,16 +28,15 @@
 #include "bsp_Pragma.h"
 #include "bsp_Build.h"
 
-#define BSP_BUILD_VERSION_FW (bsp_Build_Version_t)0x00000001
-#define BSP_BUILD_VERSION_HW (bsp_Build_Version_t)0x00000101
-
+#define BSP_BUILD_VERSION_FW (bsp_Build_Version_t)0x01000001
+#define BSP_BUILD_VERSION_HW (bsp_Build_Version_t)0x00000304
 
 #define BSP_BUILD_STR(_name, _str) STRING(_name, _str, ".build_str")
 /*=============================================================================
  *                                   Globals
  *===========================================================================*/
-BSP_BUILD_STR( bsp_Build_product, CONVERT_NAME_TO_STRING( PRODUCT ) );
-BSP_BUILD_STR( bsp_Build_platform, CONVERT_NAME_TO_STRING( PLATFORM ) );
-BSP_BUILD_STR( bsp_Build_timestamp, __TIMESTAMP__ );
+BSP_BUILD_STR(bsp_Build_product, CONVERT_NAME_TO_STRING(PRODUCT));
+BSP_BUILD_STR(bsp_Build_platform, CONVERT_NAME_TO_STRING(PLATFORM));
+BSP_BUILD_STR(bsp_Build_timestamp, __TIMESTAMP__);
 const bsp_Build_Version_t bsp_Build_versionHw = BSP_BUILD_VERSION_HW;
 const bsp_Build_Version_t bsp_Build_versionFw = BSP_BUILD_VERSION_FW;

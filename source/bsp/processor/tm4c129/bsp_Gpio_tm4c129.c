@@ -39,11 +39,12 @@
  *                              Global Data
  *============================================================================*/
 /*============================================================================*/
-bsp_Gpio_InputHandler_t bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_NUM_PORTS][BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT];
+bsp_Gpio_InputHandler_t bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_NUM_PORTS]
+                                                  [BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT];
 
 /*============================================================================*/
-const bsp_Gpio_PlatformPortInfo_t bsp_Gpio_platformPortInfoTable[ BSP_GPIO_PORT_ID_NUM_PORTS ] =
-{
+/* clang-format off */
+const bsp_Gpio_PlatformPortInfo_t bsp_Gpio_platformPortInfoTable[BSP_GPIO_PORT_ID_NUM_PORTS] = {
     { GPIO_PORTA_BASE, SYSCTL_PERIPH_GPIOA, BSP_INTERRUPT_ID_GPIOA, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_A][0]) },
     { GPIO_PORTB_BASE, SYSCTL_PERIPH_GPIOB, BSP_INTERRUPT_ID_GPIOB, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_B][0]) },
     { GPIO_PORTC_BASE, SYSCTL_PERIPH_GPIOC, BSP_INTERRUPT_ID_GPIOC, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_C][0]) },
@@ -59,40 +60,43 @@ const bsp_Gpio_PlatformPortInfo_t bsp_Gpio_platformPortInfoTable[ BSP_GPIO_PORT_
     { GPIO_PORTN_BASE, SYSCTL_PERIPH_GPION, BSP_INTERRUPT_ID_GPION, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_N][0]) },
     { GPIO_PORTP_BASE, SYSCTL_PERIPH_GPIOP, BSP_INTERRUPT_ID_GPIOP, TRUE,  &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_P][0]) },
     { GPIO_PORTQ_BASE, SYSCTL_PERIPH_GPIOQ, BSP_INTERRUPT_ID_GPIOQ, TRUE,  &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_Q][0]) },
+#if defined(BSP_INTERRUPT_ID_GPIOR)
     { GPIO_PORTR_BASE, SYSCTL_PERIPH_GPIOR, BSP_INTERRUPT_ID_GPIOR, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_R][0]) },
+#endif
+#if defined(BSP_INTERRUPT_ID_GPIOS)
     { GPIO_PORTS_BASE, SYSCTL_PERIPH_GPIOS, BSP_INTERRUPT_ID_GPIOS, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_S][0]) },
+#endif
+#if defined(BSP_INTERRUPT_ID_GPIOT)
     { GPIO_PORTT_BASE, SYSCTL_PERIPH_GPIOT, BSP_INTERRUPT_ID_GPIOT, FALSE, &(bsp_Gpio_inputHandlerTable[BSP_GPIO_PORT_ID_T][0]) }
+#endif
 };
+/* clang-format on */
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 
 /*============================================================================*/
-void
-bsp_Gpio_isrCommon( bsp_Gpio_PortId_t portId )
+void bsp_Gpio_isrCommon(bsp_Gpio_PortId_t portId)
 {
-    bsp_Gpio_InputHandler_t* handlerTable;
+    bsp_Gpio_InputHandler_t *handlerTable;
     uint32_t                 portBaseAddr;
     uint32_t                 tmpMis;
     uint8_t                  bitOffset;
 
-    portBaseAddr = bsp_Gpio_platformPortInfoTable[ portId ].baseAddr;
-    handlerTable = bsp_Gpio_platformPortInfoTable[ portId ].handlerTable;
+    portBaseAddr = bsp_Gpio_platformPortInfoTable[portId].baseAddr;
+    handlerTable = bsp_Gpio_platformPortInfoTable[portId].handlerTable;
 
     /* Read masked interrupt register */
-    tmpMis = MAP_GPIOIntStatus( portBaseAddr, false );
+    tmpMis = MAP_GPIOIntStatus(portBaseAddr, false);
 
     /* Clear interrupts */
-    MAP_GPIOIntClear( portBaseAddr, tmpMis );
+    MAP_GPIOIntClear(portBaseAddr, tmpMis);
 
     bitOffset = 0;
-    while( tmpMis != 0 )
-    {
-        if( ((tmpMis & 0x00000001) != 0) &&
-            (handlerTable[ bitOffset ] != NULL) )
-        {
-            handlerTable[ bitOffset ]( portId, bitOffset );
+    while (tmpMis != 0) {
+        if (((tmpMis & 0x00000001) != 0) && (handlerTable[bitOffset] != NULL)) {
+            handlerTable[bitOffset](portId, bitOffset);
         }
         tmpMis = (tmpMis >> 1);
         bitOffset++;
@@ -101,34 +105,30 @@ bsp_Gpio_isrCommon( bsp_Gpio_PortId_t portId )
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_isrPinCommon( bsp_Gpio_PortId_t    portId,
-                       bsp_Gpio_PinOffset_t bitOffset )
+void bsp_Gpio_isrPinCommon(bsp_Gpio_PortId_t portId, bsp_Gpio_PinOffset_t bitOffset)
 {
-    bsp_Gpio_InputHandler_t* handlerTable;
+    bsp_Gpio_InputHandler_t *handlerTable;
     uint32_t                 portBaseAddr;
     uint32_t                 tmpMis;
     uint32_t                 bitMask;
 
-    portBaseAddr = bsp_Gpio_platformPortInfoTable[ portId ].baseAddr;
-    handlerTable = bsp_Gpio_platformPortInfoTable[ portId ].handlerTable;
+    portBaseAddr = bsp_Gpio_platformPortInfoTable[portId].baseAddr;
+    handlerTable = bsp_Gpio_platformPortInfoTable[portId].handlerTable;
 
     /* Read masked interrupt register */
-    tmpMis = MAP_GPIOIntStatus( portBaseAddr, false );
+    tmpMis = MAP_GPIOIntStatus(portBaseAddr, false);
 
     /* for P0/Q0 interrupts occur when any of the other pins generate an interrupt so make sure
      * this function only handles the expected interrupt
      */
     bitMask = (1 << bitOffset);
-    if( (tmpMis & bitMask) != 0 )
-    {
+    if ((tmpMis & bitMask) != 0) {
         /* Clear interrupt */
-        MAP_GPIOIntClear( portBaseAddr, bitMask );
+        MAP_GPIOIntClear(portBaseAddr, bitMask);
 
         /* Call handler */
-        if( handlerTable[ bitOffset ] != NULL )
-        {
-            handlerTable[ bitOffset ]( portId, bitOffset );
+        if (handlerTable[bitOffset] != NULL) {
+            handlerTable[bitOffset](portId, bitOffset);
         }
     }
 
@@ -136,257 +136,225 @@ bsp_Gpio_isrPinCommon( bsp_Gpio_PortId_t    portId,
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortA( void )
+void bsp_Gpio_interruptHandlerPortA(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_A );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_A);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortB( void )
+void bsp_Gpio_interruptHandlerPortB(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_B );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_B);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortC( void )
+void bsp_Gpio_interruptHandlerPortC(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_C );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_C);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortD( void )
+void bsp_Gpio_interruptHandlerPortD(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_D );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_D);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortE( void )
+void bsp_Gpio_interruptHandlerPortE(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_E );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_E);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortF( void )
+void bsp_Gpio_interruptHandlerPortF(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_F );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_F);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortG( void )
+void bsp_Gpio_interruptHandlerPortG(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_G );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_G);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortH( void )
+void bsp_Gpio_interruptHandlerPortH(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_H );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_H);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortJ( void )
+void bsp_Gpio_interruptHandlerPortJ(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_J );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_J);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortK( void )
+void bsp_Gpio_interruptHandlerPortK(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_K );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_K);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortL( void )
+void bsp_Gpio_interruptHandlerPortL(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_L );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_L);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortM( void )
+void bsp_Gpio_interruptHandlerPortM(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_M );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_M);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortN( void )
+void bsp_Gpio_interruptHandlerPortN(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_N );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_N);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortP0( void )
+void bsp_Gpio_interruptHandlerPortP0(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_P, 0 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_P, 0);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortP1( void )
+void bsp_Gpio_interruptHandlerPortP1(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_P, 1 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_P, 1);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortP2( void )
+void bsp_Gpio_interruptHandlerPortP2(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_P, 2 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_P, 2);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortP3( void )
+void bsp_Gpio_interruptHandlerPortP3(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_P, 3 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_P, 3);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortP4( void )
+void bsp_Gpio_interruptHandlerPortP4(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_P, 4 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_P, 4);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortP5( void )
+void bsp_Gpio_interruptHandlerPortP5(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_P, 5 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_P, 5);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortP6( void )
+void bsp_Gpio_interruptHandlerPortP6(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_P, 6 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_P, 6);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortP7( void )
+void bsp_Gpio_interruptHandlerPortP7(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_P, 7 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_P, 7);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortQ0( void )
+void bsp_Gpio_interruptHandlerPortQ0(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_Q, 0 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_Q, 0);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortQ1( void )
+void bsp_Gpio_interruptHandlerPortQ1(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_Q, 1 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_Q, 1);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortQ2( void )
+void bsp_Gpio_interruptHandlerPortQ2(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_Q, 2 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_Q, 2);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortQ3( void )
+void bsp_Gpio_interruptHandlerPortQ3(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_Q, 3 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_Q, 3);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortQ4( void )
+void bsp_Gpio_interruptHandlerPortQ4(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_Q, 4 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_Q, 4);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortQ5( void )
+void bsp_Gpio_interruptHandlerPortQ5(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_Q, 5 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_Q, 5);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortQ6( void )
+void bsp_Gpio_interruptHandlerPortQ6(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_Q, 6 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_Q, 6);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortQ7( void )
+void bsp_Gpio_interruptHandlerPortQ7(void)
 {
-    bsp_Gpio_isrPinCommon( BSP_GPIO_PORT_ID_Q, 7 );
+    bsp_Gpio_isrPinCommon(BSP_GPIO_PORT_ID_Q, 7);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortR( void )
+void bsp_Gpio_interruptHandlerPortR(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_R );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_R);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortS( void )
+void bsp_Gpio_interruptHandlerPortS(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_S );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_S);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_interruptHandlerPortT( void )
+void bsp_Gpio_interruptHandlerPortT(void)
 {
-    bsp_Gpio_isrCommon( BSP_GPIO_PORT_ID_T );
+    bsp_Gpio_isrCommon(BSP_GPIO_PORT_ID_T);
     return;
 }

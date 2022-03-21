@@ -36,7 +36,7 @@ X Drivers for Push-Buttons
   - Pressure
   - Motion
   - Light
-  - Humidity 
+  - Humidity
   - LED
   - Push Buttons
   - Sensor Thread

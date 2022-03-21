@@ -35,11 +35,20 @@
  *                                Defines
  *============================================================================*/
 /*============================================================================*/
-#define TST_SUBMENU_ELEMENT( _cmd, _help, _submenu ) { _cmd, _help, .submenu = (_submenu), true }
-#define TST_HANDLER_ELEMENT( _cmd, _help, _handler ) { _cmd, _help, .handler = (_handler), false }
-#define TST_END_ELEMENT                              TST_HANDLER_ELEMENT("","",NULL)
+#define TST_SUBMENU_ELEMENT(_cmd, _help, _submenu) \
+    {                                              \
+        _cmd, _help, .submenu = (_submenu), true   \
+    }
+#define TST_HANDLER_ELEMENT(_cmd, _help, _handler) \
+    {                                              \
+        _cmd, _help, .handler = (_handler), false  \
+    }
+#define TST_END_ELEMENT TST_HANDLER_ELEMENT("", "", NULL)
 
-#define TST_PRINT_HELP( _tbl_ptr ) { printf( "%s: %s"NL, (_tbl_ptr)->cmd, (_tbl_ptr)->help ); }
+#define TST_PRINT_HELP(_tbl_ptr)                                \
+    {                                                           \
+        printf("%s: %s" NL, (_tbl_ptr)->cmd, (_tbl_ptr)->help); \
+    }
 
 // Negative return values indicate an error
 #define TST_STATUS_OK    0
@@ -58,16 +67,15 @@ typedef int32_t tst_Status_t;
 /*==============================================================================
  *                                 Types
  *============================================================================*/
-typedef tst_Status_t (*tst_HandlerText_t)( int argc, char** argv );
+typedef tst_Status_t (*tst_HandlerText_t)(int argc, char **argv);
 
 /*============================================================================*/
 typedef struct tst_TableElement_s {
-    const char* const cmd;
-    const char* const help;
-    union
-    {
+    const char *const cmd;
+    const char *const help;
+    union {
         tst_HandlerText_t                handler;
-        const struct tst_TableElement_s* submenu;
+        const struct tst_TableElement_s *submenu;
     };
     bool_t is_menu;
 } tst_TableElement_t;

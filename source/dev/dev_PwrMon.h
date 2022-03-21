@@ -33,51 +33,42 @@
  *============================================================================*/
 typedef int32_t dev_PwrMon_Data_t;
 typedef uint8_t dev_PwrMon_ChannelId_t;
-typedef void (*dev_PwrMon_Callback_t)( void* cbData );
+typedef void (*dev_PwrMon_Callback_t)(void *cbData);
 
 /*==============================================================================
  *                               Prototypes
  *============================================================================*/
 /*===========================================================================*/
-void
-dev_PwrMon_init( void );
+void dev_PwrMon_init(void);
 
 /*===========================================================================*/
-void
-dev_PwrMon_channelOffsetCal( dev_PwrMon_ChannelId_t channelId,
-                             dev_PwrMon_Data_t*     vBusPtr,
-                             dev_PwrMon_Data_t*     vShuntPtr );
+void dev_PwrMon_channelOffsetCal(
+    dev_PwrMon_ChannelId_t channelId,
+    dev_PwrMon_Data_t *    vBusPtr,
+    dev_PwrMon_Data_t *    vShuntPtr);
 
 /*===========================================================================*/
-void
-dev_PwrMon_channelBusVoltageRead( dev_PwrMon_ChannelId_t channelId,
-                                  uint8_t*               dataPtr,
-                                  dev_PwrMon_Callback_t  callback,
-                                  void*                  cbData );
+void dev_PwrMon_channelBusVoltageRead(
+    dev_PwrMon_ChannelId_t channelId,
+    uint8_t *              dataPtr,
+    dev_PwrMon_Callback_t  callback,
+    void *                 cbData);
 
 /*===========================================================================*/
-void
-dev_PwrMon_channelShuntVoltageRead( dev_PwrMon_ChannelId_t channelId,
-                                    uint8_t*               dataPtr,
-                                    dev_PwrMon_Callback_t  callback,
-                                    void*                  cbData );
+void dev_PwrMon_channelShuntVoltageRead(
+    dev_PwrMon_ChannelId_t channelId,
+    uint8_t *              dataPtr,
+    dev_PwrMon_Callback_t  callback,
+    void *                 cbData);
 
 /*===========================================================================*/
-dev_PwrMon_Data_t
-dev_PwrMon_vBusConvert( dev_PwrMon_ChannelId_t channelId,
-                        dev_PwrMon_Data_t      val );
+dev_PwrMon_Data_t dev_PwrMon_vBusConvert(dev_PwrMon_ChannelId_t channelId, dev_PwrMon_Data_t val);
 
 /*===========================================================================*/
-dev_PwrMon_Data_t
-dev_PwrMon_vShuntConvert( dev_PwrMon_ChannelId_t channelId,
-                          dev_PwrMon_Data_t      val );
+dev_PwrMon_Data_t dev_PwrMon_vShuntConvert(dev_PwrMon_ChannelId_t channelId, dev_PwrMon_Data_t val);
 
 /*===========================================================================*/
-dev_PwrMon_Data_t
-dev_PwrMon_vBusFormat( dev_PwrMon_ChannelId_t channelId,
-                       dev_PwrMon_Data_t      val );
+dev_PwrMon_Data_t dev_PwrMon_vBusFormat(dev_PwrMon_ChannelId_t channelId, dev_PwrMon_Data_t val);
 
 /*===========================================================================*/
-dev_PwrMon_Data_t
-dev_PwrMon_vShuntFormat( dev_PwrMon_ChannelId_t channelId,
-                         dev_PwrMon_Data_t      val );
+dev_PwrMon_Data_t dev_PwrMon_vShuntFormat(dev_PwrMon_ChannelId_t channelId, dev_PwrMon_Data_t val);

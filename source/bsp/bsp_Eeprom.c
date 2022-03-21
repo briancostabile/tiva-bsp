@@ -34,41 +34,34 @@
 #include "driverlib/eeprom.h"
 #include "driverlib/sysctl.h"
 
-
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 
 /*============================================================================*/
-void
-bsp_Eeprom_init( void )
+void bsp_Eeprom_init(void)
 {
-    MAP_SysCtlPeripheralEnable( SYSCTL_PERIPH_EEPROM0 );
-    while( !MAP_SysCtlPeripheralReady(SYSCTL_PERIPH_EEPROM0) );
+    MAP_SysCtlPeripheralEnable(SYSCTL_PERIPH_EEPROM0);
+    while (!MAP_SysCtlPeripheralReady(SYSCTL_PERIPH_EEPROM0))
+        ;
     MAP_EEPROMInit();
-    MAP_EEPROMIntDisable( EEPROM_INT_PROGRAM );
-    MAP_EEPROMIntClear( EEPROM_INT_PROGRAM );
+    MAP_EEPROMIntDisable(EEPROM_INT_PROGRAM);
+    MAP_EEPROMIntClear(EEPROM_INT_PROGRAM);
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Eeprom_read( uint32_t* dataPtr,
-                 uint32_t  eepromAddr,
-                 size_t    len32 )
+void bsp_Eeprom_read(uint32_t *dataPtr, uint32_t eepromAddr, size_t len32)
 {
-    BSP_ASSERT( (eepromAddr & 0x00000003) == 0 );
-    MAP_EEPROMRead( dataPtr, eepromAddr, (len32 * 4) );
+    BSP_ASSERT((eepromAddr & 0x00000003) == 0);
+    MAP_EEPROMRead(dataPtr, eepromAddr, (len32 * 4));
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Eeprom_write( uint32_t  eepromAddr,
-                  uint32_t* dataPtr,
-                  size_t    len32 )
+void bsp_Eeprom_write(uint32_t eepromAddr, uint32_t *dataPtr, size_t len32)
 {
-    BSP_ASSERT( (eepromAddr & 0x00000003) == 0 );
-    MAP_EEPROMProgram( dataPtr, eepromAddr, (len32 * 4) );
+    BSP_ASSERT((eepromAddr & 0x00000003) == 0);
+    MAP_EEPROMProgram(dataPtr, eepromAddr, (len32 * 4));
     return;
 }

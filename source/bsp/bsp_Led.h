@@ -28,7 +28,7 @@
 
 #include "bsp_Platform.h"
 #include "bsp_Gpio.h"
-#include BUILD_INCLUDE_STRING( bsp_Led_, PLATFORM )
+#include BUILD_INCLUDE_STRING(bsp_Led_, PLATFORM)
 
 /*==============================================================================
  *                             Defines
@@ -54,7 +54,7 @@ typedef uint8_t bsp_Led_Polarity_t;
 
 /*============================================================================*/
 typedef struct {
-    const char*        name;
+    const char *       name;
     bsp_Led_Color_t    color;
     bsp_Gpio_PortId_t  portId;
     uint32_t           portAddr;
@@ -65,8 +65,8 @@ typedef struct {
 
 /*============================================================================*/
 typedef struct {
-    const char*                       name;
-    const bsp_Led_GroupElementInfo_t* groupTable;
+    const char *                      name;
+    const bsp_Led_GroupElementInfo_t *groupTable;
     size_t                            cnt;
 } bsp_Led_Info_t;
 
@@ -74,10 +74,7 @@ typedef struct {
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Led_init( void );
+void bsp_Led_init(void);
 
 /*============================================================================*/
-void
-bsp_Led_setColor( bsp_Led_Id_t    id,
-                  bsp_Led_Color_t color );
+void bsp_Led_setColor(bsp_Led_Id_t id, bsp_Led_Color_t color);

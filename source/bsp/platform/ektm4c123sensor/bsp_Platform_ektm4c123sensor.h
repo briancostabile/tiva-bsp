@@ -23,6 +23,7 @@
 /**
  * @file bsp_Platform_ektm4c123sensor.h
  */
+/* clang-format off */
 #pragma once
 
 #include "inc/tm4c123gh6pm.h"
@@ -46,21 +47,21 @@
 /*==============================================================================
  *                            IO defines
  *============================================================================*/
+//must be 9600 for Virtual Com port built into launchpad
 #define BSP_PLATFORM_IO_UART_NUM         1
 #define BSP_PLATFORM_IO_UART0_ID         0
 #define BSP_PLATFORM_IO_UART0_RX_PIN_SEL 0
 #define BSP_PLATFORM_IO_UART0_TX_PIN_SEL 0
-#define BSP_PLATFORM_IO_UART0_BAUD       (9600 * 1) //must be 9600 for Virtual Com port built into launchpad
+#define BSP_PLATFORM_IO_UART0_BAUD       (9600 * 1)
 #define BSP_PLATFORM_IO_UART0_RX_BUF_LEN 32
 #define BSP_PLATFORM_IO_UART0_TX_BUF_LEN 256
 
-
 /* USB Setup */
 #define BSP_PLATFORM_USB_ENABLED
-#define BSP_PLATFORM_USB_CDC
+//#define BSP_PLATFORM_USB_CDC
 #define BSP_PLATFORM_USB_BULK
-#define BSP_PLATFORM_IO_USB0_RX_BUF_LEN  256
-#define BSP_PLATFORM_IO_USB0_TX_BUF_LEN  (3*1024)
+#define BSP_PLATFORM_IO_USB0_RX_BUF_LEN 256
+#define BSP_PLATFORM_IO_USB0_TX_BUF_LEN (2 * 1024)
 
 //#define BSP_PLATFORM_ENABLE_DEV_HUMID_SHT21
 //#define BSP_PLATFORM_ENABLE_DEV_LIGHT_ISL20023
@@ -106,7 +107,6 @@
 #define BSP_PLATFORM_IO_MAP_STDIN  "usb0"
 #define BSP_PLATFORM_IO_MAP_STDERR "usb0"
 
-
 /*==============================================================================
  *                            Power Monitor
  *============================================================================*/
@@ -116,21 +116,43 @@
 #define BSP_PLATFORM_PWRMON_NUM_DEVICES 4
 
 /**
- * Device info for each INA126 device
- * - I2C Device Id
- * - I2C Address on Bus
- * - I2C xfer speed
+ * Device info for each INA226/228/239 device
+ * -- I2C Device Id
+ * -- I2C Address on Bus
+ * -- I2C xfer speed
+ * -- SSI Device Id
+ * -- SSI read speed
+ * -- SSI write speed
  * - Associated Channel
+ * - Device Type (INA226 or INA228 or INA239)
  * - Pointer to context table entry
  */
 // Ch0: Device 0,1
 // Ch1: Device 2,3
-#define BSP_PLATFORM_PWRMON_DEVICE_TABLE(_ctxTable) {         \
-    { 1, 0x40, BSP_I2C_SPEED_FAST_PLUS, 0, &(_ctxTable)[0] }, \
-    { 1, 0x41, BSP_I2C_SPEED_FAST_PLUS, 0, &(_ctxTable)[1] }, \
-    { 3, 0x40, BSP_I2C_SPEED_FAST_PLUS, 0, &(_ctxTable)[2] }, \
-    { 3, 0x41, BSP_I2C_SPEED_FAST_PLUS, 0, &(_ctxTable)[3] }  \
-}
+#define DEVICE_TABLE_ENTRY_SSI(ssiId, speedR, speedW, ch, type, mode, ctx)              \
+    {                                                                                   \
+        .bus.ssi =                                                                      \
+            {(ssiId),                                                                   \
+             (speedR),                                                                  \
+             (speedW),                                                                  \
+             BSP_GPIO_PORT_ID_INA_CS_CH##ch,                                            \
+             BSP_GPIO_BIT_MASK_INA_CS_CH##ch},                                          \
+        (ch), DEV_PWR_MON_DEVICE_TYPE_##type, DEV_PWRMON_DEVICE_MODE_MASK_##mode, (ctx) \
+    }
+
+#define DEVICE_TABLE_ENTRY_I2C(i2cId, i2cAddr, i2cXfer, ch, type, mode, ctx)      \
+    {                                                                             \
+        .bus.i2c = {(i2cId), (i2cAddr), BSP_I2C_SPEED_##i2cXfer}, (ch),           \
+        DEV_PWR_MON_DEVICE_TYPE_##type, DEV_PWRMON_DEVICE_MODE_MASK_##mode, (ctx) \
+    }
+
+#define BSP_PLATFORM_PWRMON_DEVICE_TABLE(_ctxTable)                                     \
+    {                                                                                   \
+        DEVICE_TABLE_ENTRY_I2C(1, 0x40, FAST_PLUS, 0, INA228, SHUNT, &(_ctxTable)[0]),  \
+        DEVICE_TABLE_ENTRY_I2C(1, 0x45, FAST_PLUS, 0, INA226, BUS, &(_ctxTable)[1]),    \
+        DEVICE_TABLE_ENTRY_I2C(2, 0x40, FAST_PLUS, 1, INA228, SHUNT, &(_ctxTable)[2]),  \
+        DEVICE_TABLE_ENTRY_I2C(2, 0x45, FAST_PLUS, 1, INA226, BUS, &(_ctxTable)[3]),    \
+    }
 
 /*===========================================================================*/
 // Channels
@@ -138,14 +160,28 @@
 
 /**
  * Which device from the device table to use for each of the result registers
- * - Voltage-Bus
  * - Voltage-Shunt
+ * - Voltage-Bus
  * - Current
  * - Power
+ * - Cal GPIO Port
+ * - Cal GPIO Mask
  */
 // Ch0: 2 devices -  0: Bus, Shunt, Power, 1: Current
 // Ch1: 2 devices -  0: Bus, Shunt, Power, 1: Current
-#define BSP_PLATFORM_PWRMON_CHANNEL_MAP_TABLE { \
-    {0, 0, 1, 0},                               \
-    {2, 2, 3, 2}                                \
-}
+#define CHANNEL_MAP_TABLE_ENTRY(chName, vShuntDevIdx, vBusDevIdx)    \
+    {                                                                \
+        (vShuntDevIdx), (vBusDevIdx), BSP_GPIO_PORT_ID_CAL_##chName, \
+            BSP_GPIO_BIT_MASK_CAL_##chName                           \
+    }
+
+#define CHANNEL_MAP_TABLE_ENTRY_NO_CAL(chName, vShuntDevIdx, vBusDevIdx) \
+    {                                                                    \
+        (vShuntDevIdx), (vBusDevIdx), 0, 0                               \
+    }
+
+#define BSP_PLATFORM_PWRMON_CHANNEL_MAP_TABLE       \
+    {                                               \
+        CHANNEL_MAP_TABLE_ENTRY_NO_CAL(CH0, 0, 1),  \
+        CHANNEL_MAP_TABLE_ENTRY_NO_CAL(CH1, 2, 3),  \
+    }

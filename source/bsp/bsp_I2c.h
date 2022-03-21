@@ -29,8 +29,7 @@
 #include "inc/hw_memmap.h"
 #include "inc/hw_i2c.h"
 
-#include BUILD_INCLUDE_STRING( bsp_I2c_, PLATFORM_CORE )
-
+#include BUILD_INCLUDE_STRING(bsp_I2c_, PLATFORM_CORE)
 
 /*==============================================================================
  *                                 Types
@@ -49,11 +48,10 @@
 #define BSP_I2C_SPEED_HIGH      ((bsp_I2c_Speed_t)3)
 typedef uint8_t bsp_I2c_Speed_t;
 
-
 /*============================================================================*/
-#define BSP_I2C_CONTROL_DISABLE    ((bsp_I2c_Control_t)0)
-#define BSP_I2C_CONTROL_ENABLE     ((bsp_I2c_Control_t)1)
-#define BSP_I2C_CONTROL_ENABLE_HS  ((bsp_I2c_Control_t)2)
+#define BSP_I2C_CONTROL_DISABLE   ((bsp_I2c_Control_t)0)
+#define BSP_I2C_CONTROL_ENABLE    ((bsp_I2c_Control_t)1)
+#define BSP_I2C_CONTROL_ENABLE_HS ((bsp_I2c_Control_t)2)
 typedef uint8_t bsp_I2c_Control_t;
 
 /*============================================================================*/
@@ -71,55 +69,40 @@ typedef uint8_t bsp_I2c_Status_t;
  *                                  Types
  *============================================================================*/
 /*============================================================================*/
-typedef void (*bsp_I2c_MasterTransCallback_t)( bsp_I2c_Status_t status, void* usrData );
-typedef void (*bsp_I2c_SlaveTransCallback_t)( bsp_I2c_Status_t status, void* usrData );
+typedef void (*bsp_I2c_MasterTransCallback_t)(bsp_I2c_Status_t status, void *usrData);
+typedef void (*bsp_I2c_SlaveTransCallback_t)(bsp_I2c_Status_t status, void *usrData);
 
-typedef struct bsp_I2c_MasterTrans_n
-{
-    struct bsp_I2c_MasterTrans_n* nextPtr;
+typedef struct bsp_I2c_MasterTrans_n {
+    struct bsp_I2c_MasterTrans_n *nextPtr;
     bsp_I2c_TransType_t           type;
     bsp_I2c_Speed_t               speed;
     bsp_I2c_Addr_t                addr;
     bool_t                        rReverse;
     size_t                        rLen;
-    uint8_t*                      rBuffer;
+    uint8_t *                     rBuffer;
     size_t                        wLen;
-    uint8_t*                      wBuffer;
+    uint8_t *                     wBuffer;
     bsp_I2c_MasterTransCallback_t callback;
-    void*                         usrData;
+    void *                        usrData;
 } bsp_I2c_MasterTrans_t;
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_I2c_init( void );
+void bsp_I2c_init(void);
 
 /*============================================================================*/
-void
-bsp_I2c_masterControl( bsp_I2c_Id_t      id,
-                       bsp_I2c_Control_t control );
+void bsp_I2c_masterControl(bsp_I2c_Id_t id, bsp_I2c_Control_t control);
 
 /*============================================================================*/
-void
-bsp_I2c_masterTransQueue( bsp_I2c_Id_t           id,
-                          bsp_I2c_MasterTrans_t* transPtr );
+void bsp_I2c_masterTransQueue(bsp_I2c_Id_t id, bsp_I2c_MasterTrans_t *transPtr);
 
 /*============================================================================*/
-void
-bsp_I2c_slaveConfig( bsp_I2c_Id_t    id,
-                     bsp_I2c_Speed_t speed,
-                     bsp_I2c_Addr_t  addr );
+void bsp_I2c_slaveConfig(bsp_I2c_Id_t id, bsp_I2c_Speed_t speed, bsp_I2c_Addr_t addr);
 
 /*============================================================================*/
-size_t
-bsp_I2c_slaveRcv( bsp_I2c_Id_t id,
-                  size_t       len,
-                  void*        data );
+size_t bsp_I2c_slaveRcv(bsp_I2c_Id_t id, size_t len, void *data);
 
 /*============================================================================*/
-void
-bsp_I2c_slaveControl( bsp_I2c_Id_t      id,
-                      bsp_I2c_Control_t control );
-
+void bsp_I2c_slaveControl(bsp_I2c_Id_t id, bsp_I2c_Control_t control);

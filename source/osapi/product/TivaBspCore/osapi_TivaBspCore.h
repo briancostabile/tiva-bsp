@@ -28,21 +28,23 @@
 
 #include "bsp_Platform.h"
 
-#define OSAPI_THREAD_MAX_CNT 4
+#define OSAPI_THREAD_MAX_CNT    4
 #define OSAPI_SEMAPHORE_MAX_CNT 4
-#define OSAPI_QUEUE_MAX_CNT 4
-#define OSAPI_TIMER_MAX_CNT 4
-#define OSAPI_MS_PER_TICK 1
+#define OSAPI_QUEUE_MAX_CNT     4
+#define OSAPI_TIMER_MAX_CNT     4
+#define OSAPI_MS_PER_TICK       1
 
 // Define the memory pools (byte-size, count)
-OSAPI_MEMORY_POOL_DEFINE(  12, 6 )
-OSAPI_MEMORY_POOL_DEFINE(  24, 4 )
-OSAPI_MEMORY_POOL_DEFINE(  68, 2 )
-OSAPI_MEMORY_POOL_DEFINE( 132, 2 )
+OSAPI_MEMORY_POOL_DEFINE(12, 6)
+OSAPI_MEMORY_POOL_DEFINE(24, 4)
+OSAPI_MEMORY_POOL_DEFINE(68, 2)
+OSAPI_MEMORY_POOL_DEFINE(132, 2)
 
 /* Arranged smallest to largest block-size */
+/* clang-format off */
 #define OSAPI_MEMORY_POOL_ELEMENTS         \
     OSAPI_MEMORY_POOL_INFO_ELEMENT(  12 ), \
     OSAPI_MEMORY_POOL_INFO_ELEMENT(  24 ), \
     OSAPI_MEMORY_POOL_INFO_ELEMENT(  68 ), \
     OSAPI_MEMORY_POOL_INFO_ELEMENT( 132 )
+/* clang-format on */

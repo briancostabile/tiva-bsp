@@ -28,6 +28,7 @@
 
 #include "bsp_Types.h"
 #include "bsp_I2c.h"
+#include "bsp_Ssi.h"
 
 /*==============================================================================
  *                                   Types
@@ -39,17 +40,27 @@ typedef uint16_t dev_PwrMon_WriteData_t;
 /*===========================================================================*/
 #define DEV_PWR_MON_DEVICE_TYPE_INA226 0
 #define DEV_PWR_MON_DEVICE_TYPE_INA228 1
+#define DEV_PWR_MON_DEVICE_TYPE_INA239 2
 typedef uint8_t dev_PwrMon_DeviceType_t;
 
-typedef struct dev_PwrMon_DeviceCtx_s
-{
-    bsp_I2c_MasterTrans_t i2cTrans;
+#define DEV_PWRMON_DEVICE_MODE_MASK_SHUNT 0x01
+#define DEV_PWRMON_DEVICE_MODE_MASK_BUS   0x02
+#define DEV_PWRMON_DEVICE_MODE_MASK_BOTH \
+    (DEV_PWRMON_DEVICE_MODE_MASK_SHUNT | DEV_PWRMON_DEVICE_MODE_MASK_BUS)
+typedef uint8_t dev_PwrMon_DevModeMask_t;
+
+typedef struct dev_PwrMon_DeviceCtx_s {
+    union {
+        bsp_I2c_MasterTrans_t i2c;
+        bsp_Ssi_MasterTrans_t ssi;
+    } trans;
+
     uint8_t               wLen;
     uint8_t               wBuffer[6];
     uint8_t               rLen;
-    void*                 rPtr;
+    void *                rPtr;
     dev_PwrMon_Callback_t callback;
-    void*                 cbData;
+    void *                cbData;
 
     volatile bool               active;
     uint8_t                     prevRegId;
@@ -57,85 +68,93 @@ typedef struct dev_PwrMon_DeviceCtx_s
     dev_PwrMon_ManufacturerId_t mftrId;
 } dev_PwrMon_DeviceCtx_t;
 
-typedef struct dev_PwrMon_DeviceInfo_s
-{
-    bsp_I2c_Id_t            i2cId;
-    bsp_I2c_Addr_t          i2cAddr;
-    bsp_I2c_Speed_t         i2cSpeed;
-    dev_PwrMon_ChannelId_t  channelId;
-    dev_PwrMon_DeviceType_t devType;
-    dev_PwrMon_DeviceCtx_t* ctx;
+typedef struct dev_PwrMon_DeviceInfoI2c_s {
+    bsp_I2c_Id_t    id;
+    bsp_I2c_Addr_t  addr;
+    bsp_I2c_Speed_t speed;
+} dev_PwrMon_DeviceInfoI2c_t;
+
+typedef struct dev_PwrMon_DeviceInfoSsi_s {
+    bsp_Ssi_Id_t    id;
+    bsp_Ssi_Speed_t speedRead;
+    bsp_Ssi_Speed_t speedWrite;
+    uint32_t        csPort;
+    uint32_t        csMask;
+} dev_PwrMon_DeviceInfoSsi_t;
+
+typedef struct dev_PwrMon_DeviceInfo_s {
+    union {
+        dev_PwrMon_DeviceInfoI2c_t i2c;
+        dev_PwrMon_DeviceInfoSsi_t ssi;
+    } bus;
+
+    dev_PwrMon_ChannelId_t   channelId;
+    dev_PwrMon_DeviceType_t  devType;
+    dev_PwrMon_DevModeMask_t mode;
+    dev_PwrMon_DeviceCtx_t * ctx;
 } dev_PwrMon_DeviceInfo_t;
 
 typedef uint8_t dev_PwrMon_DevId_t;
-
-#define DEV_PWR_MON_DEVICE_MODE_MASK_SHUNT 0x01
-#define DEV_PWR_MON_DEVICE_MODE_MASK_BUS   0x02
-typedef uint8_t dev_PwrMon_DevModeMask_t;
 
 // Choose an invalid address for any of the devices
 #define DEV_PWRMON_REG_INVALID 0xF0
 
 /*===========================================================================*/
 /* Function prototype types for the API (object) structure */
-typedef void (*dev_PwrMon_InitFunc_t)( const dev_PwrMon_DeviceInfo_t* devPtr );
-typedef void (*dev_PwrMon_ConfigFunc_t)( const dev_PwrMon_DeviceInfo_t* devPtr,
-                                         dev_PwrMon_DevModeMask_t modeMask,
-                                         dev_PwrMon_Callback_t    callback,
-                                         void*                    cbData );
-typedef void (*dev_PwrMon_ReadFunc_t)( const dev_PwrMon_DeviceInfo_t* devPtr,
-                                       uint8_t*                 dataPtr,
-                                       dev_PwrMon_Callback_t    callback,
-                                       void*                    cbData );
-typedef int32_t (*dev_PwrMon_CalFunc_t)( const dev_PwrMon_DeviceInfo_t* devPtr );
-typedef int32_t (*dev_PwrMon_ConvertFunc_t)( int32_t val );
-typedef int32_t (*dev_PwrMon_FormatFunc_t)( int32_t val );
+typedef void (*dev_PwrMon_InitFunc_t)(const dev_PwrMon_DeviceInfo_t *devPtr);
+typedef void (*dev_PwrMon_ConfigFunc_t)(
+    const dev_PwrMon_DeviceInfo_t *devPtr,
+    dev_PwrMon_DevModeMask_t       modeMask,
+    dev_PwrMon_Callback_t          callback,
+    void *                         cbData);
+typedef void (*dev_PwrMon_ReadFunc_t)(
+    const dev_PwrMon_DeviceInfo_t *devPtr,
+    uint8_t *                      dataPtr,
+    dev_PwrMon_Callback_t          callback,
+    void *                         cbData);
+typedef int32_t (*dev_PwrMon_CalFunc_t)(const dev_PwrMon_DeviceInfo_t *devPtr);
+typedef int32_t (*dev_PwrMon_ConvertFunc_t)(int32_t val);
+typedef int32_t (*dev_PwrMon_FormatFunc_t)(int32_t val);
 
-typedef struct
-{
+typedef struct {
     dev_PwrMon_ReadFunc_t    read;
     dev_PwrMon_CalFunc_t     cal;
     dev_PwrMon_FormatFunc_t  format;
     dev_PwrMon_ConvertFunc_t convert;
 } dev_PwrMon_DeviceApiVoltage_t;
 
-
-typedef struct
-{
+typedef struct {
     dev_PwrMon_InitFunc_t         init;
     dev_PwrMon_ConfigFunc_t       config;
     dev_PwrMon_DeviceApiVoltage_t vBus;
     dev_PwrMon_DeviceApiVoltage_t vShunt;
 } dev_PwrMon_DeviceApi_t;
 
-
 /*===========================================================================*/
-typedef uint8_t dev_PwrMon_I2cCmd_t;
-typedef struct dev_PwrMon_RegInfo_s
-{
-    dev_PwrMon_I2cCmd_t cmd;
-    uint8_t             len;
-    bool                rdOnly;
+typedef uint8_t dev_PwrMon_CmdId_t;
+typedef struct dev_PwrMon_RegInfo_s {
+    dev_PwrMon_CmdId_t cmd;
+    uint8_t            len;
+    bool               rdOnly;
 } dev_PwrMon_RegInfo_t;
 
 #define DEV_PWRMON_REG_TYPE_RO true
 #define DEV_PWRMON_REG_TYPE_RW false
 typedef uint8_t dev_PwrMon_RegType_t;
 
+/*===========================================================================*/
+void dev_PwrMon_commonRead(
+    const dev_PwrMon_DeviceInfo_t *devPtr,
+    uint8_t                        regId,
+    uint8_t                        regLen,
+    void *                         dataPtr,
+    dev_PwrMon_Callback_t          callback,
+    void *                         cbData);
 
 /*===========================================================================*/
-void
-dev_PwrMon_commonRead( const dev_PwrMon_DeviceInfo_t* devPtr,
-                       uint8_t                        regId,
-                       uint8_t                        regLen,
-                       void*                          dataPtr,
-                       dev_PwrMon_Callback_t          callback,
-                       void*                          cbData );
-
-/*===========================================================================*/
-void
-dev_PwrMon_commonWrite( const dev_PwrMon_DeviceInfo_t* devPtr,
-                        uint8_t                        regId,
-                        dev_PwrMon_WriteData_t         data,
-                        dev_PwrMon_Callback_t          callback,
-                        void*                          cbData );
+void dev_PwrMon_commonWrite(
+    const dev_PwrMon_DeviceInfo_t *devPtr,
+    uint8_t                        regId,
+    dev_PwrMon_WriteData_t         data,
+    dev_PwrMon_Callback_t          callback,
+    void *                         cbData);

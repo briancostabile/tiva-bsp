@@ -38,18 +38,21 @@
  *============================================================================*/
 /*============================================================================*/
 // Event handler message IDs
-#define SVC_BUTTONEH_PRESS_IND       SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_BUTTON, 0 )
-#define SVC_BUTTONEH_LONG_PRESS_IND  SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_BUTTON, 1 )
-#define SVC_BUTTONEH_RELEASE_IND     SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_BUTTON, 2 )
+#define SVC_BUTTONEH_PRESS_IND      SVC_MSGFWK_MSG_ID_BUILD_IND(SVC_EHID_BUTTON, 0)
+#define SVC_BUTTONEH_LONG_PRESS_IND SVC_MSGFWK_MSG_ID_BUILD_IND(SVC_EHID_BUTTON, 1)
+#define SVC_BUTTONEH_RELEASE_IND    SVC_MSGFWK_MSG_ID_BUILD_IND(SVC_EHID_BUTTON, 2)
 
+#define SVC_BUTTONEH_MSG_ID_NAMES_TABLE           \
+    {                                             \
+        "PressInd", "LongPressInd", "ReleaseInd", \
+    }
 
 /*==============================================================================
  *                                Types
  *============================================================================*/
 /*============================================================================*/
 // Event handler message structures
-typedef struct BSP_ATTR_PACKED svc_ButtonEh_HwPressInd_s
-{
+typedef struct BSP_ATTR_PACKED svc_ButtonEh_HwPressInd_s {
     svc_MsgFwk_Hdr_t hdr;
     bsp_Button_Id_t  id;
 } svc_ButtonEh_PressInd_t;
@@ -57,7 +60,6 @@ typedef struct BSP_ATTR_PACKED svc_ButtonEh_HwPressInd_s
 typedef svc_ButtonEh_PressInd_t svc_ButtonEh_LongPressInd_t;
 
 typedef svc_ButtonEh_PressInd_t svc_ButtonEh_ReleaseInd_t;
-
 
 /*==============================================================================
  *                                Globals

@@ -31,20 +31,19 @@
 /*==================================================================================================
  *                                           Types
  *================================================================================================*/
-typedef void (* bsp_UsbIo_DataAvailableCallback_t)( size_t cnt );
-
+typedef void (*bsp_UsbIo_DataAvailableCallback_t)(size_t cnt);
 
 /*==================================================================================================
  *                                        Public Functions
  *================================================================================================*/
 /*============================================================================*/
-void bsp_UsbIo_registerDataAvailableCallback( int fd, bsp_UsbIo_DataAvailableCallback_t callback );
+void bsp_UsbIo_registerDataAvailableCallback(int fd, bsp_UsbIo_DataAvailableCallback_t callback);
 
-void bsp_UsbIo_init( void );
-int bsp_UsbIo_open( const char* path, unsigned int flags, int llv_fd );
-int bsp_UsbIo_close( int fd );
-int bsp_UsbIo_read( int fd, char* buffer, size_t count );
-int bsp_UsbIo_write( int fd, const char* buffer, size_t count );
-off_t bsp_UsbIo_lseek( int fd, off_t offset, int origin );
-int bsp_UsbIo_unlink( const char* path );
-int bsp_UsbIo_rename( const char* old_name, const char* new_name );
+void  bsp_UsbIo_init(void);
+int   bsp_UsbIo_open(const char *path, unsigned int flags, int llv_fd);
+int   bsp_UsbIo_close(int fd);
+int   bsp_UsbIo_read(int fd, char *buffer, size_t count);
+int   bsp_UsbIo_write(int fd, const char *buffer, size_t count);
+off_t bsp_UsbIo_lseek(int fd, off_t offset, int origin);
+int   bsp_UsbIo_unlink(const char *path);
+int   bsp_UsbIo_rename(const char *old_name, const char *new_name);

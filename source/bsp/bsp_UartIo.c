@@ -40,153 +40,127 @@
 #include <string.h>
 #include "stdio.h"
 
-
 /*==============================================================================
  *                                Macros
  *============================================================================*/
 
 /*============================================================================*/
-#define BSP_UARTIO_RX_BUFFER_WRITE_PTR( _infoPtr )                 \
-    &((_infoPtr)->rxBufInfo.ptr[ (_infoPtr)->rxBufInfo.writeIdx ])
-
-
-/*============================================================================*/
-#define BSP_UARTIO_RX_BUFFER_READ_PTR( _infoPtr )                  \
-    &((_infoPtr)->rxBufInfo.ptr[ (_infoPtr)->rxBufInfo.readIdx ])
-
+#define BSP_UARTIO_RX_BUFFER_WRITE_PTR(_infoPtr) \
+    &((_infoPtr)->rxBufInfo.ptr[(_infoPtr)->rxBufInfo.writeIdx])
 
 /*============================================================================*/
-#define BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_AVAIL( _infoPtr )            \
-( ((_infoPtr)->rxBufInfo.writeIdx > (_infoPtr)->rxBufInfo.readIdx) ?     \
-      ((_infoPtr)->rxBufInfo.size - (_infoPtr)->rxBufInfo.writeIdx) :    \
-      ((_infoPtr)->rxBufInfo.readIdx - (_infoPtr)->rxBufInfo.writeIdx) )
-
+#define BSP_UARTIO_RX_BUFFER_READ_PTR(_infoPtr) \
+    &((_infoPtr)->rxBufInfo.ptr[(_infoPtr)->rxBufInfo.readIdx])
 
 /*============================================================================*/
-#define BSP_UARTIO_RX_BUFFER_WRITE( _infoPtr, _nBytes )                     \
-{                                                                           \
-    if( (_nBytes) > 0 )                                                     \
-    {                                                                       \
-        BSP_MCU_CRITICAL_SECTION_ENTER();                                   \
-        if( (_infoPtr)->rxBufInfo.readIdx == (_infoPtr)->rxBufInfo.size )   \
-        {                                                                   \
-            (_infoPtr)->rxBufInfo.readIdx = (_infoPtr)->rxBufInfo.writeIdx; \
-        }                                                                   \
-        (_infoPtr)->rxBufInfo.writeIdx += (_nBytes);                        \
-        if( (_infoPtr)->rxBufInfo.writeIdx == (_infoPtr)->rxBufInfo.size )  \
-        {                                                                   \
-            (_infoPtr)->rxBufInfo.writeIdx = 0;                             \
-        }                                                                   \
-        BSP_MCU_CRITICAL_SECTION_EXIT();                                    \
-    }                                                                       \
-}
-
+#define BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_AVAIL(_infoPtr)              \
+    (((_infoPtr)->rxBufInfo.writeIdx > (_infoPtr)->rxBufInfo.readIdx)    \
+         ? ((_infoPtr)->rxBufInfo.size - (_infoPtr)->rxBufInfo.writeIdx) \
+         : ((_infoPtr)->rxBufInfo.readIdx - (_infoPtr)->rxBufInfo.writeIdx))
 
 /*============================================================================*/
-#define BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_DATA( _infoPtr )             \
-( ((_infoPtr)->rxBufInfo.readIdx >= (_infoPtr)->rxBufInfo.writeIdx) ?    \
-      ((_infoPtr)->rxBufInfo.size - (_infoPtr)->rxBufInfo.readIdx) :     \
-      ((_infoPtr)->rxBufInfo.writeIdx - (_infoPtr)->rxBufInfo.readIdx) )
-
-
-/*============================================================================*/
-#define BSP_UARTIO_RX_BUFFER_NUM_DATA( _infoPtr )                                                       \
-( ((_infoPtr)->rxBufInfo.readIdx >= (_infoPtr)->rxBufInfo.writeIdx) ?                                   \
-      (((_infoPtr)->rxBufInfo.size - (_infoPtr)->rxBufInfo.readIdx)) + (_infoPtr)->rxBufInfo.writeIdx : \
-      ((_infoPtr)->rxBufInfo.writeIdx - (_infoPtr)->rxBufInfo.readIdx) )
-
-
-/*============================================================================*/
-#define BSP_UARTIO_RX_BUFFER_READ( _infoPtr, _nBytes )                        \
-{                                                                             \
-    if( (_nBytes) > 0 )                                                       \
-    {                                                                         \
-        BSP_MCU_CRITICAL_SECTION_ENTER();                                     \
-        (_infoPtr)->rxBufInfo.readIdx += (_nBytes);                           \
-        if( (_infoPtr)->rxBufInfo.readIdx == (_infoPtr)->rxBufInfo.size )     \
-        {                                                                     \
-            (_infoPtr)->rxBufInfo.readIdx = 0;                                \
-        }                                                                     \
-        if( (_infoPtr)->rxBufInfo.readIdx == (_infoPtr)->rxBufInfo.writeIdx ) \
-        {                                                                     \
-            (_infoPtr)->rxBufInfo.readIdx = (_infoPtr)->rxBufInfo.size;       \
-        }                                                                     \
-        BSP_MCU_CRITICAL_SECTION_EXIT();                                      \
-    }                                                                         \
-}
-
+#define BSP_UARTIO_RX_BUFFER_WRITE(_infoPtr, _nBytes)                           \
+    {                                                                           \
+        if ((_nBytes) > 0) {                                                    \
+            BSP_MCU_CRITICAL_SECTION_ENTER();                                   \
+            if ((_infoPtr)->rxBufInfo.readIdx == (_infoPtr)->rxBufInfo.size) {  \
+                (_infoPtr)->rxBufInfo.readIdx = (_infoPtr)->rxBufInfo.writeIdx; \
+            }                                                                   \
+            (_infoPtr)->rxBufInfo.writeIdx += (_nBytes);                        \
+            if ((_infoPtr)->rxBufInfo.writeIdx == (_infoPtr)->rxBufInfo.size) { \
+                (_infoPtr)->rxBufInfo.writeIdx = 0;                             \
+            }                                                                   \
+            BSP_MCU_CRITICAL_SECTION_EXIT();                                    \
+        }                                                                       \
+    }
 
 /*============================================================================*/
-#define BSP_UARTIO_TX_BUFFER_WRITE_PTR( _infoPtr )                 \
-    &((_infoPtr)->txBufInfo.ptr[ (_infoPtr)->txBufInfo.writeIdx ])
-
-
-/*============================================================================*/
-#define BSP_UARTIO_TX_BUFFER_READ_PTR( _infoPtr )                 \
-    &((_infoPtr)->txBufInfo.ptr[ (_infoPtr)->txBufInfo.readIdx ])
-
+#define BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_DATA(_infoPtr)              \
+    (((_infoPtr)->rxBufInfo.readIdx >= (_infoPtr)->rxBufInfo.writeIdx)  \
+         ? ((_infoPtr)->rxBufInfo.size - (_infoPtr)->rxBufInfo.readIdx) \
+         : ((_infoPtr)->rxBufInfo.writeIdx - (_infoPtr)->rxBufInfo.readIdx))
 
 /*============================================================================*/
-#define BSP_UARTIO_TX_BUFFER_NUM_CONTIGUOUS_AVAIL( _infoPtr )            \
-( ((_infoPtr)->txBufInfo.writeIdx > (_infoPtr)->txBufInfo.readIdx) ?     \
-      ((_infoPtr)->txBufInfo.size - (_infoPtr)->txBufInfo.writeIdx) :    \
-      ((_infoPtr)->txBufInfo.readIdx - (_infoPtr)->txBufInfo.writeIdx) )
-
-
-/*============================================================================*/
-#define BSP_UARTIO_TX_BUFFER_WRITE( _infoPtr, _nBytes )                     \
-{                                                                           \
-    if( (_nBytes) > 0 )                                                     \
-    {                                                                       \
-        BSP_MCU_CRITICAL_SECTION_ENTER();                                   \
-        if( (_infoPtr)->txBufInfo.readIdx == (_infoPtr)->txBufInfo.size )   \
-        {                                                                   \
-            (_infoPtr)->txBufInfo.readIdx = (_infoPtr)->txBufInfo.writeIdx; \
-        }                                                                   \
-        (_infoPtr)->txBufInfo.writeIdx += (_nBytes);                        \
-        if( (_infoPtr)->txBufInfo.writeIdx == (_infoPtr)->txBufInfo.size )  \
-        {                                                                   \
-            (_infoPtr)->txBufInfo.writeIdx = 0;                             \
-        }                                                                   \
-        BSP_MCU_CRITICAL_SECTION_EXIT();                                    \
-    }                                                                       \
-}
-
+#define BSP_UARTIO_RX_BUFFER_NUM_DATA(_infoPtr)                             \
+    (((_infoPtr)->rxBufInfo.readIdx >= (_infoPtr)->rxBufInfo.writeIdx)      \
+         ? (((_infoPtr)->rxBufInfo.size - (_infoPtr)->rxBufInfo.readIdx)) + \
+             (_infoPtr)->rxBufInfo.writeIdx                                 \
+         : ((_infoPtr)->rxBufInfo.writeIdx - (_infoPtr)->rxBufInfo.readIdx))
 
 /*============================================================================*/
-#define BSP_UARTIO_TX_BUFFER_NUM_CONTIGUOUS_DATA( _infoPtr )             \
-( ((_infoPtr)->txBufInfo.readIdx >= (_infoPtr)->txBufInfo.writeIdx) ?    \
-      ((_infoPtr)->txBufInfo.size - (_infoPtr)->txBufInfo.readIdx) :     \
-      ((_infoPtr)->txBufInfo.writeIdx - (_infoPtr)->txBufInfo.readIdx) )
-
+#define BSP_UARTIO_RX_BUFFER_READ(_infoPtr, _nBytes)                               \
+    {                                                                              \
+        if ((_nBytes) > 0) {                                                       \
+            BSP_MCU_CRITICAL_SECTION_ENTER();                                      \
+            (_infoPtr)->rxBufInfo.readIdx += (_nBytes);                            \
+            if ((_infoPtr)->rxBufInfo.readIdx == (_infoPtr)->rxBufInfo.size) {     \
+                (_infoPtr)->rxBufInfo.readIdx = 0;                                 \
+            }                                                                      \
+            if ((_infoPtr)->rxBufInfo.readIdx == (_infoPtr)->rxBufInfo.writeIdx) { \
+                (_infoPtr)->rxBufInfo.readIdx = (_infoPtr)->rxBufInfo.size;        \
+            }                                                                      \
+            BSP_MCU_CRITICAL_SECTION_EXIT();                                       \
+        }                                                                          \
+    }
 
 /*============================================================================*/
-#define BSP_UARTIO_TX_BUFFER_READ( _infoPtr, _nBytes )                        \
-{                                                                             \
-    if( (_nBytes) > 0 )                                                       \
-    {                                                                         \
-        BSP_MCU_CRITICAL_SECTION_ENTER();                                     \
-        (_infoPtr)->txBufInfo.readIdx += (_nBytes);                           \
-        if( (_infoPtr)->txBufInfo.readIdx == (_infoPtr)->txBufInfo.size )     \
-        {                                                                     \
-            (_infoPtr)->txBufInfo.readIdx = 0;                                \
-        }                                                                     \
-        if( (_infoPtr)->txBufInfo.readIdx == (_infoPtr)->txBufInfo.writeIdx ) \
-        {                                                                     \
-            (_infoPtr)->txBufInfo.readIdx = (_infoPtr)->txBufInfo.size;       \
-        }                                                                     \
-        BSP_MCU_CRITICAL_SECTION_EXIT();                                      \
-    }                                                                         \
-}
+#define BSP_UARTIO_TX_BUFFER_WRITE_PTR(_infoPtr) \
+    &((_infoPtr)->txBufInfo.ptr[(_infoPtr)->txBufInfo.writeIdx])
 
+/*============================================================================*/
+#define BSP_UARTIO_TX_BUFFER_READ_PTR(_infoPtr) \
+    &((_infoPtr)->txBufInfo.ptr[(_infoPtr)->txBufInfo.readIdx])
+
+/*============================================================================*/
+#define BSP_UARTIO_TX_BUFFER_NUM_CONTIGUOUS_AVAIL(_infoPtr)              \
+    (((_infoPtr)->txBufInfo.writeIdx > (_infoPtr)->txBufInfo.readIdx)    \
+         ? ((_infoPtr)->txBufInfo.size - (_infoPtr)->txBufInfo.writeIdx) \
+         : ((_infoPtr)->txBufInfo.readIdx - (_infoPtr)->txBufInfo.writeIdx))
+
+/*============================================================================*/
+#define BSP_UARTIO_TX_BUFFER_WRITE(_infoPtr, _nBytes)                           \
+    {                                                                           \
+        if ((_nBytes) > 0) {                                                    \
+            BSP_MCU_CRITICAL_SECTION_ENTER();                                   \
+            if ((_infoPtr)->txBufInfo.readIdx == (_infoPtr)->txBufInfo.size) {  \
+                (_infoPtr)->txBufInfo.readIdx = (_infoPtr)->txBufInfo.writeIdx; \
+            }                                                                   \
+            (_infoPtr)->txBufInfo.writeIdx += (_nBytes);                        \
+            if ((_infoPtr)->txBufInfo.writeIdx == (_infoPtr)->txBufInfo.size) { \
+                (_infoPtr)->txBufInfo.writeIdx = 0;                             \
+            }                                                                   \
+            BSP_MCU_CRITICAL_SECTION_EXIT();                                    \
+        }                                                                       \
+    }
+
+/*============================================================================*/
+#define BSP_UARTIO_TX_BUFFER_NUM_CONTIGUOUS_DATA(_infoPtr)              \
+    (((_infoPtr)->txBufInfo.readIdx >= (_infoPtr)->txBufInfo.writeIdx)  \
+         ? ((_infoPtr)->txBufInfo.size - (_infoPtr)->txBufInfo.readIdx) \
+         : ((_infoPtr)->txBufInfo.writeIdx - (_infoPtr)->txBufInfo.readIdx))
+
+/*============================================================================*/
+#define BSP_UARTIO_TX_BUFFER_READ(_infoPtr, _nBytes)                               \
+    {                                                                              \
+        if ((_nBytes) > 0) {                                                       \
+            BSP_MCU_CRITICAL_SECTION_ENTER();                                      \
+            (_infoPtr)->txBufInfo.readIdx += (_nBytes);                            \
+            if ((_infoPtr)->txBufInfo.readIdx == (_infoPtr)->txBufInfo.size) {     \
+                (_infoPtr)->txBufInfo.readIdx = 0;                                 \
+            }                                                                      \
+            if ((_infoPtr)->txBufInfo.readIdx == (_infoPtr)->txBufInfo.writeIdx) { \
+                (_infoPtr)->txBufInfo.readIdx = (_infoPtr)->txBufInfo.size;        \
+            }                                                                      \
+            BSP_MCU_CRITICAL_SECTION_EXIT();                                       \
+        }                                                                          \
+    }
 
 /*==============================================================================
  *                                 Types
  *============================================================================*/
 /*============================================================================*/
-typedef struct
-{
-    uint8_t* ptr;
+typedef struct {
+    uint8_t *ptr;
     size_t   size;
     size_t   writeIdx;
     size_t   readIdx;
@@ -207,9 +181,8 @@ typedef struct
  *
  * Global to hold the read callback function pointer.
  */
-typedef struct
-{
-    const char * const             name;
+typedef struct {
+    const char *const              name;
     bsp_Uart_Id_t                  uartId;
     bsp_Uart_PinSel_t              rxPinSel;
     bsp_Uart_PinSel_t              txPinSel;
@@ -223,25 +196,27 @@ typedef struct
     bsp_UartIo_DataAvailCallback_t dataAvailCallback;
 } bsp_UartIo_InternalInfo_t;
 
-
 /*==============================================================================
  *                                 Globals
  *============================================================================*/
 /*============================================================================*/
-uint8_t bsp_UartIo_rxBuffer0[ BSP_PLATFORM_IO_UART0_RX_BUF_LEN ];
-uint8_t bsp_UartIo_txBuffer0[ BSP_PLATFORM_IO_UART0_TX_BUF_LEN ];
+uint8_t bsp_UartIo_rxBuffer0[BSP_PLATFORM_IO_UART0_RX_BUF_LEN];
+uint8_t bsp_UartIo_txBuffer0[BSP_PLATFORM_IO_UART0_TX_BUF_LEN];
 
 /*============================================================================*/
 bsp_UartIo_InternalInfo_t bsp_UartIo_internalInfoTable[] = {
-    { "uart0",
-      BSP_PLATFORM_IO_UART0_ID,
-      BSP_PLATFORM_IO_UART0_RX_PIN_SEL,
-      BSP_PLATFORM_IO_UART0_TX_PIN_SEL,
-      BSP_PLATFORM_IO_UART0_BAUD,
-      {bsp_UartIo_rxBuffer0, DIM(bsp_UartIo_rxBuffer0), 0, DIM(bsp_UartIo_rxBuffer0) },
-      {bsp_UartIo_txBuffer0, DIM(bsp_UartIo_txBuffer0), 0, DIM(bsp_UartIo_txBuffer0) },
-      FALSE, FALSE, 0, 0, NULL }
-};
+    {"uart0",
+     BSP_PLATFORM_IO_UART0_ID,
+     BSP_PLATFORM_IO_UART0_RX_PIN_SEL,
+     BSP_PLATFORM_IO_UART0_TX_PIN_SEL,
+     BSP_PLATFORM_IO_UART0_BAUD,
+     {bsp_UartIo_rxBuffer0, DIM(bsp_UartIo_rxBuffer0), 0, DIM(bsp_UartIo_rxBuffer0)},
+     {bsp_UartIo_txBuffer0, DIM(bsp_UartIo_txBuffer0), 0, DIM(bsp_UartIo_txBuffer0)},
+     FALSE,
+     FALSE,
+     0,
+     0,
+     NULL}};
 
 /*==============================================================================
  *                            Local Functions
@@ -251,53 +226,48 @@ bsp_UartIo_InternalInfo_t bsp_UartIo_internalInfoTable[] = {
 /**
  * Copy data as we can from the USART driver into the buffer.
  */
-static void bsp_UartIo_rxHandler( void* arg, void* dataPtr, size_t numRead );
-static void
-bsp_UartIo_rxHandler( void*  arg,
-                      void*  dataPtr,
-                      size_t numRead )
+static void bsp_UartIo_rxHandler(void *arg, void *dataPtr, size_t numRead);
+static void bsp_UartIo_rxHandler(void *arg, void *dataPtr, size_t numRead)
 {
-    size_t bufferSpace;
-    size_t extraReadCnt;
-    bsp_UartIo_InternalInfo_t* infoPtr;
+    size_t                     bufferSpace;
+    size_t                     extraReadCnt;
+    bsp_UartIo_InternalInfo_t *infoPtr;
 
-    infoPtr = (bsp_UartIo_InternalInfo_t*)arg;
+    infoPtr = (bsp_UartIo_InternalInfo_t *)arg;
 
     /* Bump up the write index by the amount copied in by the USART driver */
-    BSP_UARTIO_RX_BUFFER_WRITE( infoPtr, numRead );
+    BSP_UARTIO_RX_BUFFER_WRITE(infoPtr, numRead);
 
     /* Check how much contiguous space is available */
-    bufferSpace = BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_AVAIL( infoPtr );
+    bufferSpace = BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_AVAIL(infoPtr);
 
     extraReadCnt = 1;
 
     /* Setup to get more data in the buffer */
-    while( (bufferSpace != 0) && (extraReadCnt != 0) )
-    {
+    while ((bufferSpace != 0) && (extraReadCnt != 0)) {
         /* Read more data */
-        extraReadCnt = bsp_Uart_rcv( infoPtr->uartId,
-                                     BSP_UARTIO_RX_BUFFER_WRITE_PTR( infoPtr ),
-                                     1,
-                                     infoPtr,
-                                     &bsp_UartIo_rxHandler );
+        extraReadCnt = bsp_Uart_rcv(
+            infoPtr->uartId,
+            BSP_UARTIO_RX_BUFFER_WRITE_PTR(infoPtr),
+            1,
+            infoPtr,
+            &bsp_UartIo_rxHandler);
 
-        BSP_UARTIO_RX_BUFFER_WRITE( infoPtr, extraReadCnt );
+        BSP_UARTIO_RX_BUFFER_WRITE(infoPtr, extraReadCnt);
 
-        bufferSpace = BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_AVAIL( infoPtr );
+        bufferSpace = BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_AVAIL(infoPtr);
     }
 
     /* If there's no more buffer space then set the flag to indicate that
      * the UART has no pending rx transactions
      */
-    if( bufferSpace == 0 )
-    {
+    if (bufferSpace == 0) {
         /* Once some buffer space becomes available then it will be re enabled */
         infoPtr->rxEnabled = FALSE;
     }
 
-    if( infoPtr->dataAvailCallback != NULL )
-    {
-        infoPtr->dataAvailCallback( BSP_UARTIO_RX_BUFFER_NUM_DATA(infoPtr) );
+    if (infoPtr->dataAvailCallback != NULL) {
+        infoPtr->dataAvailCallback(BSP_UARTIO_RX_BUFFER_NUM_DATA(infoPtr));
     }
 
     return;
@@ -308,63 +278,56 @@ bsp_UartIo_rxHandler( void*  arg,
  * The callback continues forwarding data from the serial buffer into the USART
  * driver if there is any. If not then it just sets a global and returns.
  */
-static void bsp_UartIo_txDoneHandler( void* arg );
-static void
-bsp_UartIo_txDoneHandler( void* arg )
+static void bsp_UartIo_txDoneHandler(void *arg);
+static void bsp_UartIo_txDoneHandler(void *arg)
 {
     size_t                     contigDataLen;
-    bsp_UartIo_InternalInfo_t* infoPtr;
+    bsp_UartIo_InternalInfo_t *infoPtr;
 
-    infoPtr = (bsp_UartIo_InternalInfo_t*)arg;
+    infoPtr = (bsp_UartIo_InternalInfo_t *)arg;
 
     /* Assume everything we requested to send was sent before
      * this callback was called.
      */
-    BSP_UARTIO_TX_BUFFER_READ( infoPtr, infoPtr->txDataCount );
+    BSP_UARTIO_TX_BUFFER_READ(infoPtr, infoPtr->txDataCount);
 
-    contigDataLen = BSP_UARTIO_TX_BUFFER_NUM_CONTIGUOUS_DATA( infoPtr );
+    contigDataLen = BSP_UARTIO_TX_BUFFER_NUM_CONTIGUOUS_DATA(infoPtr);
 
-    if( contigDataLen == 0 )
-    {
+    if (contigDataLen == 0) {
         /* There's nothing else to send, so signal the client. */
         infoPtr->txEnabled = FALSE;
     }
-    else
-    {
+    else {
         /* Save off the number of bytes that we expect to be
          * sent before the next callback.
          */
         infoPtr->txDataCount = contigDataLen;
 
         /* Send the data. */
-        bsp_Uart_snd( infoPtr->uartId,
-                      BSP_UARTIO_TX_BUFFER_READ_PTR( infoPtr ),
-                      infoPtr->txDataCount,
-                      (void*)infoPtr,
-                      &bsp_UartIo_txDoneHandler );
+        bsp_Uart_snd(
+            infoPtr->uartId,
+            BSP_UARTIO_TX_BUFFER_READ_PTR(infoPtr),
+            infoPtr->txDataCount,
+            (void *)infoPtr,
+            &bsp_UartIo_txDoneHandler);
     }
 
     return;
 }
 
-
-
 /*============================================================================*/
-static size_t
-bsp_UartIo_bufferWrite( bsp_UartIo_InternalInfo_t* infoPtr,
-                        void*                      dataPtr,
-                        size_t                     cnt )
+static size_t bsp_UartIo_bufferWrite(bsp_UartIo_InternalInfo_t *infoPtr, void *dataPtr, size_t cnt)
 {
-    size_t  numAvail;
-    size_t  numBuffered;
-    size_t  dataInBuffer;
-    bool_t  bufferOverflow;
-    bool_t  triggerTx;
+    size_t numAvail;
+    size_t numBuffered;
+    size_t dataInBuffer;
+    bool_t bufferOverflow;
+    bool_t triggerTx;
 
-    BSP_ASSERT( (dataPtr != NULL) && (cnt > 0) );
+    BSP_ASSERT((dataPtr != NULL) && (cnt > 0));
 
-    numAvail = 0;
-    numBuffered = 0;
+    numAvail       = 0;
+    numBuffered    = 0;
     bufferOverflow = FALSE;
 
     /* Copy the data from the client pointer into the buffer. If there is
@@ -373,33 +336,31 @@ bsp_UartIo_bufferWrite( bsp_UartIo_InternalInfo_t* infoPtr,
      *       that new data will go out with the previous transmit and a new
      *       call to the USART driver is not necessary.
      */
-    while( (numBuffered < cnt) && (bufferOverflow == FALSE) )
-    {
+    while ((numBuffered < cnt) && (bufferOverflow == FALSE)) {
         BSP_MCU_CRITICAL_SECTION_ENTER();
-        numAvail = BSP_UARTIO_TX_BUFFER_NUM_CONTIGUOUS_AVAIL( infoPtr );
+        numAvail = BSP_UARTIO_TX_BUFFER_NUM_CONTIGUOUS_AVAIL(infoPtr);
 
-        if( numAvail == 0 )
-        {
+        if (numAvail == 0) {
             /* Drop the data that doesn't fit and exit */
             infoPtr->txDataDroppedCount += (cnt - numBuffered);
             bufferOverflow = TRUE;
         }
-        else
-        {
+        else {
             /* Need to copy client data into the serial buffer in a contiguous
              * section. If client is requesting to send more data than is
              * available at the end of the circular serial buffer then copy in
              * as much as will fit at the end and loop through again.
              */
-            numAvail = (numAvail > (cnt-numBuffered)) ? (cnt-numBuffered) : numAvail;
+            numAvail = (numAvail > (cnt - numBuffered)) ? (cnt - numBuffered) : numAvail;
 
             /* Copy to the write buffer */
-            memcpy( BSP_UARTIO_TX_BUFFER_WRITE_PTR( infoPtr ),
-                    &(((uint8_t *)dataPtr)[numBuffered]),
-                    numAvail );
+            memcpy(
+                BSP_UARTIO_TX_BUFFER_WRITE_PTR(infoPtr),
+                &(((uint8_t *)dataPtr)[numBuffered]),
+                numAvail);
 
             /* Update the write index */
-            BSP_UARTIO_TX_BUFFER_WRITE( infoPtr, numAvail );
+            BSP_UARTIO_TX_BUFFER_WRITE(infoPtr, numAvail);
             numBuffered += numAvail;
         }
         BSP_MCU_CRITICAL_SECTION_EXIT();
@@ -411,36 +372,31 @@ bsp_UartIo_bufferWrite( bsp_UartIo_InternalInfo_t* infoPtr,
      */
     triggerTx = FALSE;
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    dataInBuffer = BSP_UARTIO_TX_BUFFER_NUM_CONTIGUOUS_DATA( infoPtr );
-    if( (dataInBuffer > 0) && (infoPtr->txEnabled == FALSE) )
-    {
+    dataInBuffer = BSP_UARTIO_TX_BUFFER_NUM_CONTIGUOUS_DATA(infoPtr);
+    if ((dataInBuffer > 0) && (infoPtr->txEnabled == FALSE)) {
         /* There's data to be sent and tx is not enabled so trigger a tx */
         triggerTx = TRUE;
     }
     BSP_MCU_CRITICAL_SECTION_EXIT();
 
-    if( triggerTx == TRUE )
-    {
-        infoPtr->txEnabled = TRUE;
+    if (triggerTx == TRUE) {
+        infoPtr->txEnabled   = TRUE;
         infoPtr->txDataCount = dataInBuffer;
 
         /* Send the data. */
-        bsp_Uart_snd( infoPtr->uartId,
-                      BSP_UARTIO_TX_BUFFER_READ_PTR( infoPtr ),
-                      infoPtr->txDataCount,
-                      (void*)infoPtr,
-                      &bsp_UartIo_txDoneHandler );
+        bsp_Uart_snd(
+            infoPtr->uartId,
+            BSP_UARTIO_TX_BUFFER_READ_PTR(infoPtr),
+            infoPtr->txDataCount,
+            (void *)infoPtr,
+            &bsp_UartIo_txDoneHandler);
     }
 
-    return( numBuffered );
+    return (numBuffered);
 }
 
-
 /*============================================================================*/
-static size_t
-bsp_UartIo_bufferRead( bsp_UartIo_InternalInfo_t* infoPtr,
-                       void*                      dataPtr,
-                       size_t                     cnt )
+static size_t bsp_UartIo_bufferRead(bsp_UartIo_InternalInfo_t *infoPtr, void *dataPtr, size_t cnt)
 {
     size_t  numRead;
     size_t  bufCount;
@@ -448,32 +404,28 @@ bsp_UartIo_bufferRead( bsp_UartIo_InternalInfo_t* infoPtr,
     bool_t  bufEmpty;
     uint8_t dataCnt;
 
-    BSP_ASSERT( (dataPtr != NULL) && (cnt > 0) );
+    BSP_ASSERT((dataPtr != NULL) && (cnt > 0));
 
-    numRead = 0;
+    numRead  = 0;
     bufEmpty = FALSE;
 
     /* Copy as much of the requested data from the serial buffer into the
      * client buffer
      */
-    while( (numRead < cnt) && (bufEmpty == FALSE) )
-    {
-        bufCount = BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_DATA( infoPtr );
+    while ((numRead < cnt) && (bufEmpty == FALSE)) {
+        bufCount = BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_DATA(infoPtr);
 
-        if( bufCount > 0 )
-        {
+        if (bufCount > 0) {
             /* Copy the data from the rx buffer into the client buffer */
-            bufCount = ((bufCount+numRead) > cnt) ? (cnt-numRead) : bufCount;
+            bufCount = ((bufCount + numRead) > cnt) ? (cnt - numRead) : bufCount;
 
-            memcpy( &(((uint8_t *)dataPtr)[numRead]),
-                    BSP_UARTIO_RX_BUFFER_READ_PTR( infoPtr ),
-                    bufCount );
+            memcpy(
+                &(((uint8_t *)dataPtr)[numRead]), BSP_UARTIO_RX_BUFFER_READ_PTR(infoPtr), bufCount);
 
-            BSP_UARTIO_RX_BUFFER_READ( infoPtr, bufCount );
+            BSP_UARTIO_RX_BUFFER_READ(infoPtr, bufCount);
             numRead += bufCount;
         }
-        else
-        {
+        else {
             bufEmpty = TRUE;
         }
     }
@@ -489,28 +441,26 @@ bsp_UartIo_bufferRead( bsp_UartIo_InternalInfo_t* infoPtr,
      */
     BSP_MCU_CRITICAL_SECTION_ENTER();
 
-    bufferSpace = BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_AVAIL( infoPtr );
+    bufferSpace = BSP_UARTIO_RX_BUFFER_NUM_CONTIGUOUS_AVAIL(infoPtr);
 
-    if( (infoPtr->rxEnabled == FALSE) && (bufferSpace > 0) )
-    {
+    if ((infoPtr->rxEnabled == FALSE) && (bufferSpace > 0)) {
         /* Read more data */
-        dataCnt = bsp_Uart_rcv( infoPtr->uartId,
-                                BSP_UARTIO_RX_BUFFER_WRITE_PTR( infoPtr ),
-                                1,
-                                (void*)infoPtr,
-                                &bsp_UartIo_rxHandler );
+        dataCnt = bsp_Uart_rcv(
+            infoPtr->uartId,
+            BSP_UARTIO_RX_BUFFER_WRITE_PTR(infoPtr),
+            1,
+            (void *)infoPtr,
+            &bsp_UartIo_rxHandler);
 
-        if( dataCnt != 0 )
-        {
+        if (dataCnt != 0) {
             /* The UART had data waiting so now the RX buffer is definitely
              * not empty. The UART is not enabled to receive because only
              * 1 byte was requested which means there is no outstanding
              * transaction in the UART.
              */
-            BSP_UARTIO_RX_BUFFER_WRITE( infoPtr, dataCnt );
+            BSP_UARTIO_RX_BUFFER_WRITE(infoPtr, dataCnt);
         }
-        else
-        {
+        else {
             /* There was no data sitting in the UART so the rx is enabled
              * waiting for more data to fill the buffer. The Serial_rxCallback
              * will be called once data arrives in the UART
@@ -521,24 +471,23 @@ bsp_UartIo_bufferRead( bsp_UartIo_InternalInfo_t* infoPtr,
 
     BSP_MCU_CRITICAL_SECTION_EXIT();
 
-    return( numRead );
+    return (numRead);
 }
-
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_UartIo_init( void )
+void bsp_UartIo_init(void)
 {
-    for( uint8_t i=0; i<DIM(bsp_UartIo_internalInfoTable); i++ )
-    {
+    for (uint8_t i = 0; i < DIM(bsp_UartIo_internalInfoTable); i++) {
         /* Initialize the buffer info */
         bsp_UartIo_internalInfoTable[i].rxBufInfo.writeIdx = 0;
-        bsp_UartIo_internalInfoTable[i].rxBufInfo.readIdx  = bsp_UartIo_internalInfoTable[i].rxBufInfo.size;
+        bsp_UartIo_internalInfoTable[i].rxBufInfo.readIdx =
+            bsp_UartIo_internalInfoTable[i].rxBufInfo.size;
         bsp_UartIo_internalInfoTable[i].txBufInfo.writeIdx = 0;
-        bsp_UartIo_internalInfoTable[i].txBufInfo.readIdx  = bsp_UartIo_internalInfoTable[i].txBufInfo.size;
+        bsp_UartIo_internalInfoTable[i].txBufInfo.readIdx =
+            bsp_UartIo_internalInfoTable[i].txBufInfo.size;
 
         bsp_UartIo_internalInfoTable[i].txDataDroppedCount = 0;
         bsp_UartIo_internalInfoTable[i].txDataCount        = 0;
@@ -547,131 +496,116 @@ bsp_UartIo_init( void )
         bsp_UartIo_internalInfoTable[i].txEnabled = false;
         bsp_UartIo_internalInfoTable[i].rxEnabled = true; /* Rx enabled on call to uartRcv */
 
-        memset( bsp_UartIo_internalInfoTable[i].rxBufInfo.ptr, 0, sizeof(bsp_UartIo_internalInfoTable[i].rxBufInfo.size) );
-        memset( bsp_UartIo_internalInfoTable[i].txBufInfo.ptr, 0, sizeof(bsp_UartIo_internalInfoTable[i].txBufInfo.size) );
+        memset(
+            bsp_UartIo_internalInfoTable[i].rxBufInfo.ptr,
+            0,
+            sizeof(bsp_UartIo_internalInfoTable[i].rxBufInfo.size));
+        memset(
+            bsp_UartIo_internalInfoTable[i].txBufInfo.ptr,
+            0,
+            sizeof(bsp_UartIo_internalInfoTable[i].txBufInfo.size));
 
         /* Setup physical UART to use */
-        bsp_Uart_control( bsp_UartIo_internalInfoTable[i].uartId,
-                          bsp_UartIo_internalInfoTable[i].rxPinSel,
-                          bsp_UartIo_internalInfoTable[i].txPinSel,
-                          BSP_UART_PIN_SEL_NONE, //RTS is not used
-                          BSP_UART_PIN_SEL_NONE ); //CTS is not used
+        bsp_Uart_control(
+            bsp_UartIo_internalInfoTable[i].uartId,
+            bsp_UartIo_internalInfoTable[i].rxPinSel,
+            bsp_UartIo_internalInfoTable[i].txPinSel,
+            BSP_UART_PIN_SEL_NONE,     // RTS is not used
+            BSP_UART_PIN_SEL_NONE);    // CTS is not used
 
-        bsp_Uart_config( bsp_UartIo_internalInfoTable[i].uartId,
-                         bsp_UartIo_internalInfoTable[i].baud,
-                         BSP_UART_PARITY_NONE,
-                         BSP_UART_STOP_BIT_1,
-                         BSP_UART_DATA_BIT_8,
-                         BSP_UART_FLOW_NONE );
+        bsp_Uart_config(
+            bsp_UartIo_internalInfoTable[i].uartId,
+            bsp_UartIo_internalInfoTable[i].baud,
+            BSP_UART_PARITY_NONE,
+            BSP_UART_STOP_BIT_1,
+            BSP_UART_DATA_BIT_8,
+            BSP_UART_FLOW_NONE);
 
-        bsp_Io_addDevice( bsp_UartIo_internalInfoTable[i].name,
-                          &bsp_UartIo_internalInfoTable[i],
-                          bsp_UartIo_open,
-                          bsp_UartIo_close,
-                          bsp_UartIo_read,
-                          bsp_UartIo_write,
-                          bsp_UartIo_lseek,
-                          bsp_UartIo_unlink,
-                          bsp_UartIo_rename );
+        bsp_Io_addDevice(
+            bsp_UartIo_internalInfoTable[i].name,
+            &bsp_UartIo_internalInfoTable[i],
+            bsp_UartIo_open,
+            bsp_UartIo_close,
+            bsp_UartIo_read,
+            bsp_UartIo_write,
+            bsp_UartIo_lseek,
+            bsp_UartIo_unlink,
+            bsp_UartIo_rename);
 
         /* Ready to receive */
-        bsp_Uart_rcv( bsp_UartIo_internalInfoTable[i].uartId,
-                      BSP_UARTIO_RX_BUFFER_WRITE_PTR( &bsp_UartIo_internalInfoTable[i] ),
-                      1,
-                      (void*)&bsp_UartIo_internalInfoTable[i],
-                      &bsp_UartIo_rxHandler );
+        bsp_Uart_rcv(
+            bsp_UartIo_internalInfoTable[i].uartId,
+            BSP_UARTIO_RX_BUFFER_WRITE_PTR(&bsp_UartIo_internalInfoTable[i]),
+            1,
+            (void *)&bsp_UartIo_internalInfoTable[i],
+            &bsp_UartIo_rxHandler);
     }
 
     return;
 }
 
-
 /*============================================================================*/
-void
-bsp_UartIo_registerDataAvailableCallback( int                            file_descriptor,
-                                          bsp_UartIo_DataAvailCallback_t callback )
+void bsp_UartIo_registerDataAvailableCallback(
+    int                            file_descriptor,
+    bsp_UartIo_DataAvailCallback_t callback)
 {
-    ((bsp_UartIo_InternalInfo_t*)file_descriptor)->dataAvailCallback = callback;
+    ((bsp_UartIo_InternalInfo_t *)file_descriptor)->dataAvailCallback = callback;
     return;
 }
 
-
 /*============================================================================*/
-int
-bsp_UartIo_open( const char*  path,
-                 unsigned int flags,
-                 int          llv_fd )
+int bsp_UartIo_open(const char *path, unsigned int flags, int llv_fd)
 {
     uint8_t pathLen;
-    int ret;
+    int     ret;
 
     pathLen = strlen(path);
 
     /* Todo: Do something smarter here */
-    if( path[(pathLen-2)] == '0' )
-    {
+    if (path[(pathLen - 2)] == '0') {
         ret = (int)&(bsp_UartIo_internalInfoTable[0]);
     }
-    else
-    {
+    else {
         ret = (int)&(bsp_UartIo_internalInfoTable[1]);
     }
 
-    return( ret );
+    return (ret);
 }
-
 
 /*============================================================================*/
-int
-bsp_UartIo_close( int file_descriptor )
+int bsp_UartIo_close(int file_descriptor)
 {
-    return( 0 );
+    return (0);
 }
-
 
 /*============================================================================*/
-int
-bsp_UartIo_read( int    file_descriptor,
-                 char*  buffer,
-                 size_t count )
+int bsp_UartIo_read(int file_descriptor, char *buffer, size_t count)
 {
-    return( (int)(bsp_UartIo_bufferRead( (bsp_UartIo_InternalInfo_t*)file_descriptor, buffer, count )) );
+    return (
+        (int)(bsp_UartIo_bufferRead((bsp_UartIo_InternalInfo_t *)file_descriptor, buffer, count)));
 }
-
 
 /*============================================================================*/
-int
-bsp_UartIo_write( int         file_descriptor,
-                  const char* buffer,
-                  size_t      count )
+int bsp_UartIo_write(int file_descriptor, const char *buffer, size_t count)
 {
-    return( (int)(bsp_UartIo_bufferWrite( (bsp_UartIo_InternalInfo_t*)file_descriptor, (void *)buffer, count )) );
+    return ((int)(bsp_UartIo_bufferWrite(
+        (bsp_UartIo_InternalInfo_t *)file_descriptor, (void *)buffer, count)));
 }
-
 
 /*============================================================================*/
-off_t
-bsp_UartIo_lseek( int   file_descriptor,
-                  off_t offset,
-                  int   origin )
+off_t bsp_UartIo_lseek(int file_descriptor, off_t offset, int origin)
 {
-    return( (off_t)-1 );
+    return ((off_t)-1);
 }
-
 
 /*============================================================================*/
-int
-bsp_UartIo_unlink( const char* path )
+int bsp_UartIo_unlink(const char *path)
 {
-    return( -1 );
+    return (-1);
 }
-
 
 /*============================================================================*/
-int
-bsp_UartIo_rename( const char* old_name,
-                   const char* new_name )
+int bsp_UartIo_rename(const char *old_name, const char *new_name)
 {
-    return( -1 );
+    return (-1);
 }
-

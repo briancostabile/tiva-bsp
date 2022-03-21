@@ -36,24 +36,19 @@
  *============================================================================*/
 /*============================================================================*/
 // Platform specific initializations
-void
-bsp_Gpio_initPlatform( void )
+void bsp_Gpio_initPlatform(void)
 {
     /* Configure No Connect pins as no-pull inputs */
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_NCPT4,
-                          BSP_GPIO_BIT_MASK_NCPT4,
-                          FALSE, BSP_GPIO_PULL_NONE );
+    bsp_Gpio_configInput(
+        BSP_GPIO_PORT_ID_NCPT4, BSP_GPIO_BIT_MASK_NCPT4, FALSE, BSP_GPIO_PULL_NONE);
 
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_NCPT5,
-                          BSP_GPIO_BIT_MASK_NCPT5,
-                          FALSE, BSP_GPIO_PULL_NONE );
+    bsp_Gpio_configInput(
+        BSP_GPIO_PORT_ID_NCPT5, BSP_GPIO_BIT_MASK_NCPT5, FALSE, BSP_GPIO_PULL_NONE);
 
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_NCPT6,
-                          BSP_GPIO_BIT_MASK_NCPT6,
-                          FALSE, BSP_GPIO_PULL_NONE );
+    bsp_Gpio_configInput(
+        BSP_GPIO_PORT_ID_NCPT6, BSP_GPIO_BIT_MASK_NCPT6, FALSE, BSP_GPIO_PULL_NONE);
 
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_NCPT7,
-                          BSP_GPIO_BIT_MASK_NCPT7,
-                          FALSE, BSP_GPIO_PULL_NONE );
+    bsp_Gpio_configInput(
+        BSP_GPIO_PORT_ID_NCPT7, BSP_GPIO_BIT_MASK_NCPT7, FALSE, BSP_GPIO_PULL_NONE);
     return;
 }

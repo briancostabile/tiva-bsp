@@ -23,7 +23,9 @@ FILENAME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 $(info Including:$(FILENAME))
 
 PROCESSOR       := tm4c129
+ifeq ($(VARIANT),)
 VARIANT         := xnczad
+endif
 REVISION        := ra0
 CPU             := cortex-m4
 CORE            := v7e-m+fp

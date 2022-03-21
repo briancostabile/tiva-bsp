@@ -21,13 +21,13 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_Ssi_tm4c129.c
+ * @file bsp_Ssi_tm4c123.c
  * @brief Contains processor specific SSI tables and functions
  */
 
 #include "bsp_Gpio.h"
 #include "bsp_Interrupt.h"
-#include "bsp_Ssi_tm4c129.h"
+#include "bsp_Ssi_tm4c123.h"
 #include <string.h>
 
 #include "driverlib/rom.h"
@@ -43,105 +43,59 @@
  *============================================================================*/
 /* clang-format off */
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi0Clk[] = {
-    {BSP_GPIO_PORT_ID(PA2), BSP_GPIO_MASK(PA2), BSP_GPIO_ALT_FUNC(PA2_SSI0CLK)},
+    {BSP_GPIO_PORT_ID(PA2), BSP_GPIO_MASK(PA2), BSP_GPIO_ALT_FUNC(PA2_SSI0CLK)}
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi0Fss[] = {
     {BSP_GPIO_PORT_ID(PA3), BSP_GPIO_MASK(PA3), BSP_GPIO_ALT_FUNC(PA3_SSI0FSS)}
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi0Dat0[] = {
-    {BSP_GPIO_PORT_ID(PA4), BSP_GPIO_MASK(PA4), BSP_GPIO_ALT_FUNC(PA4_SSI0XDAT0)}
+    {BSP_GPIO_PORT_ID(PA4), BSP_GPIO_MASK(PA4), BSP_GPIO_ALT_FUNC(PA4_SSI0RX)}
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi0Dat1[] = {
-    {BSP_GPIO_PORT_ID(PA5), BSP_GPIO_MASK(PA5), BSP_GPIO_ALT_FUNC(PA5_SSI0XDAT1)}
-};
-static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi0Dat2[] = {
-    {BSP_GPIO_PORT_ID(PA6), BSP_GPIO_MASK(PA6), BSP_GPIO_ALT_FUNC(PA6_SSI0XDAT2)}
-};
-static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi0Dat3[] = {
-    {BSP_GPIO_PORT_ID(PA7), BSP_GPIO_MASK(PA7), BSP_GPIO_ALT_FUNC(PA7_SSI0XDAT3)}
+    {BSP_GPIO_PORT_ID(PA5), BSP_GPIO_MASK(PA5), BSP_GPIO_ALT_FUNC(PA5_SSI0TX)}
 };
 
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi1Clk[] = {
-    {BSP_GPIO_PORT_ID(PB5), BSP_GPIO_MASK(PB5), BSP_GPIO_ALT_FUNC(PB5_SSI1CLK)},
+    {BSP_GPIO_PORT_ID(PD0), BSP_GPIO_MASK(PD0), BSP_GPIO_ALT_FUNC(PD0_SSI1CLK)},
+    {BSP_GPIO_PORT_ID(PF2), BSP_GPIO_MASK(PF2), BSP_GPIO_ALT_FUNC(PF2_SSI1CLK)}
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi1Fss[] = {
-    {BSP_GPIO_PORT_ID(PB4), BSP_GPIO_MASK(PB4), BSP_GPIO_ALT_FUNC(PB4_SSI1FSS)}
+    {BSP_GPIO_PORT_ID(PD1), BSP_GPIO_MASK(PD1), BSP_GPIO_ALT_FUNC(PD1_SSI1FSS)},
+    {BSP_GPIO_PORT_ID(PF3), BSP_GPIO_MASK(PF3), BSP_GPIO_ALT_FUNC(PF3_SSI1FSS)}
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi1Dat0[] = {
-    {BSP_GPIO_PORT_ID(PE4), BSP_GPIO_MASK(PE4), BSP_GPIO_ALT_FUNC(PE4_SSI1XDAT0)}
+    {BSP_GPIO_PORT_ID(PD2), BSP_GPIO_MASK(PD2), BSP_GPIO_ALT_FUNC(PD2_SSI1RX)},
+    {BSP_GPIO_PORT_ID(PF0), BSP_GPIO_MASK(PF0), BSP_GPIO_ALT_FUNC(PF0_SSI1RX)}
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi1Dat1[] = {
-    {BSP_GPIO_PORT_ID(PE5), BSP_GPIO_MASK(PE5), BSP_GPIO_ALT_FUNC(PE5_SSI1XDAT1)}
-};
-static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi1Dat2[] = {
-    {BSP_GPIO_PORT_ID(PD4), BSP_GPIO_MASK(PD4), BSP_GPIO_ALT_FUNC(PD4_SSI1XDAT2)}
-};
-static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi1Dat3[] = {
-    {BSP_GPIO_PORT_ID(PD5), BSP_GPIO_MASK(PD5), BSP_GPIO_ALT_FUNC(PD5_SSI1XDAT3)}
+    {BSP_GPIO_PORT_ID(PD3), BSP_GPIO_MASK(PD3), BSP_GPIO_ALT_FUNC(PD3_SSI1TX)},
+    {BSP_GPIO_PORT_ID(PF1), BSP_GPIO_MASK(PF1), BSP_GPIO_ALT_FUNC(PF1_SSI1TX)}
 };
 
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi2Clk[] = {
-    {BSP_GPIO_PORT_ID(PD3), BSP_GPIO_MASK(PD3), BSP_GPIO_ALT_FUNC(PD3_SSI2CLK)},
-#if defined(GPIO_PG7_SSI2CLK)
-    {BSP_GPIO_PORT_ID(PG7), BSP_GPIO_MASK(PG7), BSP_GPIO_ALT_FUNC(PG7_SSI2CLK)}
-#endif
+    {BSP_GPIO_PORT_ID(PB4), BSP_GPIO_MASK(PB4), BSP_GPIO_ALT_FUNC(PB4_SSI2CLK)},
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi2Fss[] = {
-    {BSP_GPIO_PORT_ID(PD2), BSP_GPIO_MASK(PD2), BSP_GPIO_ALT_FUNC(PD2_SSI2FSS)},
-#if defined(GPIO_PG6_SSI2FSS)
-    {BSP_GPIO_PORT_ID(PG6), BSP_GPIO_MASK(PG6), BSP_GPIO_ALT_FUNC(PG6_SSI2FSS)}
-#endif
+    {BSP_GPIO_PORT_ID(PB5), BSP_GPIO_MASK(PB5), BSP_GPIO_ALT_FUNC(PB5_SSI2FSS)},
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi2Dat0[] = {
-    {BSP_GPIO_PORT_ID(PD1), BSP_GPIO_MASK(PD1), BSP_GPIO_ALT_FUNC(PD1_SSI2XDAT0)},
-#if defined(GPIO_PG5_SSI2XDAT0)
-    {BSP_GPIO_PORT_ID(PG5), BSP_GPIO_MASK(PG5), BSP_GPIO_ALT_FUNC(PG5_SSI2XDAT0)}
-#endif
+    {BSP_GPIO_PORT_ID(PB6), BSP_GPIO_MASK(PB6), BSP_GPIO_ALT_FUNC(PB6_SSI2RX)},
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi2Dat1[] = {
-    {BSP_GPIO_PORT_ID(PD0), BSP_GPIO_MASK(PD0), BSP_GPIO_ALT_FUNC(PD0_SSI2XDAT1)},
-#if defined(GPIO_PG4_SSI2XDAT1)
-    {BSP_GPIO_PORT_ID(PG4), BSP_GPIO_MASK(PG4), BSP_GPIO_ALT_FUNC(PG4_SSI2XDAT1)}
-#endif
-};
-static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi2Dat2[] = {
-    {BSP_GPIO_PORT_ID(PD7), BSP_GPIO_MASK(PD7), BSP_GPIO_ALT_FUNC(PD7_SSI2XDAT2)},
-#if defined(GPIO_PG3_SSI2XDAT2)
-    {BSP_GPIO_PORT_ID(PG3), BSP_GPIO_MASK(PG3), BSP_GPIO_ALT_FUNC(PG3_SSI2XDAT2)}
-#endif
-};
-static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi2Dat3[] = {
-    {BSP_GPIO_PORT_ID(PD6), BSP_GPIO_MASK(PD6), BSP_GPIO_ALT_FUNC(PD6_SSI2XDAT3)},
-#if defined(GPIO_PG2_SSI2XDAT3)
-    {BSP_GPIO_PORT_ID(PG2), BSP_GPIO_MASK(PG2), BSP_GPIO_ALT_FUNC(PG2_SSI2XDAT3)}
-#endif
+    {BSP_GPIO_PORT_ID(PB7), BSP_GPIO_MASK(PB7), BSP_GPIO_ALT_FUNC(PB7_SSI2TX)},
 };
 
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi3Clk[] = {
-    {BSP_GPIO_PORT_ID(PF3), BSP_GPIO_MASK(PF3), BSP_GPIO_ALT_FUNC(PF3_SSI3CLK)},
-    {BSP_GPIO_PORT_ID(PQ0), BSP_GPIO_MASK(PQ0), BSP_GPIO_ALT_FUNC(PQ0_SSI3CLK)}
+    {BSP_GPIO_PORT_ID(PD0), BSP_GPIO_MASK(PD0), BSP_GPIO_ALT_FUNC(PD0_SSI3CLK)}
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi3Fss[] = {
-    {BSP_GPIO_PORT_ID(PF2), BSP_GPIO_MASK(PF2), BSP_GPIO_ALT_FUNC(PF2_SSI3FSS)},
-    {BSP_GPIO_PORT_ID(PQ1), BSP_GPIO_MASK(PQ1), BSP_GPIO_ALT_FUNC(PQ1_SSI3FSS)}
+    {BSP_GPIO_PORT_ID(PD1), BSP_GPIO_MASK(PD1), BSP_GPIO_ALT_FUNC(PD1_SSI3FSS)}
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi3Dat0[] = {
-    {BSP_GPIO_PORT_ID(PF1), BSP_GPIO_MASK(PF1), BSP_GPIO_ALT_FUNC(PF1_SSI3XDAT0)},
-    {BSP_GPIO_PORT_ID(PQ2), BSP_GPIO_MASK(PQ2), BSP_GPIO_ALT_FUNC(PQ2_SSI3XDAT0)}
+    {BSP_GPIO_PORT_ID(PD2), BSP_GPIO_MASK(PD2), BSP_GPIO_ALT_FUNC(PD2_SSI3RX)}
 };
 static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi3Dat1[] = {
-    {BSP_GPIO_PORT_ID(PF0), BSP_GPIO_MASK(PF0), BSP_GPIO_ALT_FUNC(PF0_SSI3XDAT1)},
-    {BSP_GPIO_PORT_ID(PQ3), BSP_GPIO_MASK(PQ3), BSP_GPIO_ALT_FUNC(PQ3_SSI3XDAT1)}
-};
-static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi3Dat2[] = {
-    {BSP_GPIO_PORT_ID(PF4), BSP_GPIO_MASK(PF4), BSP_GPIO_ALT_FUNC(PF4_SSI3XDAT2)},
-    {BSP_GPIO_PORT_ID(PP0), BSP_GPIO_MASK(PP0), BSP_GPIO_ALT_FUNC(PP0_SSI3XDAT2)}
-};
-static const bsp_Ssi_PinInfo_t bsp_Ssi_pinInfoTableSsi3Dat3[] = {
-#if defined(GPIO_PF5_SSI3XDAT3)
-    {BSP_GPIO_PORT_ID(PF5), BSP_GPIO_MASK(PF5), BSP_GPIO_ALT_FUNC(PF5_SSI3XDAT3)},
-#endif
-    {BSP_GPIO_PORT_ID(PP1), BSP_GPIO_MASK(PP1), BSP_GPIO_ALT_FUNC(PP1_SSI3XDAT3)}
+    {BSP_GPIO_PORT_ID(PD3), BSP_GPIO_MASK(PD3), BSP_GPIO_ALT_FUNC(PD3_SSI3TX)}
 };
 /* clang-format on */
 
@@ -159,10 +113,10 @@ const bsp_Ssi_StaticInfo_t bsp_Ssi_staticInfo[] = {
      bsp_Ssi_pinInfoTableSsi0Dat0,
      DIM(bsp_Ssi_pinInfoTableSsi0Dat1),
      bsp_Ssi_pinInfoTableSsi0Dat1,
-     DIM(bsp_Ssi_pinInfoTableSsi0Dat2),
-     bsp_Ssi_pinInfoTableSsi0Dat2,
-     DIM(bsp_Ssi_pinInfoTableSsi0Dat3),
-     bsp_Ssi_pinInfoTableSsi0Dat3},
+     0,
+     NULL,
+     0,
+     NULL},
     {SSI1_BASE,
      SYSCTL_PERIPH_SSI1,
      BSP_INTERRUPT_ID_SSI1,
@@ -176,10 +130,10 @@ const bsp_Ssi_StaticInfo_t bsp_Ssi_staticInfo[] = {
      bsp_Ssi_pinInfoTableSsi1Dat0,
      DIM(bsp_Ssi_pinInfoTableSsi1Dat1),
      bsp_Ssi_pinInfoTableSsi1Dat1,
-     DIM(bsp_Ssi_pinInfoTableSsi1Dat2),
-     bsp_Ssi_pinInfoTableSsi1Dat2,
-     DIM(bsp_Ssi_pinInfoTableSsi1Dat3),
-     bsp_Ssi_pinInfoTableSsi1Dat3},
+     0,
+     NULL,
+     0,
+     NULL},
     {SSI2_BASE,
      SYSCTL_PERIPH_SSI2,
      BSP_INTERRUPT_ID_SSI2,
@@ -193,10 +147,10 @@ const bsp_Ssi_StaticInfo_t bsp_Ssi_staticInfo[] = {
      bsp_Ssi_pinInfoTableSsi2Dat0,
      DIM(bsp_Ssi_pinInfoTableSsi2Dat1),
      bsp_Ssi_pinInfoTableSsi2Dat1,
-     DIM(bsp_Ssi_pinInfoTableSsi2Dat2),
-     bsp_Ssi_pinInfoTableSsi2Dat2,
-     DIM(bsp_Ssi_pinInfoTableSsi2Dat3),
-     bsp_Ssi_pinInfoTableSsi2Dat3},
+     0,
+     NULL,
+     0,
+     NULL},
     {SSI3_BASE,
      SYSCTL_PERIPH_SSI3,
      BSP_INTERRUPT_ID_SSI3,
@@ -210,10 +164,10 @@ const bsp_Ssi_StaticInfo_t bsp_Ssi_staticInfo[] = {
      bsp_Ssi_pinInfoTableSsi3Dat0,
      DIM(bsp_Ssi_pinInfoTableSsi3Dat1),
      bsp_Ssi_pinInfoTableSsi3Dat1,
-     DIM(bsp_Ssi_pinInfoTableSsi3Dat2),
-     bsp_Ssi_pinInfoTableSsi3Dat2,
-     DIM(bsp_Ssi_pinInfoTableSsi3Dat3),
-     bsp_Ssi_pinInfoTableSsi3Dat3}};
+     0,
+     NULL,
+     0,
+     NULL}};
 
 /*==============================================================================
  *                              Public Functions

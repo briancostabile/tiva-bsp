@@ -88,32 +88,32 @@
 #define BSP_DMA_CH7_SW4         4
 
 /* Channel 8 */
-#define BSP_DMA_CH8_UART0_RX    0
-#define BSP_DMA_CH8_UART1_RX    1
-#define BSP_DMA_CH8_SW3         2
-#define BSP_DMA_CH8_GPTIMER5A   3
-#define BSP_DMA_CH8_SW4         4
+#define BSP_DMA_CH8_UART0_RX  0
+#define BSP_DMA_CH8_UART1_RX  1
+#define BSP_DMA_CH8_SW3       2
+#define BSP_DMA_CH8_GPTIMER5A 3
+#define BSP_DMA_CH8_SW4       4
 
 /* Channel 9 */
-#define BSP_DMA_CH9_UART0_TX    0
-#define BSP_DMA_CH9_UART1_TX    1
-#define BSP_DMA_CH9_SW3         2
-#define BSP_DMA_CH9_GPTIMER5B   3
-#define BSP_DMA_CH9_SW4         4
+#define BSP_DMA_CH9_UART0_TX  0
+#define BSP_DMA_CH9_UART1_TX  1
+#define BSP_DMA_CH9_SW3       2
+#define BSP_DMA_CH9_GPTIMER5B 3
+#define BSP_DMA_CH9_SW4       4
 
 /* Channel 10 */
-#define BSP_DMA_CH10_SSI0_RX     0
-#define BSP_DMA_CH10_SSI1_RX     1
-#define BSP_DMA_CH10_UART6_RX    2
-#define BSP_DMA_CH10_GPWTIMER0A  3
-#define BSP_DMA_CH10_SW4         4
+#define BSP_DMA_CH10_SSI0_RX    0
+#define BSP_DMA_CH10_SSI1_RX    1
+#define BSP_DMA_CH10_UART6_RX   2
+#define BSP_DMA_CH10_GPWTIMER0A 3
+#define BSP_DMA_CH10_SW4        4
 
 /* Channel 11 */
-#define BSP_DMA_CH11_SSI0_TX     0
-#define BSP_DMA_CH11_SSI1_TX     1
-#define BSP_DMA_CH11_UART6_TX    2
-#define BSP_DMA_CH11_GPWTIMER0B  3
-#define BSP_DMA_CH11_SW4         4
+#define BSP_DMA_CH11_SSI0_TX    0
+#define BSP_DMA_CH11_SSI1_TX    1
+#define BSP_DMA_CH11_UART6_TX   2
+#define BSP_DMA_CH11_GPWTIMER0B 3
+#define BSP_DMA_CH11_SW4        4
 
 /* Channel 12 */
 #define BSP_DMA_CH12_SW0         0
@@ -130,18 +130,18 @@
 #define BSP_DMA_CH13_SW4         4
 
 /* Channel 14 */
-#define BSP_DMA_CH14_ADC0_SS0   0
-#define BSP_DMA_CH14_GPTIMER2A  1
-#define BSP_DMA_CH14_SSI3_RX    2
-#define BSP_DMA_CH14_GPIOE      3
-#define BSP_DMA_CH14_SW4        4
+#define BSP_DMA_CH14_ADC0_SS0  0
+#define BSP_DMA_CH14_GPTIMER2A 1
+#define BSP_DMA_CH14_SSI3_RX   2
+#define BSP_DMA_CH14_GPIOE     3
+#define BSP_DMA_CH14_SW4       4
 
 /* Channel 15 */
-#define BSP_DMA_CH15_ADC0_SS1   0
-#define BSP_DMA_CH15_GPTIMER2B  1
-#define BSP_DMA_CH15_SSI3_TX    2
-#define BSP_DMA_CH15_GPIOF      3
-#define BSP_DMA_CH15_SW4        4
+#define BSP_DMA_CH15_ADC0_SS1  0
+#define BSP_DMA_CH15_GPTIMER2B 1
+#define BSP_DMA_CH15_SSI3_TX   2
+#define BSP_DMA_CH15_GPIOF     3
+#define BSP_DMA_CH15_SW4       4
 
 /* Channel 16 */
 #define BSP_DMA_CH16_ADC0_SS2   0
@@ -158,60 +158,60 @@
 #define BSP_DMA_CH17_SW4        4
 
 /* Channel 18 */
-#define BSP_DMA_CH18_GPTIMER0A  0
-#define BSP_DMA_CH18_GPTIMER1A  1
-#define BSP_DMA_CH18_UART4_RX   2
-#define BSP_DMA_CH18_GPIOB      3
-#define BSP_DMA_CH18_SW4        4
+#define BSP_DMA_CH18_GPTIMER0A 0
+#define BSP_DMA_CH18_GPTIMER1A 1
+#define BSP_DMA_CH18_UART4_RX  2
+#define BSP_DMA_CH18_GPIOB     3
+#define BSP_DMA_CH18_SW4       4
 
 /* Channel 19 */
-#define BSP_DMA_CH19_GPTIMER0B  0
-#define BSP_DMA_CH19_GPTIMER1B  1
-#define BSP_DMA_CH19_UART4_TX   2
-#define BSP_DMA_CH19_SW3        3
-#define BSP_DMA_CH19_SW4        4
+#define BSP_DMA_CH19_GPTIMER0B 0
+#define BSP_DMA_CH19_GPTIMER1B 1
+#define BSP_DMA_CH19_UART4_TX  2
+#define BSP_DMA_CH19_SW3       3
+#define BSP_DMA_CH19_SW4       4
 
 /* Channel 20 */
-#define BSP_DMA_CH20_GPTIMER1A  0
-#define BSP_DMA_CH20_SW1        1
-#define BSP_DMA_CH20_UART7_RX   2
-#define BSP_DMA_CH20_SW3        3
-#define BSP_DMA_CH20_SW4        4
+#define BSP_DMA_CH20_GPTIMER1A 0
+#define BSP_DMA_CH20_SW1       1
+#define BSP_DMA_CH20_UART7_RX  2
+#define BSP_DMA_CH20_SW3       3
+#define BSP_DMA_CH20_SW4       4
 
 /* Channel 21 */
-#define BSP_DMA_CH21_GPTIMER1B  0
-#define BSP_DMA_CH21_SW1        1
-#define BSP_DMA_CH21_UART7_TX   2
-#define BSP_DMA_CH21_SW3        3
-#define BSP_DMA_CH21_SW4        4
+#define BSP_DMA_CH21_GPTIMER1B 0
+#define BSP_DMA_CH21_SW1       1
+#define BSP_DMA_CH21_UART7_TX  2
+#define BSP_DMA_CH21_SW3       3
+#define BSP_DMA_CH21_SW4       4
 
 /* Channel 22 */
-#define BSP_DMA_CH22_UART1_RX   0
-#define BSP_DMA_CH22_SW1        1
-#define BSP_DMA_CH22_SW2        2
-#define BSP_DMA_CH22_SW3        3
-#define BSP_DMA_CH22_SW4        4
+#define BSP_DMA_CH22_UART1_RX 0
+#define BSP_DMA_CH22_SW1      1
+#define BSP_DMA_CH22_SW2      2
+#define BSP_DMA_CH22_SW3      3
+#define BSP_DMA_CH22_SW4      4
 
 /* Channel 23 */
-#define BSP_DMA_CH23_UART1_TX   0
-#define BSP_DMA_CH23_SW1        1
-#define BSP_DMA_CH23_SW2        2
-#define BSP_DMA_CH23_SW3        3
-#define BSP_DMA_CH23_SW4        4
+#define BSP_DMA_CH23_UART1_TX 0
+#define BSP_DMA_CH23_SW1      1
+#define BSP_DMA_CH23_SW2      2
+#define BSP_DMA_CH23_SW3      3
+#define BSP_DMA_CH23_SW4      4
 
 /* Channel 24 */
-#define BSP_DMA_CH24_SSI1_RX     0
-#define BSP_DMA_CH24_ADC1_SS0    1
-#define BSP_DMA_CH24_SW2         2
-#define BSP_DMA_CH24_GPWTIMER3A  3
-#define BSP_DMA_CH24_SW4         4
+#define BSP_DMA_CH24_SSI1_RX    0
+#define BSP_DMA_CH24_ADC1_SS0   1
+#define BSP_DMA_CH24_SW2        2
+#define BSP_DMA_CH24_GPWTIMER3A 3
+#define BSP_DMA_CH24_SW4        4
 
 /* Channel 25 */
-#define BSP_DMA_CH25_SSI1_TX     0
-#define BSP_DMA_CH25_ADC1_SS1    1
-#define BSP_DMA_CH25_SW2         2
-#define BSP_DMA_CH25_GPWTIMER3B  3
-#define BSP_DMA_CH25_SW4         4
+#define BSP_DMA_CH25_SSI1_TX    0
+#define BSP_DMA_CH25_ADC1_SS1   1
+#define BSP_DMA_CH25_SW2        2
+#define BSP_DMA_CH25_GPWTIMER3B 3
+#define BSP_DMA_CH25_SW4        4
 
 /* Channel 26 */
 #define BSP_DMA_CH26_SW0        0
@@ -221,32 +221,32 @@
 #define BSP_DMA_CH26_SW4        4
 
 /* Channel 27 */
-#define BSP_DMA_CH27_SW0         0
-#define BSP_DMA_CH27_ADC1_SS3    1
-#define BSP_DMA_CH27_SW2         2
-#define BSP_DMA_CH27_GPWTIMER4B  3
-#define BSP_DMA_CH27_SW4         4
+#define BSP_DMA_CH27_SW0        0
+#define BSP_DMA_CH27_ADC1_SS3   1
+#define BSP_DMA_CH27_SW2        2
+#define BSP_DMA_CH27_GPWTIMER4B 3
+#define BSP_DMA_CH27_SW4        4
 
 /* Channel 28 */
-#define BSP_DMA_CH28_SW0         0
-#define BSP_DMA_CH28_SW1         1
-#define BSP_DMA_CH28_SW2         2
-#define BSP_DMA_CH28_GPWTIMER5A  3
-#define BSP_DMA_CH28_SW4         4
+#define BSP_DMA_CH28_SW0        0
+#define BSP_DMA_CH28_SW1        1
+#define BSP_DMA_CH28_SW2        2
+#define BSP_DMA_CH28_GPWTIMER5A 3
+#define BSP_DMA_CH28_SW4        4
 
 /* Channel 29 */
-#define BSP_DMA_CH29_SW0         0
-#define BSP_DMA_CH29_SW1         1
-#define BSP_DMA_CH29_SW2         2
-#define BSP_DMA_CH29_GPWTIMER5B  3
-#define BSP_DMA_CH29_SW4         4
+#define BSP_DMA_CH29_SW0        0
+#define BSP_DMA_CH29_SW1        1
+#define BSP_DMA_CH29_SW2        2
+#define BSP_DMA_CH29_GPWTIMER5B 3
+#define BSP_DMA_CH29_SW4        4
 
 /* Channel 30 */
-#define BSP_DMA_CH30_SW0     0
-#define BSP_DMA_CH30_SW1     1
-#define BSP_DMA_CH30_SW2     2
-#define BSP_DMA_CH30_SW3     3
-#define BSP_DMA_CH30_SW4     4
+#define BSP_DMA_CH30_SW0 0
+#define BSP_DMA_CH30_SW1 1
+#define BSP_DMA_CH30_SW2 2
+#define BSP_DMA_CH30_SW3 3
+#define BSP_DMA_CH30_SW4 4
 
 /*============================================================================*/
 #define BSP_DMA_INCREMENT_8    ((bsp_Dma_Increment_t)0)
@@ -292,28 +292,25 @@ typedef uint8_t bsp_Dma_Protect_t;
 typedef uint8_t bsp_Dma_ChId_t;
 
 /*============================================================================*/
-typedef void (*bsp_Dma_XferDoneCallback_t)( void* userData );
+typedef void (*bsp_Dma_XferDoneCallback_t)(void *userData);
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Dma_init( void );
+void bsp_Dma_init(void);
 
 /*============================================================================*/
-void
-bsp_Dma_chConfig( bsp_Dma_ChId_t      chId,
-                  bsp_Dma_XferMode_t  mode,
-                  bsp_Dma_Increment_t srcInc,
-                  bsp_Dma_Increment_t srcSize,
-                  void*               srcPtr,
-                  bsp_Dma_Increment_t dstInc,
-                  bsp_Dma_Increment_t dstSize,
-                  void*               dstPtr,
-                  size_t              size );
+void bsp_Dma_chConfig(
+    bsp_Dma_ChId_t      chId,
+    bsp_Dma_XferMode_t  mode,
+    bsp_Dma_Increment_t srcInc,
+    bsp_Dma_Increment_t srcSize,
+    void *              srcPtr,
+    bsp_Dma_Increment_t dstInc,
+    bsp_Dma_Increment_t dstSize,
+    void *              dstPtr,
+    size_t              size);
 
 /*============================================================================*/
-void
-bsp_Dma_chStart( bsp_Dma_ChId_t             chId,
-                 bsp_Dma_XferDoneCallback_t callback );
+void bsp_Dma_chStart(bsp_Dma_ChId_t chId, bsp_Dma_XferDoneCallback_t callback);

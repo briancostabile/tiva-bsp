@@ -32,55 +32,43 @@
  *                                Types
  *============================================================================*/
 /*============================================================================*/
-typedef int (*bsp_Io_Open_t)( const char* path, unsigned int flags, int llv_fd );
-
-
-/*============================================================================*/
-typedef int (*bsp_Io_Close_t)( int file_descriptor );
-
+typedef int (*bsp_Io_Open_t)(const char *path, unsigned int flags, int llv_fd);
 
 /*============================================================================*/
-typedef int (*bsp_Io_Read_t)( int file_descriptor, char*  buffer, size_t count );
-
-
-/*============================================================================*/
-typedef int (*bsp_Io_Write_t)( int file_descriptor, const char* buffer, size_t count );
-
+typedef int (*bsp_Io_Close_t)(int file_descriptor);
 
 /*============================================================================*/
-typedef off_t (*bsp_Io_Lseek_t)( int file_descriptor, off_t offset, int origin );
-
-
-/*============================================================================*/
-typedef int (*bsp_Io_Unlink_t)( const char* path );
-
+typedef int (*bsp_Io_Read_t)(int file_descriptor, char *buffer, size_t count);
 
 /*============================================================================*/
-typedef int (*bsp_Io_Rename_t)( const char* old_name, const char* new_name );
+typedef int (*bsp_Io_Write_t)(int file_descriptor, const char *buffer, size_t count);
 
+/*============================================================================*/
+typedef off_t (*bsp_Io_Lseek_t)(int file_descriptor, off_t offset, int origin);
 
+/*============================================================================*/
+typedef int (*bsp_Io_Unlink_t)(const char *path);
+
+/*============================================================================*/
+typedef int (*bsp_Io_Rename_t)(const char *old_name, const char *new_name);
 
 /*==============================================================================
  *                              Prototypes
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Io_init( void );
-
+void bsp_Io_init(void);
 
 /*============================================================================*/
-int
-bsp_Io_fileToDfd( FILE* file );
-
+int bsp_Io_fileToDfd(FILE *file);
 
 /*============================================================================*/
-void
-bsp_Io_addDevice( const char*     path,
-                  void*           cookie,
-                  bsp_Io_Open_t   open,
-                  bsp_Io_Close_t  close,
-                  bsp_Io_Read_t   read,
-                  bsp_Io_Write_t  write,
-                  bsp_Io_Lseek_t  lseek,
-                  bsp_Io_Unlink_t unlink,
-                  bsp_Io_Rename_t rename );
+void bsp_Io_addDevice(
+    const char *    path,
+    void *          cookie,
+    bsp_Io_Open_t   open,
+    bsp_Io_Close_t  close,
+    bsp_Io_Read_t   read,
+    bsp_Io_Write_t  write,
+    bsp_Io_Lseek_t  lseek,
+    bsp_Io_Unlink_t unlink,
+    bsp_Io_Rename_t rename);

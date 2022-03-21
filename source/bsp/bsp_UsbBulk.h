@@ -31,26 +31,27 @@
 /*==================================================================================================
  *                                           Types
  *================================================================================================*/
-typedef void (* bsp_UsbBulk_DataAvailableCallback_t)( size_t cnt );
-typedef void (* bsp_UsbBulk_ConnectionCallback_t)( bool connected );
-typedef void (* bsp_UsbBulk_TxDoneCallback_t)( size_t cnt );
-
+typedef void (*bsp_UsbBulk_DataAvailableCallback_t)(size_t cnt);
+typedef void (*bsp_UsbBulk_ConnectionCallback_t)(bool connected);
+typedef void (*bsp_UsbBulk_TxDoneCallback_t)(size_t cnt);
 
 /*==================================================================================================
  *                                        Public Functions
  *================================================================================================*/
-bsp_UsbBulk_DataAvailableCallback_t
-bsp_UsbBulk_registerCallbackDataAvailable( int fd, bsp_UsbBulk_DataAvailableCallback_t callback );
+bsp_UsbBulk_DataAvailableCallback_t bsp_UsbBulk_registerCallbackDataAvailable(
+    int                                 fd,
+    bsp_UsbBulk_DataAvailableCallback_t callback);
 
-bsp_UsbBulk_ConnectionCallback_t
-bsp_UsbBulk_registerCallbackConnection( int fd, bsp_UsbBulk_ConnectionCallback_t callback );
+bsp_UsbBulk_ConnectionCallback_t bsp_UsbBulk_registerCallbackConnection(
+    int                              fd,
+    bsp_UsbBulk_ConnectionCallback_t callback);
 
-bsp_UsbBulk_TxDoneCallback_t
-bsp_UsbBulk_registerCallbackTxDone( int fd, bsp_UsbBulk_TxDoneCallback_t callback );
+bsp_UsbBulk_TxDoneCallback_t bsp_UsbBulk_registerCallbackTxDone(
+    int                          fd,
+    bsp_UsbBulk_TxDoneCallback_t callback);
 
-void* bsp_UsbBulk_init( void* compositeEntry );
-int bsp_UsbBulk_open( void );
-int bsp_UsbBulk_close( int fd );
-int bsp_UsbBulk_read( int fd, void* buffer, size_t count );
-int bsp_UsbBulk_write( int fd, const void* buffer, size_t count );
-
+void *bsp_UsbBulk_init(void *compositeEntry);
+int   bsp_UsbBulk_open(void);
+int   bsp_UsbBulk_close(int fd);
+int   bsp_UsbBulk_read(int fd, void *buffer, size_t count);
+int   bsp_UsbBulk_write(int fd, const void *buffer, size_t count);

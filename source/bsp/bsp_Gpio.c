@@ -39,53 +39,50 @@
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Gpio_init( void )
+void bsp_Gpio_init(void)
 {
     bsp_Gpio_PortId_t    portId;
     bsp_Gpio_PinOffset_t numInts;
     bsp_Gpio_PinOffset_t i;
 
     /* Every port is enabled and the interrupts cleared */
-    for( portId=0; portId<DIM(bsp_Gpio_platformPortInfoTable); portId++ )
-    {
-        if( MAP_SysCtlPeripheralPresent( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr ) == true )
-        {
+    for (portId = 0; portId < DIM(bsp_Gpio_platformPortInfoTable); portId++) {
+        if (MAP_SysCtlPeripheralPresent(bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr) ==
+            true) {
             /* Enable all of the GPIO peripheral blocks */
-            MAP_SysCtlPeripheralEnable( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr );
+            MAP_SysCtlPeripheralEnable(bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr);
 
-            if( bsp_Gpio_platformPortInfoTable[portId].bitInterruptable == TRUE )
-            {
+            if (bsp_Gpio_platformPortInfoTable[portId].bitInterruptable == TRUE) {
                 numInts = BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT;
             }
-            else
-            {
+            else {
                 numInts = 1;
             }
 
             /* Disable and clear all interrupts */
-            for( i=0; i<numInts; i++ )
-            {
-                bsp_Interrupt_disable( (bsp_Gpio_platformPortInfoTable[portId].intId + i) );
-                bsp_Interrupt_clearPending( (bsp_Gpio_platformPortInfoTable[portId].intId + i));
+            for (i = 0; i < numInts; i++) {
+                bsp_Interrupt_disable((bsp_Gpio_platformPortInfoTable[portId].intId + i));
+                bsp_Interrupt_clearPending((bsp_Gpio_platformPortInfoTable[portId].intId + i));
             }
 
             /* Clear the callback table */
-            memset( bsp_Gpio_platformPortInfoTable[portId].handlerTable,
-                    0,
-                    BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT );
+            memset(
+                bsp_Gpio_platformPortInfoTable[portId].handlerTable,
+                0,
+                BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT);
 
             /* Re-Enable all interrupts */
-            for( i=0; i<numInts; i++ )
-            {
-                bsp_Interrupt_enable( (bsp_Gpio_platformPortInfoTable[portId].intId + i) );
+            for (i = 0; i < numInts; i++) {
+                bsp_Interrupt_enable((bsp_Gpio_platformPortInfoTable[portId].intId + i));
             }
 
             /* Wait for the peripheral to be ready in the system controller before moving on */
-            while( MAP_SysCtlPeripheralReady( bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr ) == FALSE );
+            while (MAP_SysCtlPeripheralReady(bsp_Gpio_platformPortInfoTable[portId].sysCtrlAddr) ==
+                   FALSE)
+                ;
 
             /* Unlock All pins */
-            MAP_GPIOUnlockPin( bsp_Gpio_platformPortInfoTable[portId].baseAddr, 0xFF );
+            MAP_GPIOUnlockPin(bsp_Gpio_platformPortInfoTable[portId].baseAddr, 0xFF);
         }
     }
 
@@ -94,160 +91,136 @@ bsp_Gpio_init( void )
     return;
 }
 
-
 /*============================================================================*/
-void
-bsp_Gpio_write( bsp_Gpio_PortId_t  portId,
-                bsp_Gpio_BitMask_t mask,
-                bsp_Gpio_BitMask_t val )
+void bsp_Gpio_write(bsp_Gpio_PortId_t portId, bsp_Gpio_BitMask_t mask, bsp_Gpio_BitMask_t val)
 {
-    MAP_GPIOPinWrite( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, val );
+    MAP_GPIOPinWrite(bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, val);
     return;
 }
 
-
 /*============================================================================*/
-bsp_Gpio_BitMask_t
-bsp_Gpio_read( bsp_Gpio_PortId_t  portId,
-               bsp_Gpio_BitMask_t mask )
+bsp_Gpio_BitMask_t bsp_Gpio_read(bsp_Gpio_PortId_t portId, bsp_Gpio_BitMask_t mask)
 {
     bsp_Gpio_BitMask_t returnVal;
-    returnVal = MAP_GPIOPinRead( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
-    return( returnVal );
+    returnVal = MAP_GPIOPinRead(bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask);
+    return (returnVal);
 }
 
-
 /*============================================================================*/
-void
-bsp_Gpio_configAnalog( bsp_Gpio_PortId_t    portId,
-                       bsp_Gpio_BitMask_t   mask )
+void bsp_Gpio_configAnalog(bsp_Gpio_PortId_t portId, bsp_Gpio_BitMask_t mask)
 {
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    MAP_GPIOPinTypeADC( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
-    BSP_MCU_CRITICAL_SECTION_EXIT();
-    return;
-}
-
-
-/*============================================================================*/
-void
-bsp_Gpio_configAltFunction( bsp_Gpio_PortId_t    portId,
-                            bsp_Gpio_BitMask_t   mask,
-                            bsp_Gpio_AltFuncId_t altFuncId )
-{
-    BSP_MCU_CRITICAL_SECTION_ENTER();
-    GPIODirModeSet( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, GPIO_DIR_MODE_HW );
-    MAP_GPIOPinConfigure( altFuncId );
+    MAP_GPIOPinTypeADC(bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask);
     BSP_MCU_CRITICAL_SECTION_EXIT();
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_configOutput( bsp_Gpio_PortId_t  portId,
-                       bsp_Gpio_BitMask_t mask,
-                       bool_t             openDrain,
-                       bsp_Gpio_Drive_t   drive )
+void bsp_Gpio_configAltFunction(
+    bsp_Gpio_PortId_t    portId,
+    bsp_Gpio_BitMask_t   mask,
+    bsp_Gpio_AltFuncId_t altFuncId)
 {
-    uint32_t pinType = GPIO_PIN_TYPE_STD;
+    BSP_MCU_CRITICAL_SECTION_ENTER();
+    GPIODirModeSet(bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, GPIO_DIR_MODE_HW);
+    MAP_GPIOPinConfigure(altFuncId);
+    BSP_MCU_CRITICAL_SECTION_EXIT();
+    return;
+}
+
+/*============================================================================*/
+void bsp_Gpio_configOutput(
+    bsp_Gpio_PortId_t  portId,
+    bsp_Gpio_BitMask_t mask,
+    bool_t             openDrain,
+    bsp_Gpio_Drive_t   drive)
+{
+    uint32_t pinType  = GPIO_PIN_TYPE_STD;
     uint32_t strength = GPIO_STRENGTH_2MA;
-    if( openDrain == true )
-    {
+    if (openDrain == true) {
         pinType = GPIO_PIN_TYPE_OD;
     }
-    else
-    {
-        if( drive == BSP_GPIO_DRIVE_2MA )
-        {
+    else {
+        if (drive == BSP_GPIO_DRIVE_2MA) {
             strength = GPIO_STRENGTH_2MA;
         }
-        else if( drive == BSP_GPIO_DRIVE_4MA )
-        {
+        else if (drive == BSP_GPIO_DRIVE_4MA) {
             strength = GPIO_STRENGTH_4MA;
         }
-        else if( drive == BSP_GPIO_DRIVE_8MA )
-        {
+        else if (drive == BSP_GPIO_DRIVE_8MA) {
             strength = GPIO_STRENGTH_8MA;
         }
-        else if( drive == BSP_GPIO_DRIVE_8MA_SC )
-        {
+        else if (drive == BSP_GPIO_DRIVE_8MA_SC) {
             strength = GPIO_STRENGTH_8MA_SC;
         }
-        else if( drive == BSP_GPIO_DRIVE_6MA )
-        {
+        else if (drive == BSP_GPIO_DRIVE_6MA) {
             strength = GPIO_STRENGTH_6MA;
         }
-        else if( drive == BSP_GPIO_DRIVE_10MA )
-        {
+        else if (drive == BSP_GPIO_DRIVE_10MA) {
             strength = GPIO_STRENGTH_10MA;
         }
-        else
-        {
+        else {
             strength = GPIO_STRENGTH_12MA;
         }
     }
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    MAP_GPIOPinTypeGPIOOutput( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
-    MAP_GPIOPadConfigSet( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, strength, pinType );
+    MAP_GPIOPinTypeGPIOOutput(bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask);
+    MAP_GPIOPadConfigSet(bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, strength, pinType);
     BSP_MCU_CRITICAL_SECTION_EXIT();
 
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_configInput( bsp_Gpio_PortId_t  portId,
-                      bsp_Gpio_BitMask_t mask,
-                      bool_t             openDrain,
-                      bsp_Gpio_Pull_t    pull )
+void bsp_Gpio_configInput(
+    bsp_Gpio_PortId_t  portId,
+    bsp_Gpio_BitMask_t mask,
+    bool_t             openDrain,
+    bsp_Gpio_Pull_t    pull)
 {
     uint32_t pinType = GPIO_PIN_TYPE_STD;
-    if( openDrain == true )
-    {
+    if (openDrain == true) {
         pinType = GPIO_PIN_TYPE_OD;
     }
-    else if( pull == BSP_GPIO_PULL_UP )
-    {
+    else if (pull == BSP_GPIO_PULL_UP) {
         pinType = GPIO_PIN_TYPE_STD_WPU;
     }
-    else if( pull == BSP_GPIO_PULL_DOWN )
-    {
+    else if (pull == BSP_GPIO_PULL_DOWN) {
         pinType = GPIO_PIN_TYPE_STD_WPD;
     }
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    MAP_GPIOPinTypeGPIOInput( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
-    MAP_GPIOPadConfigSet( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, BSP_GPIO_DRIVE_2MA, pinType );
+    MAP_GPIOPinTypeGPIOInput(bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask);
+    MAP_GPIOPadConfigSet(
+        bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask, BSP_GPIO_DRIVE_2MA, pinType);
     BSP_MCU_CRITICAL_SECTION_EXIT();
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_intControl( bsp_Gpio_PortId_t     portId,
-                     bsp_Gpio_BitMask_t    mask,
-                     bsp_Gpio_IntControl_t control )
+void bsp_Gpio_intControl(
+    bsp_Gpio_PortId_t     portId,
+    bsp_Gpio_BitMask_t    mask,
+    bsp_Gpio_IntControl_t control)
 {
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    if( control == BSP_GPIO_INT_CONTROL_ENABLE )
-    {
-        MAP_GPIOIntEnable( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
+    if (control == BSP_GPIO_INT_CONTROL_ENABLE) {
+        MAP_GPIOIntEnable(bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask);
     }
-    else
-    {
-        MAP_GPIOIntDisable( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
+    else {
+        MAP_GPIOIntDisable(bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask);
     }
     BSP_MCU_CRITICAL_SECTION_EXIT();
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Gpio_intConfig( bsp_Gpio_PortId_t       portId,
-                    bsp_Gpio_BitMask_t      mask,
-                    bool_t                  dmaTriggerEnable,
-                    bool_t                  adcTriggerEnable,
-                    bsp_Gpio_IntType_t      type,
-                    bsp_Gpio_InputHandler_t callback )
+void bsp_Gpio_intConfig(
+    bsp_Gpio_PortId_t       portId,
+    bsp_Gpio_BitMask_t      mask,
+    bool_t                  dmaTriggerEnable,
+    bool_t                  adcTriggerEnable,
+    bsp_Gpio_IntType_t      type,
+    bsp_Gpio_InputHandler_t callback)
 {
     uint32_t portAddr;
 
@@ -255,60 +228,50 @@ bsp_Gpio_intConfig( bsp_Gpio_PortId_t       portId,
 
     BSP_MCU_CRITICAL_SECTION_ENTER();
 
-    if( dmaTriggerEnable == TRUE )
-    {
-        MAP_GPIODMATriggerEnable( portAddr, mask );
+    if (dmaTriggerEnable == TRUE) {
+        MAP_GPIODMATriggerEnable(portAddr, mask);
     }
-    else
-    {
-        MAP_GPIODMATriggerDisable( portAddr, mask );
+    else {
+        MAP_GPIODMATriggerDisable(portAddr, mask);
     }
 
-    if( adcTriggerEnable == TRUE )
-    {
-        MAP_GPIOADCTriggerEnable( portAddr, mask );
+    if (adcTriggerEnable == TRUE) {
+        MAP_GPIOADCTriggerEnable(portAddr, mask);
     }
-    else
-    {
-        MAP_GPIOADCTriggerDisable( portAddr, mask );
+    else {
+        MAP_GPIOADCTriggerDisable(portAddr, mask);
     }
 
-    uint32_t intType = (bsp_Gpio_platformPortInfoTable[portId].bitInterruptable) ? GPIO_DISCRETE_INT : 0;;
-    if( type == BSP_GPIO_INT_TYPE_EDGE_RISING )
-    {
+    uint32_t intType =
+        (bsp_Gpio_platformPortInfoTable[portId].bitInterruptable) ? GPIO_DISCRETE_INT : 0;
+    ;
+    if (type == BSP_GPIO_INT_TYPE_EDGE_RISING) {
         intType |= GPIO_RISING_EDGE;
     }
-    else if( type == BSP_GPIO_INT_TYPE_EDGE_FALLING )
-    {
+    else if (type == BSP_GPIO_INT_TYPE_EDGE_FALLING) {
         intType |= GPIO_FALLING_EDGE;
     }
-    else if( type == BSP_GPIO_INT_TYPE_EDGE_BOTH )
-    {
+    else if (type == BSP_GPIO_INT_TYPE_EDGE_BOTH) {
         intType |= GPIO_BOTH_EDGES;
     }
-    else if( type == BSP_GPIO_INT_TYPE_LEVEL_LOW )
-    {
+    else if (type == BSP_GPIO_INT_TYPE_LEVEL_LOW) {
         intType |= GPIO_LOW_LEVEL;
     }
-    else if( type == BSP_GPIO_INT_TYPE_LEVEL_HIGH )
-    {
+    else if (type == BSP_GPIO_INT_TYPE_LEVEL_HIGH) {
         intType |= GPIO_HIGH_LEVEL;
     }
-    MAP_GPIOIntTypeSet( portAddr, mask, intType );
+    MAP_GPIOIntTypeSet(portAddr, mask, intType);
 
     /* Register handler for each masked bit passed in */
-    for( uint8_t pin=0; pin<BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT; pin++ )
-    {
-        if( ((1 << pin) & mask) != 0 )
-        {
+    for (uint8_t pin = 0; pin < BSP_GPIO_PIN_OFFSET_NUM_PINS_PER_PORT; pin++) {
+        if (((1 << pin) & mask) != 0) {
             bsp_Gpio_platformPortInfoTable[portId].handlerTable[pin] = callback;
         }
     }
 
-    MAP_GPIOIntClear( bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask );
+    MAP_GPIOIntClear(bsp_Gpio_platformPortInfoTable[portId].baseAddr, mask);
 
     BSP_MCU_CRITICAL_SECTION_EXIT();
 
     return;
 }
-

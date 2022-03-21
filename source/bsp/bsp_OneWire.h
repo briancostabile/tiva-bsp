@@ -19,26 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
- #pragma once
+#pragma once
 
 #include <stdint.h>
 /*=============================================================================
  *                               Functions
  *===========================================================================*/
 /*===========================================================================*/
-void
-bsp_OneWire_init( void );
-
+void bsp_OneWire_init(void);
 
 /*===========================================================================*/
-bool
-bsp_OneWire_snd( uint32_t sndData,
-                 uint8_t  sndNumBits );
-
+bool bsp_OneWire_snd(uint32_t sndData, uint8_t sndNumBits);
 
 /*===========================================================================*/
-bool
-bsp_OneWire_sndRcv( uint32_t sndData,
-                    uint8_t  sndNumBits,
-                    uint8_t* rcvDataPtr,
-                    uint8_t  rcvDataLen );
+bool bsp_OneWire_sndRcv(
+    uint32_t sndData,
+    uint8_t  sndNumBits,
+    uint8_t *rcvDataPtr,
+    uint8_t  rcvDataLen);

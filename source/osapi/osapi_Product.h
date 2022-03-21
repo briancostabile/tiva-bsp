@@ -37,17 +37,19 @@
 #define OSAPI_MEMORY_HDR_SIZE_32 1
 #define OSAPI_MEMORY_HDR_SIZE_8  (OSAPI_MEMORY_HDR_SIZE_32 * 4)
 
-#define OSAPI_MEMORY_POOL_DEFINE( _size, _cnt ) \
-uint32_t  osapi_MemoryPool##_size[ ((_cnt) * ((_size + OSAPI_MEMORY_HDR_SIZE_8) / 4)) ]; \
-uint32_t* osapi_MemoryPoolFree##_size;
+#define OSAPI_MEMORY_POOL_DEFINE(_size, _cnt)                                              \
+    uint32_t  osapi_MemoryPool##_size[((_cnt) * ((_size + OSAPI_MEMORY_HDR_SIZE_8) / 4))]; \
+    uint32_t *osapi_MemoryPoolFree##_size;
 
-#define OSAPI_MEMORY_POOL_INFO_ELEMENT( _size ) \
-{ (_size),  sizeof(osapi_MemoryPool##_size),   osapi_MemoryPool##_size,   &osapi_MemoryPoolFree##_size   }
-
+#define OSAPI_MEMORY_POOL_INFO_ELEMENT(_size)                              \
+    {                                                                      \
+        (_size), sizeof(osapi_MemoryPool##_size), osapi_MemoryPool##_size, \
+            &osapi_MemoryPoolFree##_size                                   \
+    }
 
 #if defined(PRODUCT)
 /* The name of the product turns into the tail end of the headerfile that is included */
 #include BUILD_INCLUDE_STRING(osapi_, PRODUCT)
 #else
-# error "PRODUCT must be defined on command line"
+#error "PRODUCT must be defined on command line"
 #endif

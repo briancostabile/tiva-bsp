@@ -34,6 +34,7 @@
  *============================================================================*/
 /*============================================================================*/
 /* One entry for each IO port. */
+/* clang-format off */
 const bsp_Trace_IoInfo_t bsp_Trace_ioInfoTable[BSP_GPIO_PORT_ID_NUM_PORTS]=
 {
     { BSP_GPIO_PORT_ID(PA0), (BSP_GPIO_MASK(TPA2) | BSP_GPIO_MASK(TPA3) | BSP_GPIO_MASK(TPA4) | BSP_GPIO_MASK(TPA5) | BSP_GPIO_MASK(TPA6) | BSP_GPIO_MASK(TPA7)) },
@@ -43,3 +44,8 @@ const bsp_Trace_IoInfo_t bsp_Trace_ioInfoTable[BSP_GPIO_PORT_ID_NUM_PORTS]=
     { BSP_GPIO_PORT_ID(PE0), (BSP_GPIO_MASK(TPE0) | BSP_GPIO_MASK(TPE1) | BSP_GPIO_MASK(TPE2) | BSP_GPIO_MASK(TPE3) | BSP_GPIO_MASK(TPE4) | BSP_GPIO_MASK(TPE5)) },
     { BSP_GPIO_PORT_ID(PF0), 0x00000000 }
 };
+
+size_t bsp_Trace_ioInfoTableLen(void)
+{
+    return(DIM(bsp_Trace_ioInfoTable));
+}

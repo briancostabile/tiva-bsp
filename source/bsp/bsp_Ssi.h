@@ -30,7 +30,7 @@
 #include "inc/hw_memmap.h"
 #include "inc/hw_i2c.h"
 
-#include BUILD_INCLUDE_STRING( bsp_Ssi_, PLATFORM_CORE )
+#include BUILD_INCLUDE_STRING(bsp_Ssi_, PLATFORM_CORE)
 
 /*==============================================================================
  *                                Types
@@ -40,8 +40,8 @@
 typedef uint32_t bsp_Ssi_Speed_t;
 
 /*============================================================================*/
-#define BSP_SSI_CONTROL_DISABLE  ((bsp_Ssi_Control_t)0)
-#define BSP_SSI_CONTROL_ENABLE   ((bsp_Ssi_Control_t)1)
+#define BSP_SSI_CONTROL_DISABLE ((bsp_Ssi_Control_t)0)
+#define BSP_SSI_CONTROL_ENABLE  ((bsp_Ssi_Control_t)1)
 typedef uint8_t bsp_Ssi_Control_t;
 
 /*============================================================================*/
@@ -54,46 +54,42 @@ typedef uint8_t bsp_Ssi_TransType_t;
 // Mode 1 :Pol-0 Pha-1
 // Mode 2 :Pol-1 Pha-0
 // Mode 3 :Pol-1 Pha-1
-#define BSP_SSI_TRANS_MODE_0      ((bsp_Ssi_TransMode_t)0)
-#define BSP_SSI_TRANS_MODE_1      ((bsp_Ssi_TransMode_t)1)
-#define BSP_SSI_TRANS_MODE_2      ((bsp_Ssi_TransMode_t)2)
-#define BSP_SSI_TRANS_MODE_3      ((bsp_Ssi_TransMode_t)3)
+#define BSP_SSI_TRANS_MODE_0 ((bsp_Ssi_TransMode_t)0)
+#define BSP_SSI_TRANS_MODE_1 ((bsp_Ssi_TransMode_t)1)
+#define BSP_SSI_TRANS_MODE_2 ((bsp_Ssi_TransMode_t)2)
+#define BSP_SSI_TRANS_MODE_3 ((bsp_Ssi_TransMode_t)3)
 typedef uint8_t bsp_Ssi_TransMode_t;
 
-typedef void (* bsp_Spi_selectFunction_t)(void);
 /*============================================================================*/
 /*============================================================================*/
-typedef void (*bsp_Ssi_MasterTransCallback_t)( void* userData );
+typedef void (*bsp_Ssi_MasterTransCallback_t)(void *userData);
 
-typedef struct bsp_Ssi_MasterTrans_n
-{
-    struct bsp_Ssi_MasterTrans_n* nextPtr;
+typedef struct bsp_Ssi_MasterTrans_n {
+    struct bsp_Ssi_MasterTrans_n *nextPtr;
     bsp_Ssi_Speed_t               speed;
     bsp_Ssi_TransType_t           type;
     bsp_Ssi_TransMode_t           mode;
-    size_t                        len;
-    uint8_t*                      rBuffer;
-    uint8_t*                      wBuffer;
-    bsp_Spi_selectFunction_t      csEnable;
-    bsp_Spi_selectFunction_t      csDisable;
+    bool_t                        rReverse;
+    size_t                        sLen;
+    size_t                        rLen;
+    uint8_t *                     rBuffer;
+    size_t                        wLen;
+    uint8_t *                     wBuffer;
+    uint32_t                      csPort;
+    uint32_t                      csMask;
+    uint32_t                      csMaskEn;
     bsp_Ssi_MasterTransCallback_t callback;
-    void*                         usrData;
+    void *                        usrData;
 } bsp_Ssi_MasterTrans_t;
-
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Ssi_init( void );
+void bsp_Ssi_init(void);
 
 /*============================================================================*/
-void
-bsp_Ssi_masterControl( bsp_Ssi_Id_t      id,
-                       bsp_Ssi_Control_t control );
+void bsp_Ssi_masterControl(bsp_Ssi_Id_t id, bsp_Ssi_Control_t control);
 
 /*============================================================================*/
-void
-bsp_Ssi_masterTransQueue( bsp_Ssi_Id_t           id,
-                          bsp_Ssi_MasterTrans_t* transPtr );
+void bsp_Ssi_masterTransQueue(bsp_Ssi_Id_t id, bsp_Ssi_MasterTrans_t *transPtr);

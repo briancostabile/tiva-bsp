@@ -40,23 +40,21 @@
 /*==============================================================================
  *                                Types
  *============================================================================*/
-typedef void (*svc_Eh_InitHandler_t)( void );
-typedef void (*svc_Eh_MsgHandler_t)( svc_MsgFwk_Hdr_t* msgPtr );
+typedef void (*svc_Eh_InitHandler_t)(void);
+typedef void (*svc_Eh_MsgHandler_t)(svc_MsgFwk_Hdr_t *msgPtr);
 
 /*============================================================================*/
-typedef struct svc_Eh_Info_s
-{
+typedef struct svc_Eh_Info_s {
     svc_EhId_t                eh;
     size_t                    bcastListLen;
-    const svc_MsgFwk_MsgId_t* bcastList;
+    const svc_MsgFwk_MsgId_t *bcastList;
     svc_Eh_InitHandler_t      initHandler;
     svc_Eh_MsgHandler_t       msgHandler;
 } svc_Eh_Info_t;
 
-
 /*============================================================================*/
-void
-svc_Eh_listRun( size_t                cnt,
-                const svc_Eh_Info_t** infoPtrList,
-                size_t                queueDepth,
-                void*                 queueMem );
+void svc_Eh_listRun(
+    size_t                cnt,
+    const svc_Eh_Info_t **infoPtrList,
+    size_t                queueDepth,
+    void *                queueMem);

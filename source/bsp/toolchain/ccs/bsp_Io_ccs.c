@@ -35,8 +35,7 @@
 #endif
 
 /*============================================================================*/
-void
-bsp_Io_init( void )
+void bsp_Io_init(void)
 {
     return;
 }
@@ -47,52 +46,48 @@ bsp_Io_init( void )
  * a limited number of device table entries available for the user. The TI
  * library allows for 3 devices
  */
-void
-bsp_Io_addDevice( const char*     path,
-                  void*           cookie,
-                  bsp_Io_Open_t   open,
-                  bsp_Io_Close_t  close,
-                  bsp_Io_Read_t   read,
-                  bsp_Io_Write_t  write,
-                  bsp_Io_Lseek_t  lseek,
-                  bsp_Io_Unlink_t unlink,
-                  bsp_Io_Rename_t rename )
+void bsp_Io_addDevice(
+    const char *    path,
+    void *          cookie,
+    bsp_Io_Open_t   open,
+    bsp_Io_Close_t  close,
+    bsp_Io_Read_t   read,
+    bsp_Io_Write_t  write,
+    bsp_Io_Lseek_t  lseek,
+    bsp_Io_Unlink_t unlink,
+    bsp_Io_Rename_t rename)
 {
     char reopen_path[7];
-    int ret = add_device( (char*)path, _SSA, open, close, read, write, lseek, unlink, rename );
+    int  ret = add_device((char *)path, _SSA, open, close, read, write, lseek, unlink, rename);
 
-    if (ret < 0)
-    {
+    if (ret < 0) {
         // Device not added
         return;
     }
 
-    memset( reopen_path, 0, sizeof(reopen_path) );
-    strcat( reopen_path, path );
-    strcat( reopen_path, ":" );
+    memset(reopen_path, 0, sizeof(reopen_path));
+    strcat(reopen_path, path);
+    strcat(reopen_path, ":");
 
-    FILE* dev_fp = fopen( reopen_path, "w" );
+    FILE *dev_fp = fopen(reopen_path, "w");
 
-    if( strcmp( BSP_PLATFORM_IO_MAP_STDIN, path ) == 0 )
-    {
-        freopen( reopen_path, "r", stdin );
-        setvbuf( stdin, NULL, _IONBF, 0 );
+    if (strcmp(BSP_PLATFORM_IO_MAP_STDIN, path) == 0) {
+        freopen(reopen_path, "r", stdin);
+        setvbuf(stdin, NULL, _IONBF, 0);
         stdin->flags &= ~(_IOFBF | _IOLBF | _IONBF);
         stdin->flags |= _IONBF;
         stdin->fd = dev_fp->fd;
     }
-    if( strcmp( BSP_PLATFORM_IO_MAP_STDOUT, path ) == 0 )
-    {
-        freopen( reopen_path, "w", stdout );
-        setvbuf( stdout, NULL, _IONBF, 0 );
+    if (strcmp(BSP_PLATFORM_IO_MAP_STDOUT, path) == 0) {
+        freopen(reopen_path, "w", stdout);
+        setvbuf(stdout, NULL, _IONBF, 0);
         stdout->flags &= ~(_IOFBF | _IOLBF | _IONBF);
         stdout->flags |= _IONBF;
         stdout->fd = dev_fp->fd;
     }
-    if( strcmp( BSP_PLATFORM_IO_MAP_STDERR, path ) == 0 )
-    {
-        freopen( reopen_path, "w", stderr );
-        setvbuf( stderr, NULL, _IONBF, 0 );
+    if (strcmp(BSP_PLATFORM_IO_MAP_STDERR, path) == 0) {
+        freopen(reopen_path, "w", stderr);
+        setvbuf(stderr, NULL, _IONBF, 0);
         stderr->flags &= ~(_IOFBF | _IOLBF | _IONBF);
         stderr->flags |= _IONBF;
         stderr->fd = dev_fp->fd;
@@ -101,10 +96,8 @@ bsp_Io_addDevice( const char*     path,
     return;
 }
 
-
 /*============================================================================*/
-int
-bsp_Io_fileToDfd( FILE* file )
+int bsp_Io_fileToDfd(FILE *file)
 {
-    return( _stream[(file)->fd].dfd );
+    return (_stream[(file)->fd].dfd);
 }

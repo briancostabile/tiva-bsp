@@ -36,16 +36,13 @@
  *============================================================================*/
 /*============================================================================*/
 // Platform specific initializations
-void
-bsp_Gpio_initPlatform( void )
+void bsp_Gpio_initPlatform(void)
 {
     /* Configure No Connect pins as no-pull inputs */
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_NCPB6,
-                          BSP_GPIO_BIT_MASK_NCPB6,
-                          FALSE, BSP_GPIO_PULL_NONE );
+    bsp_Gpio_configInput(
+        BSP_GPIO_PORT_ID_NCPB6, BSP_GPIO_BIT_MASK_NCPB6, FALSE, BSP_GPIO_PULL_NONE);
 
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_NCPB7,
-                          BSP_GPIO_BIT_MASK_NCPB7,
-                          FALSE, BSP_GPIO_PULL_NONE );
+    bsp_Gpio_configInput(
+        BSP_GPIO_PORT_ID_NCPB7, BSP_GPIO_BIT_MASK_NCPB7, FALSE, BSP_GPIO_PULL_NONE);
     return;
 }

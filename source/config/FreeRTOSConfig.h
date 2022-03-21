@@ -25,7 +25,7 @@
  * 1 tab == 4 spaces!
  */
 
-
+/* clang-format off */ 
 /******************************************************************************
     See http://www.freertos.org/a00110.html for an explanation of the
     definitions contained in this file.

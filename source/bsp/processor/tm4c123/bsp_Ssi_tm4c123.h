@@ -21,87 +21,89 @@
  */
 /*============================================================================*/
 /**
- * @file bsp_I2c_tm4c123.h
- * @brief Contains the tm4c123 core I2C defines.
+ * @file bsp_Ssi_tm4c123.h
+ * @brief Contains the tm4c123 core SSI defines.
  */
 #pragma once
 
 #include "bsp_Types.h"
 #include "bsp_Interrupt.h"
 #include "bsp_Gpio.h"
+#include "bsp_Dma.h"
 
 /*==============================================================================
  *                                 Types
  *============================================================================*/
 
 /*============================================================================*/
-/**
- * The tm4c123 does not have FIFOs on I2C
- */
-#define BSP_I2C_PLATFORM_USE_FIFO 0
-
-/*==============================================================================
- *                                 Types
- *============================================================================*/
+#define BSP_SSI_ID0 ((bsp_Ssi_Id_t)0)
+#define BSP_SSI_ID1 ((bsp_Ssi_Id_t)1)
+#define BSP_SSI_ID2 ((bsp_Ssi_Id_t)2)
+#define BSP_SSI_ID3 ((bsp_Ssi_Id_t)3)
+typedef uint8_t bsp_Ssi_Id_t;
 
 /*============================================================================*/
-#define BSP_I2C_ID0 ((bsp_I2c_Id_t)0)
-#define BSP_I2C_ID1 ((bsp_I2c_Id_t)1)
-#define BSP_I2C_ID2 ((bsp_I2c_Id_t)2)
-#define BSP_I2C_ID3 ((bsp_I2c_Id_t)3)
-typedef uint8_t bsp_I2c_Id_t;
+#define BSP_SSI_PLATFORM_NUM 4
 
 /*============================================================================*/
-#define BSP_I2C_PLATFORM_NUM 4
-
-/*============================================================================*/
-#define BSP_I2C_PIN_SEL_0    ((bsp_I2c_PinSel_t)0)
-#define BSP_I2C_PIN_SEL_1    ((bsp_I2c_PinSel_t)1)
-#define BSP_I2C_PIN_SEL_2    ((bsp_I2c_PinSel_t)2)
-#define BSP_I2C_PIN_SEL_3    ((bsp_I2c_PinSel_t)3)
-#define BSP_I2C_PIN_SEL_4    ((bsp_I2c_PinSel_t)4)
-#define BSP_I2C_PIN_SEL_5    ((bsp_I2c_PinSel_t)5)
-#define BSP_I2C_PIN_SEL_6    ((bsp_I2c_PinSel_t)6)
-#define BSP_I2C_PIN_SEL_7    ((bsp_I2c_PinSel_t)7)
-#define BSP_I2C_PIN_SEL_NONE ((bsp_I2c_PinSel_t)8)
-typedef uint8_t bsp_I2c_PinSel_t;
+#define BSP_SSI_PIN_SEL_0    ((bsp_Ssi_PinSel_t)0)
+#define BSP_SSI_PIN_SEL_1    ((bsp_Ssi_PinSel_t)1)
+#define BSP_SSI_PIN_SEL_2    ((bsp_Ssi_PinSel_t)2)
+#define BSP_SSI_PIN_SEL_3    ((bsp_Ssi_PinSel_t)3)
+#define BSP_SSI_PIN_SEL_4    ((bsp_Ssi_PinSel_t)4)
+#define BSP_SSI_PIN_SEL_5    ((bsp_Ssi_PinSel_t)5)
+#define BSP_SSI_PIN_SEL_6    ((bsp_Ssi_PinSel_t)6)
+#define BSP_SSI_PIN_SEL_7    ((bsp_Ssi_PinSel_t)7)
+#define BSP_SSI_PIN_SEL_NONE ((bsp_Ssi_PinSel_t)8)
+typedef uint8_t bsp_Ssi_PinSel_t;
 
 /*============================================================================*/
 /**
- * @brief Structure to hold Pin muxing info for I2C pins
+ * @brief Structure to hold Pin muxing info for SSI pins
  */
 typedef struct {
     bsp_Gpio_PortId_t    portId;
     bsp_Gpio_BitMask_t   mask;
     bsp_Gpio_AltFuncId_t altFuncId;
-} bsp_I2c_PinInfo_t;
+} bsp_Ssi_PinInfo_t;
 
 /*============================================================================*/
 /**
- * @brief Structure to hold constant info about the I2C hardware
+ * @brief Structure to hold constant info about the SSI hardware
  */
 typedef struct {
     uint32_t                 baseAddr;
     uint32_t                 sysCtrlAddr;
     uint32_t                 intId;
-    uint8_t                  sclPinInfoTableLen;
-    const bsp_I2c_PinInfo_t *sclPinInfoTable;
-    uint8_t                  sdaPinInfoTableLen;
-    const bsp_I2c_PinInfo_t *sdaPinInfoTable;
-} bsp_I2c_StaticInfo_t;
+    uint32_t                 dmaPerIdRx;
+    uint32_t                 dmaPerIdTx;
+    uint8_t                  clkPinInfoTableLen;
+    const bsp_Ssi_PinInfo_t *clkPinInfoTable;
+    uint8_t                  fssPinInfoTableLen;
+    const bsp_Ssi_PinInfo_t *fssPinInfoTable;
+    uint8_t                  dat0PinInfoTableLen;
+    const bsp_Ssi_PinInfo_t *dat0PinInfoTable;
+    uint8_t                  dat1PinInfoTableLen;
+    const bsp_Ssi_PinInfo_t *dat1PinInfoTable;
+    uint8_t                  dat2PinInfoTableLen;
+    const bsp_Ssi_PinInfo_t *dat2PinInfoTable;
+    uint8_t                  dat3PinInfoTableLen;
+    const bsp_Ssi_PinInfo_t *dat3PinInfoTable;
+} bsp_Ssi_StaticInfo_t;
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
+
 /*============================================================================*/
-void bsp_I2c_interruptHandler0(void);
-void bsp_I2c_interruptHandler1(void);
-void bsp_I2c_interruptHandler2(void);
-void bsp_I2c_interruptHandler3(void);
+void bsp_Ssi_interruptHandler0(void);
+void bsp_Ssi_interruptHandler1(void);
+void bsp_Ssi_interruptHandler2(void);
+void bsp_Ssi_interruptHandler3(void);
 
 /*==============================================================================
  *                                Globals
  *============================================================================*/
 
 /*============================================================================*/
-extern const bsp_I2c_StaticInfo_t bsp_I2c_staticInfo[BSP_I2C_PLATFORM_NUM];
+extern const bsp_Ssi_StaticInfo_t bsp_Ssi_staticInfo[BSP_SSI_PLATFORM_NUM];

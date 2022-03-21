@@ -34,15 +34,13 @@
 // Signed Fixed point 24.8 values
 typedef uint32_t dev_Pressure_Meas_t;
 
-typedef void (*dev_Pressure_MeasCallback_t)( dev_Pressure_Meas_t light );
+typedef void (*dev_Pressure_MeasCallback_t)(dev_Pressure_Meas_t light);
 
 /*==============================================================================
  *                               Prototypes
  *============================================================================*/
 /*===========================================================================*/
-void
-dev_Pressure_init( void );
+void dev_Pressure_init(void);
 
 /*===========================================================================*/
-void
-dev_Pressure_measTrigger( dev_Pressure_MeasCallback_t callback );
+void dev_Pressure_measTrigger(dev_Pressure_MeasCallback_t callback);

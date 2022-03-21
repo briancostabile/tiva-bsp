@@ -42,36 +42,31 @@ extern const bsp_Led_Info_t bsp_Led_infoTable[BSP_PLATFORM_LED_NUM];
  *                            Public Functions
  *============================================================================*/
 //*============================================================================*/
-void
-bsp_Led_init( void )
+void bsp_Led_init(void)
 {
-    for( uint8_t i=0; i<DIM(bsp_Led_infoTable); i++ )
-    {
-        for( uint8_t j=0; j<bsp_Led_infoTable[i].cnt; j++ )
-        {
+    for (uint8_t i = 0; i < DIM(bsp_Led_infoTable); i++) {
+        for (uint8_t j = 0; j < bsp_Led_infoTable[i].cnt; j++) {
             /* For each port configure the LED IO as output and set to low */
-            const bsp_Led_GroupElementInfo_t* ledPtr = &bsp_Led_infoTable[i].groupTable[j];
-            bsp_Gpio_configOutput( ledPtr->portId, ledPtr->mask, FALSE, ledPtr->drive );
-            bsp_Gpio_write( ledPtr->portId, ledPtr->mask, (!(ledPtr->polarity) * ledPtr->mask) );
+            const bsp_Led_GroupElementInfo_t *ledPtr = &bsp_Led_infoTable[i].groupTable[j];
+            bsp_Gpio_configOutput(ledPtr->portId, ledPtr->mask, FALSE, ledPtr->drive);
+            bsp_Gpio_write(ledPtr->portId, ledPtr->mask, (!(ledPtr->polarity) * ledPtr->mask));
         }
     }
     return;
 }
 
 /*============================================================================*/
-void
-bsp_Led_setColor( bsp_Led_Id_t    id,
-                  bsp_Led_Color_t color )
+void bsp_Led_setColor(bsp_Led_Id_t id, bsp_Led_Color_t color)
 {
     // For now any color turns LED on full
-    const bsp_Led_GroupElementInfo_t* ledPtr;
-    for( uint8_t j=0; j<bsp_Led_infoTable[id].cnt; j++ )
-    {
+    const bsp_Led_GroupElementInfo_t *ledPtr;
+    for (uint8_t j = 0; j < bsp_Led_infoTable[id].cnt; j++) {
         ledPtr = &bsp_Led_infoTable[id].groupTable[j];
-        bsp_Gpio_write( ledPtr->portId, ledPtr->mask,
-                        (color & ledPtr->color) ?
-                            ((ledPtr->polarity) * ledPtr->mask) :
-                            (!(ledPtr->polarity) * ledPtr->mask) );
+        bsp_Gpio_write(
+            ledPtr->portId,
+            ledPtr->mask,
+            (color & ledPtr->color) ? ((ledPtr->polarity) * ledPtr->mask)
+                                    : (!(ledPtr->polarity) * ledPtr->mask));
     }
     return;
 }

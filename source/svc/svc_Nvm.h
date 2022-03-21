@@ -40,33 +40,39 @@ typedef struct svc_Nvm_DataHdr_s {
     uint32_t len;
 } svc_Nvm_DataHdr_t;
 
-
 #if defined(PRODUCT)
 /* The name of the product turns into the tail end of the headerfile that is included */
 #include BUILD_INCLUDE_STRING(svc_Nvm_, PRODUCT)
 #else
 typedef svc_Nvm_DataHdr_t svc_Nvm_Data_t;
-static inline void svc_Nvm_updateCalData( void*    dataPtr,
-                                          uint32_t chIdx,
-                                          int16_t  vBusOffset,
-                                          int16_t  vShuntOffset )
-{return;}
-static inline bool svc_Nvm_validData( void* dataPtr ) { return true; }
-static inline void svc_Nvm_setHdr( void* dataPtr ) { return; }
-static inline void svc_Nvm_initData( void* dataPtr ) { return; }
+static inline void
+svc_Nvm_updateCalData(void *dataPtr, uint32_t chIdx, int16_t vBusOffset, int16_t vShuntOffset)
+{
+    return;
+}
+static inline bool svc_Nvm_validData(void *dataPtr)
+{
+    return true;
+}
+static inline void svc_Nvm_setHdr(void *dataPtr)
+{
+    return;
+}
+static inline void svc_Nvm_initData(void *dataPtr)
+{
+    return;
+}
 #endif
 
 /*============================================================================*/
-void
-svc_Nvm_init( void );
+void svc_Nvm_init(void);
 
 /*============================================================================*/
-void
-svc_Nvm_save( void );
+void svc_Nvm_save(void);
 
 /*============================================================================*/
-static inline void* svc_Nvm_dataPtr( void )
+static inline void *svc_Nvm_dataPtr(void)
 {
     extern svc_Nvm_Data_t svc_Nvm_data;
-    return( (void*)&svc_Nvm_data );
+    return ((void *)&svc_Nvm_data);
 }

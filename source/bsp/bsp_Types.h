@@ -31,7 +31,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#if defined( __TI_COMPILER_VERSION__ )
+#include <inttypes.h>
+#if defined(__TI_COMPILER_VERSION__)
 #include <file.h>
 #else
 #include <sys/file.h>
@@ -49,13 +50,11 @@
 
 typedef uint8_t bool_t;
 
-
 /*============================================================================*/
 /* NULL Pointer definition */
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
-
 
 /*============================================================================*/
 /**
@@ -66,8 +65,7 @@ typedef uint8_t bool_t;
  * The DIM Macro would be:
  *     DIM(array) == 10
  */
-#define DIM(_x) (sizeof((_x))/sizeof((_x)[0]))
-
+#define DIM(_x) (sizeof((_x)) / sizeof((_x)[0]))
 
 /*============================================================================*/
 /**
@@ -76,8 +74,7 @@ typedef uint8_t bool_t;
 #ifdef MAX
 #undef MAX
 #endif
-#define MAX(_a,_b) ( ((_a)<(_b)) ? (_b) : (_a) )
-
+#define MAX(_a, _b) (((_a) < (_b)) ? (_b) : (_a))
 
 /*============================================================================*/
 /**
@@ -86,15 +83,14 @@ typedef uint8_t bool_t;
 #ifdef MIN
 #undef MIN
 #endif
-#define MIN(_a,_b) ( ((_a)<(_b)) ? (_a) : (_b) )
-
+#define MIN(_a, _b) (((_a) < (_b)) ? (_a) : (_b))
 
 /*============================================================================*/
 /**
  * @brief Macro to return the absolute value of a signed integer.
  */
 #ifndef ABS
-#define ABS(_a) ( ((_a) < 0) ? -(_a) : (_a) )
+#define ABS(_a) (((_a) < 0) ? -(_a) : (_a))
 #endif
 
 /*===========================================================================*/
@@ -110,7 +106,7 @@ typedef uint8_t bool_t;
  * @brief
  *   This macro builds a single file name from the 2 passed in parts.
  */
-#define BUILD_FILE_NAME( _prefix, _postfix )  _prefix ##_postfix.h
+#define BUILD_FILE_NAME(_prefix, _postfix) _prefix##_postfix.h
 
 /*===========================================================================*/
 /**
@@ -120,9 +116,8 @@ typedef uint8_t bool_t;
  *   create include files for platform specific implementations. The macros are
  *   broken up into several steps to force the evaluation of each step.
  */
-#define BUILD_INCLUDE_STRING( _prefix,                           \
-                              _postfix )                         \
-    CONVERT_NAME_TO_STRING( BUILD_FILE_NAME(_prefix, _postfix) )
+#define BUILD_INCLUDE_STRING(_prefix, _postfix) \
+    CONVERT_NAME_TO_STRING(BUILD_FILE_NAME(_prefix, _postfix))
 
 /*===========================================================================*/
 /**

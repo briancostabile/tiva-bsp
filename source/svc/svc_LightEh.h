@@ -38,21 +38,18 @@
  *============================================================================*/
 /*============================================================================*/
 // Event handler message IDs
-#define SVC_LIGHTEH_MEAS_ALS_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_LIGHT, 0 )
-#define SVC_LIGHTEH_MEAS_IR_IND  SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_LIGHT, 1 )
-
+#define SVC_LIGHTEH_MEAS_ALS_IND SVC_MSGFWK_MSG_ID_BUILD_IND(SVC_EHID_LIGHT, 0)
+#define SVC_LIGHTEH_MEAS_IR_IND  SVC_MSGFWK_MSG_ID_BUILD_IND(SVC_EHID_LIGHT, 1)
 
 /*==============================================================================
  *                                Types
  *============================================================================*/
 /*============================================================================*/
 // Event handler message structures
-typedef struct BSP_ATTR_PACKED svc_LightEh_MeasInd_s
-{
+typedef struct BSP_ATTR_PACKED svc_LightEh_MeasInd_s {
     svc_MsgFwk_Hdr_t      hdr;
     dev_Light_MeasLight_t light;
 } svc_LightEh_MeasInd_t;
-
 
 /*==============================================================================
  *                                Globals

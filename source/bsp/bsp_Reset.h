@@ -36,8 +36,7 @@
 typedef uint32_t bsp_Reset_Reason_t;
 
 /*===========================================================================*/
-enum
-{
+enum {
     BSP_RESET_HWREASON_EXT  = 0x0001,
     BSP_RESET_HWREASON_POR  = 0x0002,
     BSP_RESET_HWREASON_BOR  = 0x0004,
@@ -50,8 +49,7 @@ enum
 typedef uint8_t bsp_Reset_HwReason_t;
 
 /*===========================================================================*/
-enum
-{
+enum {
     BSP_RESET_SWREASON_UNKNOWN       = 0x0000,
     BSP_RESET_SWREASON_ASSERT        = 0x0001,
     BSP_RESET_SWREASON_UNHANDLED_INT = 0x0002,
@@ -59,6 +57,8 @@ enum
     BSP_RESET_SWREASON_EXIT          = 0x0004,
     BSP_RESET_SWREASON_OS_MALLOC     = 0x0005,
     BSP_RESET_SWREASON_OS_STACK      = 0x0006,
+    BSP_RESET_SWREASON_BOOTLOADER    = 0x0007,
+    BSP_RESET_SWREASON_CMD           = 0x0008,
 };
 typedef uint8_t bsp_Reset_SwReason_t;
 
@@ -66,45 +66,34 @@ typedef uint8_t bsp_Reset_SwReason_t;
  *                               Prototypes
  *============================================================================*/
 /*===========================================================================*/
-void
-bsp_Reset_init( void );
+void bsp_Reset_init(void);
 
 /*===========================================================================*/
-bsp_Reset_Reason_t
-bsp_Reset_getReason( void );
+bsp_Reset_Reason_t bsp_Reset_getReason(void);
 
 /*===========================================================================*/
-bsp_Reset_SwReason_t
-bsp_Reset_getSwReason( void );
+bsp_Reset_SwReason_t bsp_Reset_getSwReason(void);
 
 /*===========================================================================*/
-bsp_Reset_HwReason_t
-bsp_Reset_getHwReason( void );
+bsp_Reset_HwReason_t bsp_Reset_getHwReason(void);
 
 /*===========================================================================*/
-const char*
-bsp_Reset_getAssertFunction( void );
+const char *bsp_Reset_getAssertFunction(void);
 
 /*===========================================================================*/
-uint16_t
-bsp_Reset_getAssertLine( void );
+uint16_t bsp_Reset_getAssertLine(void);
 
 /*===========================================================================*/
-uint32_t
-bsp_Reset_getResetCount( void );
+uint32_t bsp_Reset_getResetCount(void);
 
 /*===========================================================================*/
-void
-bsp_Reset_setAssertInfo( const char* function_str, uint16_t line );
+void bsp_Reset_setAssertInfo(const char *function_str, uint16_t line);
 
 /*===========================================================================*/
-void
-bsp_Reset_systemReset( bsp_Reset_SwReason_t reason );
+void bsp_Reset_systemReset(bsp_Reset_SwReason_t reason);
 
 /*===========================================================================*/
-void
-bsp_Reset_systemFault( uint32_t* stackRegs );
+void bsp_Reset_systemFault(uint32_t *stackRegs);
 
 /*===========================================================================*/
-uint32_t *
-bsp_Reset_getFaultRegs( void );
+uint32_t *bsp_Reset_getFaultRegs(void);

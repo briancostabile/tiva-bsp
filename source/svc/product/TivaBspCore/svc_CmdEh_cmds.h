@@ -43,7 +43,7 @@
 typedef uint16_t svc_CmdEh_CmdId_t;
 
 /*============================================================================*/
-typedef void (*svc_CmdEh_binarySendCallback_t)( uint8_t* buf, uint16_t len );
+typedef void (*svc_CmdEh_binarySendCallback_t)(uint8_t *buf, uint16_t len);
 
 /*==============================================================================
  *                            Local Functions
@@ -51,11 +51,9 @@ typedef void (*svc_CmdEh_binarySendCallback_t)( uint8_t* buf, uint16_t len );
 
 /*============================================================================*/
 typedef struct BSP_ATTR_PACKED svc_CmdEh_CmdHdr_s {
-    uint16_t          len; // Length does not include itself
+    uint16_t          len;    // Length does not include itself
     svc_CmdEh_CmdId_t cmdId;
 } svc_CmdEh_CmdHdr_t;
-
-
 
 /*============================================================================*/
 typedef struct BSP_ATTR_PACKED svc_CmdEh_CmdVersionReq_s {
@@ -69,8 +67,6 @@ typedef struct BSP_ATTR_PACKED svc_CmdEh_CmdVersionCnf_s {
     bsp_Build_Version_t verFw;
 } svc_CmdEh_CmdVersionCnf_t;
 
-
-
 /*============================================================================*/
 typedef struct BSP_ATTR_PACKED svc_CmdEh_CmdEhStatsReq_s {
     svc_CmdEh_CmdHdr_t hdr;
@@ -82,8 +78,6 @@ typedef struct BSP_ATTR_PACKED svc_CmdEh_CmdEhStatsCnf_s {
     svc_MsgFwk_Stats_t stats;
 } svc_CmdEh_CmdEhStatsCnf_t;
 
-
-
 /*============================================================================*/
 typedef struct BSP_ATTR_PACKED svc_CmdEh_CmdBcastRegReq_s {
     svc_CmdEh_CmdHdr_t hdr;
@@ -93,10 +87,8 @@ typedef struct BSP_ATTR_PACKED svc_CmdEh_CmdBcastRegReq_s {
 
 /*============================================================================*/
 typedef struct BSP_ATTR_PACKED svc_CmdEh_CmdBcastRegCnf_s {
-    svc_CmdEh_CmdHdr_t  hdr;
+    svc_CmdEh_CmdHdr_t hdr;
 } svc_CmdEh_CmdBcastRegCnf_t;
-
-
 
 /*============================================================================*/
 typedef struct BSP_ATTR_PACKED svc_CmdEh_CmdEhMsg_s {
@@ -104,11 +96,8 @@ typedef struct BSP_ATTR_PACKED svc_CmdEh_CmdEhMsg_s {
     uint8_t            data[];
 } svc_CmdEh_CmdEhMsg_t;
 
-
 /*==============================================================================
  *                              Functions
  *============================================================================*/
 /*============================================================================*/
-int32_t
-svc_CmdEh_handlerBinary(  svc_CmdEh_CmdHdr_t*            cmdPtr,
-                          svc_CmdEh_binarySendCallback_t cb );
+int32_t svc_CmdEh_handlerBinary(svc_CmdEh_CmdHdr_t *cmdPtr, svc_CmdEh_binarySendCallback_t cb);

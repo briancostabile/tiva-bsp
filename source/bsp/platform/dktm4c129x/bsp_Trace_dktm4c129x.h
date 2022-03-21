@@ -24,6 +24,7 @@
  * @file bsp_Trace_dktm4c129x.h
  * @brief Contains platform specific trace mappings to IO pins
  */
+/* clang-format off */
 #pragma once
 
 #include "bsp_Gpio.h"
@@ -160,3 +161,4 @@
  *============================================================================*/
 /*============================================================================*/
 extern const bsp_Trace_IoInfo_t bsp_Trace_ioInfoTable[BSP_GPIO_PORT_ID_NUM_PORTS];
+size_t bsp_Trace_ioInfoTableLen(void);

@@ -39,5 +39,5 @@
 /* The name of the platform turns into the tail end of the headerfile that is included */
 #include BUILD_INCLUDE_STRING(bsp_Platform_, PLATFORM)
 #else
-# error "PLATFORM must be defined on command line"
+#error "PLATFORM must be defined on command line"
 #endif

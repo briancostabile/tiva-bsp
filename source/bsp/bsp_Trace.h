@@ -35,17 +35,15 @@
  *============================================================================*/
 /*============================================================================*/
 typedef struct {
-    bsp_Gpio_PortId_t    portId;
-    bsp_Gpio_BitMask_t   mask;
-}bsp_Trace_IoInfo_t;
-
+    bsp_Gpio_PortId_t  portId;
+    bsp_Gpio_BitMask_t mask;
+} bsp_Trace_IoInfo_t;
 
 /* Include after defining IoInfo structure because platform depends on that structure */
-#include BUILD_INCLUDE_STRING( bsp_Trace_, PLATFORM )
+#include BUILD_INCLUDE_STRING(bsp_Trace_, PLATFORM)
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Trace_init( void );
+void bsp_Trace_init(void);

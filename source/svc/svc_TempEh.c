@@ -39,7 +39,6 @@
 #endif
 #include "svc_Log.h"
 
-
 #if defined(SVC_EHID_TEMP)
 /*==============================================================================
  *                                Defines
@@ -63,54 +62,46 @@ osapi_Timer_t svc_TempEh_timer;
  *============================================================================*/
 
 /*============================================================================*/
-static void
-svc_TempEh_buildAndSendMeasInd( dev_Temp_MeasTemperature_t temperature )
+static void svc_TempEh_buildAndSendMeasInd(dev_Temp_MeasTemperature_t temperature)
 {
     svc_TempEh_MeasInd_t measInd;
 
     measInd.temperature = temperature;
 
-    svc_MsgFwk_msgAllocAndBroadcast( SVC_TEMPEH_MEAS_IND,
-                                     sizeof(svc_TempEh_MeasInd_t),
-                                     SVC_MSGFWK_MSG_PAYLOAD_PTR(&measInd) );
+    svc_MsgFwk_msgAllocAndBroadcast(
+        SVC_TEMPEH_MEAS_IND, sizeof(svc_TempEh_MeasInd_t), SVC_MSGFWK_MSG_PAYLOAD_PTR(&measInd));
 
     return;
 }
 
 /*============================================================================*/
-static void
-svc_TempEh_measHandler( dev_Temp_MeasTemperature_t temperature )
+static void svc_TempEh_measHandler(dev_Temp_MeasTemperature_t temperature)
 {
 #if (SVC_LOG_LEVEL >= SVC_LOG_LEVEL_INFO)
-    volatile int i=0;
-    if( (i++ % 4) == 0 )
-    {
-        SVC_LOG_INFO( "temp:%d.%d"NL, (temperature/64), ((temperature%64) * 100 / 64) );
+    volatile int i = 0;
+    if ((i++ % 4) == 0) {
+        SVC_LOG_INFO("temp:%d.%d" NL, (temperature / 64), ((temperature % 64) * 100 / 64));
     }
 #endif
-    svc_TempEh_buildAndSendMeasInd( temperature );
+    svc_TempEh_buildAndSendMeasInd(temperature);
 }
-
 
 /*============================================================================*/
-static void
-svc_TempEh_init( void )
+static void svc_TempEh_init(void)
 {
     dev_Temp_init();
-    dev_Temp_measTrigger( svc_TempEh_measHandler );
+    dev_Temp_measTrigger(svc_TempEh_measHandler);
 }
-
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-const svc_Eh_Info_t svc_TempEh_info =
-{
+const svc_Eh_Info_t svc_TempEh_info = {
     SVC_EHID_TEMP,
-    0,    // bcastListLen
-    NULL, // bcastList
+    0,       // bcastListLen
+    NULL,    // bcastList
     svc_TempEh_init,
-    NULL  // msgHandler
+    NULL    // msgHandler
 };
 #endif

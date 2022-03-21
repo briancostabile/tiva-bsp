@@ -359,4 +359,3 @@ distclean:
 
 newlib:
 	$(shell cd $(NEWLIB_DIR);./configure $(NEWLIB_CONFIG))
-

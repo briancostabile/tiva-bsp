@@ -31,7 +31,7 @@
 
 #include "bsp_Platform.h"
 
-#include BUILD_INCLUDE_STRING( bsp_Uart_, PLATFORM_CORE )
+#include BUILD_INCLUDE_STRING(bsp_Uart_, PLATFORM_CORE)
 
 /*==============================================================================
  *                                Defines
@@ -44,13 +44,11 @@
  */
 typedef uint32_t bsp_Uart_Baud_t;
 
-
 /*============================================================================*/
 /**
  * @brief Enumeration for the parity options in UART mode
  */
-enum
-{
+enum {
     BSP_UART_PARITY_NONE = 0,
     BSP_UART_PARITY_ODD  = 1,
     BSP_UART_PARITY_EVEN = 2,
@@ -59,25 +57,18 @@ enum
 };
 typedef uint8_t bsp_Uart_Parity_t;
 
-
 /*============================================================================*/
 /**
  * @brief Enumeration for the stop bit options in UART mode
  */
-enum
-{
-    BSP_UART_STOP_BIT_1,
-    BSP_UART_STOP_BIT_2
-};
+enum { BSP_UART_STOP_BIT_1, BSP_UART_STOP_BIT_2 };
 typedef uint8_t bsp_Uart_StopBit_t;
-
 
 /*============================================================================*/
 /**
  * @brief Enumeration for the data bit length options in UART mode
  */
-enum
-{
+enum {
     BSP_UART_DATA_BIT_5 = 0,
     BSP_UART_DATA_BIT_6 = 1,
     BSP_UART_DATA_BIT_7 = 2,
@@ -85,43 +76,32 @@ enum
 };
 typedef uint8_t bsp_Uart_DataBit_t;
 
-
 /*============================================================================*/
 /**
  * @brief Enumeration for the flow control options in UART mode.
  *
  * This implementation doesn't support flow control so the only option is NONE
  */
-enum
-{
-    BSP_UART_FLOW_NONE
-};
+enum { BSP_UART_FLOW_NONE };
 typedef uint8_t bsp_Uart_Flow_t;
-
 
 /*============================================================================*/
 /**
  * @brief this type defines the client supplied callback for Rx operations.
  */
-typedef void (*bsp_Uart_RxCallback_t)( void*  callbackArg,
-                                       void*  rxDataPtr,
-                                       size_t numBytes );
-
+typedef void (*bsp_Uart_RxCallback_t)(void *callbackArg, void *rxDataPtr, size_t numBytes);
 
 /*============================================================================*/
 /**
  * @brief this type defines the client supplied callback for Tx operations.
  */
-typedef void (*bsp_Uart_TxCallback_t)( void* callbackArg );
-
+typedef void (*bsp_Uart_TxCallback_t)(void *callbackArg);
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Uart_init( void );
-
+void bsp_Uart_init(void);
 
 /*============================================================================*/
 /**
@@ -135,13 +115,12 @@ bsp_Uart_init( void );
  *
  * Note: This implementation only supports UART
  */
-void
-bsp_Uart_control( bsp_Uart_Id_t     id,
-                  bsp_Uart_PinSel_t rxSel,
-                  bsp_Uart_PinSel_t txSel,
-                  bsp_Uart_PinSel_t rtsSel,
-                  bsp_Uart_PinSel_t ctsSel );
-
+void bsp_Uart_control(
+    bsp_Uart_Id_t     id,
+    bsp_Uart_PinSel_t rxSel,
+    bsp_Uart_PinSel_t txSel,
+    bsp_Uart_PinSel_t rtsSel,
+    bsp_Uart_PinSel_t ctsSel);
 
 /*============================================================================*/
 /**
@@ -155,14 +134,13 @@ bsp_Uart_control( bsp_Uart_Id_t     id,
  * @param data - The enumerated number of data bit length setting
  * @param flow - The enumerated flow control setting
  */
-void
-bsp_Uart_config( bsp_Uart_Id_t      id,
-                 bsp_Uart_Baud_t    baud,
-                 bsp_Uart_Parity_t  parity,
-                 bsp_Uart_StopBit_t stop,
-                 bsp_Uart_DataBit_t data,
-                 bsp_Uart_Flow_t    flow );
-
+void bsp_Uart_config(
+    bsp_Uart_Id_t      id,
+    bsp_Uart_Baud_t    baud,
+    bsp_Uart_Parity_t  parity,
+    bsp_Uart_StopBit_t stop,
+    bsp_Uart_DataBit_t data,
+    bsp_Uart_Flow_t    flow);
 
 /*============================================================================*/
 /**
@@ -181,13 +159,12 @@ bsp_Uart_config( bsp_Uart_Id_t      id,
  *                   has been sent. NULL can be used to force data to be sent
  *                   manually vs. interrupt driven.
  */
-void
-bsp_Uart_snd( bsp_Uart_Id_t         id,
-              void*                 sndDataPtr,
-              size_t                numBytes,
-              void*                 callbackArg,
-              bsp_Uart_TxCallback_t callback );
-
+void bsp_Uart_snd(
+    bsp_Uart_Id_t         id,
+    void *                sndDataPtr,
+    size_t                numBytes,
+    void *                callbackArg,
+    bsp_Uart_TxCallback_t callback);
 
 /*============================================================================*/
 /**
@@ -205,10 +182,9 @@ bsp_Uart_snd( bsp_Uart_Id_t         id,
  *                   will still setup a receive, but it won't notify the client
  *                   when it is done.
  */
-size_t
-bsp_Uart_rcv( bsp_Uart_Id_t         id,
-              void*                 bufPtr,
-              size_t                cnt,
-              void*                 callbackArg,
-              bsp_Uart_RxCallback_t callback );
-
+size_t bsp_Uart_rcv(
+    bsp_Uart_Id_t         id,
+    void *                bufPtr,
+    size_t                cnt,
+    void *                callbackArg,
+    bsp_Uart_RxCallback_t callback);

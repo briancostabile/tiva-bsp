@@ -32,7 +32,6 @@
 #include "inc/hw_Timer.h"
 #include "driverlib/pin_map.h"
 
-
 /*============================================================================*/
 #define BSP_TIMERGP_ID_0 0
 #define BSP_TIMERGP_ID_1 1
@@ -52,37 +51,37 @@ typedef uint8_t bsp_TimerGp_SubTimerId_t;
 /*============================================================================*/
 
 /*============================================================================*/
-typedef void (* bsp_TimerGp_TimeoutHandler_t)( bsp_TimerGp_TimerId_t    timerId,
-                                               bsp_TimerGp_SubTimerId_t subTimerId,
-                                               uint32_t                 mask );
+typedef void (*bsp_TimerGp_TimeoutHandler_t)(
+    bsp_TimerGp_TimerId_t    timerId,
+    bsp_TimerGp_SubTimerId_t subTimerId,
+    uint32_t                 mask);
 
 /*============================================================================*/
 typedef struct {
     bsp_Interrupt_Id_t            intId;
-    bsp_TimerGp_TimeoutHandler_t* handler;
-}bsp_TimerGp_InterruptInfo_t;
+    bsp_TimerGp_TimeoutHandler_t *handler;
+} bsp_TimerGp_InterruptInfo_t;
 
 /*============================================================================*/
 typedef struct {
-    uint32_t                    baseAddr;
-    uint32_t                    sysCtrlAddr;
+    uint32_t                          baseAddr;
+    uint32_t                          sysCtrlAddr;
     const bsp_TimerGp_InterruptInfo_t handlerTable[BSP_TIMERGP_ID_NUM_SUB_TIMERS];
-}bsp_TimerGp_PlatformInfo_t;
-
+} bsp_TimerGp_PlatformInfo_t;
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void bsp_TimerGp_interruptHandlerTimer0A( void );
-void bsp_TimerGp_interruptHandlerTimer0B( void );
-void bsp_TimerGp_interruptHandlerTimer1A( void );
-void bsp_TimerGp_interruptHandlerTimer1B( void );
-void bsp_TimerGp_interruptHandlerTimer2A( void );
-void bsp_TimerGp_interruptHandlerTimer2B( void );
-void bsp_TimerGp_interruptHandlerTimer3A( void );
-void bsp_TimerGp_interruptHandlerTimer3B( void );
-void bsp_TimerGp_interruptHandlerTimer4A( void );
-void bsp_TimerGp_interruptHandlerTimer4B( void );
-void bsp_TimerGp_interruptHandlerTimer5A( void );
-void bsp_TimerGp_interruptHandlerTimer5B( void );
+void bsp_TimerGp_interruptHandlerTimer0A(void);
+void bsp_TimerGp_interruptHandlerTimer0B(void);
+void bsp_TimerGp_interruptHandlerTimer1A(void);
+void bsp_TimerGp_interruptHandlerTimer1B(void);
+void bsp_TimerGp_interruptHandlerTimer2A(void);
+void bsp_TimerGp_interruptHandlerTimer2B(void);
+void bsp_TimerGp_interruptHandlerTimer3A(void);
+void bsp_TimerGp_interruptHandlerTimer3B(void);
+void bsp_TimerGp_interruptHandlerTimer4A(void);
+void bsp_TimerGp_interruptHandlerTimer4B(void);
+void bsp_TimerGp_interruptHandlerTimer5A(void);
+void bsp_TimerGp_interruptHandlerTimer5B(void);

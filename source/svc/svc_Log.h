@@ -41,22 +41,22 @@
 #define SVC_LOG_LEVEL_INFO  1
 
 #if (SVC_LOG_LEVEL <= SVC_LOG_LEVEL_INFO)
-#define SVC_LOG_INFO( ... ) printf( __VA_ARGS__ )
+#define SVC_LOG_INFO(...) printf(__VA_ARGS__)
 #else
-#define SVC_LOG_INFO( ... )
+#define SVC_LOG_INFO(...)
 #endif
 
 #if (SVC_LOG_LEVEL <= SVC_LOG_LEVEL_WARN)
-#define SVC_LOG_WARN( ... ) printf( __VA_ARGS__ )
+#define SVC_LOG_WARN(...) printf(__VA_ARGS__)
 #else
-#define SVC_LOG_WARN( ... )
+#define SVC_LOG_WARN(...)
 #endif
 
 #if (SVC_LOG_LEVEL <= SVC_LOG_LEVEL_ERROR)
-#define SVC_LOG_ERROR( ... ) printf( __VA_ARGS__ )
+#define SVC_LOG_ERROR(...) printf(__VA_ARGS__)
 #else
-#define SVC_LOG_ERROR( ... )
+#define SVC_LOG_ERROR(...)
 #endif
 
 #define ENDLINE "\n"
-#define NL "\n"
+#define NL      "\n"

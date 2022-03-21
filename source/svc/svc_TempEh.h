@@ -38,20 +38,17 @@
  *============================================================================*/
 /*============================================================================*/
 // Event handler message IDs
-#define SVC_TEMPEH_MEAS_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_TEMP, 0 )
-
+#define SVC_TEMPEH_MEAS_IND SVC_MSGFWK_MSG_ID_BUILD_IND(SVC_EHID_TEMP, 0)
 
 /*==============================================================================
  *                                Types
  *============================================================================*/
 /*============================================================================*/
 // Event handler message structures
-typedef struct BSP_ATTR_PACKED svc_TempEh_MeasInd_s
-{
+typedef struct BSP_ATTR_PACKED svc_TempEh_MeasInd_s {
     svc_MsgFwk_Hdr_t           hdr;
     dev_Temp_MeasTemperature_t temperature;
 } svc_TempEh_MeasInd_t;
-
 
 /*==============================================================================
  *                                Globals

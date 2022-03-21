@@ -28,7 +28,7 @@
 
 #include "bsp_Platform.h"
 
-#include BUILD_INCLUDE_STRING( bsp_Gpio_, PLATFORM )
+#include BUILD_INCLUDE_STRING(bsp_Gpio_, PLATFORM)
 
 /*==============================================================================
  *                             Defines
@@ -91,46 +91,42 @@ typedef uint8_t bsp_Gpio_Drive_t;
  * To write to the pin the address of the data register to write to depends on
  * the bit offset
  */
-#define BSP_GPIO_DATA_REG_FROM_NAME( _ioName ) *(((volatile uint32_t *)(BSP_GPIO_BASE_ADDR_##_ioName)) + BSP_GPIO_BIT_MASK_##_ioName)
+#define BSP_GPIO_DATA_REG_FROM_NAME(_ioName) \
+    *(((volatile uint32_t *)(BSP_GPIO_BASE_ADDR_##_ioName)) + BSP_GPIO_BIT_MASK_##_ioName)
 
 /*============================================================================*/
 /**
  * Macros to get the platform port and mask from the name
  */
-#define BSP_GPIO_PORT_ID( _name ) (BSP_GPIO_PORT_ID_##_name)
-#define BSP_GPIO_PORT_BASE_ADDR( _name ) (BSP_GPIO_BASE_ADDR_##_name)
-#define BSP_GPIO_ALT_FUNC( _name ) (GPIO_##_name)
-#define BSP_GPIO_MASK( _name ) (bsp_Gpio_BitMask_t)(BSP_GPIO_BIT_MASK_##_name)
-
+#define BSP_GPIO_PORT_ID(_name)        (BSP_GPIO_PORT_ID_##_name)
+#define BSP_GPIO_PORT_BASE_ADDR(_name) (BSP_GPIO_BASE_ADDR_##_name)
+#define BSP_GPIO_ALT_FUNC(_name)       (GPIO_##_name)
+#define BSP_GPIO_MASK(_name)           (bsp_Gpio_BitMask_t)(BSP_GPIO_BIT_MASK_##_name)
 
 /*============================================================================*/
 /**
  * Macros to set/clear/toggle a single IO based on the defined name
  */
-#define BSP_GPIO_OUT_SET_HIGH( _name )                                 \
-{                                                                      \
-	BSP_GPIO_DATA_REG_FROM_NAME( _name ) |= BSP_GPIO_BIT_MASK_##_name; \
-}
+#define BSP_GPIO_OUT_SET_HIGH(_name)                                     \
+    {                                                                    \
+        BSP_GPIO_DATA_REG_FROM_NAME(_name) |= BSP_GPIO_BIT_MASK_##_name; \
+    }
 
-#define BSP_GPIO_OUT_SET_LOW( _name )                                   \
-{                                                                       \
-	BSP_GPIO_DATA_REG_FROM_NAME( _name ) &= ~BSP_GPIO_BIT_MASK_##_name; \
-}
+#define BSP_GPIO_OUT_SET_LOW(_name)                                       \
+    {                                                                     \
+        BSP_GPIO_DATA_REG_FROM_NAME(_name) &= ~BSP_GPIO_BIT_MASK_##_name; \
+    }
 
-#define BSP_GPIO_TOGGLE( _name )                                       \
-{                                                                      \
-	BSP_GPIO_DATA_REG_FROM_NAME( _name ) ^= BSP_GPIO_BIT_MASK_##_name; \
-}
+#define BSP_GPIO_TOGGLE(_name)                                           \
+    {                                                                    \
+        BSP_GPIO_DATA_REG_FROM_NAME(_name) ^= BSP_GPIO_BIT_MASK_##_name; \
+    }
 
 /*============================================================================*/
 /**
  * Macro to Read a single IO based on the defined name
  */
-#define BSP_GPIO_GET( _name )                                           \
-(                                                                       \
-	BSP_GPIO_DATA_REG_FROM_NAME( _name ) >> BSP_GPIO_BIT_OFFSET_##_name \
-)
-
+#define BSP_GPIO_GET(_name) (BSP_GPIO_DATA_REG_FROM_NAME(_name) >> BSP_GPIO_BIT_OFFSET_##_name)
 
 /*==============================================================================
  *                               Types
@@ -145,60 +141,51 @@ typedef uint32_t bsp_Gpio_AltFuncId_t;
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Gpio_init( void );
+void bsp_Gpio_init(void);
 
 /*============================================================================*/
-void
-bsp_Gpio_initPlatform( void );
+void bsp_Gpio_initPlatform(void);
 
 /*============================================================================*/
-void
-bsp_Gpio_write( bsp_Gpio_PortId_t  portId,
-		        bsp_Gpio_BitMask_t mask,
-		        bsp_Gpio_BitMask_t val );
+void bsp_Gpio_write(bsp_Gpio_PortId_t portId, bsp_Gpio_BitMask_t mask, bsp_Gpio_BitMask_t val);
 
 /*============================================================================*/
-bsp_Gpio_BitMask_t
-bsp_Gpio_read( bsp_Gpio_PortId_t  portId,
-		       bsp_Gpio_BitMask_t mask );
+bsp_Gpio_BitMask_t bsp_Gpio_read(bsp_Gpio_PortId_t portId, bsp_Gpio_BitMask_t mask);
 
 /*============================================================================*/
-void
-bsp_Gpio_configAnalog( bsp_Gpio_PortId_t    portId,
-                       bsp_Gpio_BitMask_t   mask );
+void bsp_Gpio_configAnalog(bsp_Gpio_PortId_t portId, bsp_Gpio_BitMask_t mask);
 
 /*============================================================================*/
-void
-bsp_Gpio_configAltFunction( bsp_Gpio_PortId_t    portId,
-                            bsp_Gpio_BitMask_t   mask,
-                            bsp_Gpio_AltFuncId_t altFuncId );
+void bsp_Gpio_configAltFunction(
+    bsp_Gpio_PortId_t    portId,
+    bsp_Gpio_BitMask_t   mask,
+    bsp_Gpio_AltFuncId_t altFuncId);
 
 /*============================================================================*/
-void
-bsp_Gpio_configOutput( bsp_Gpio_PortId_t  portId,
-                       bsp_Gpio_BitMask_t mask,
-                       bool_t             openDrain,
-                       bsp_Gpio_Drive_t   drive );
+void bsp_Gpio_configOutput(
+    bsp_Gpio_PortId_t  portId,
+    bsp_Gpio_BitMask_t mask,
+    bool_t             openDrain,
+    bsp_Gpio_Drive_t   drive);
 
 /*============================================================================*/
-void
-bsp_Gpio_configInput( bsp_Gpio_PortId_t  portId,
-                      bsp_Gpio_BitMask_t mask,
-                      bool_t             openDrain,
-                      bsp_Gpio_Pull_t    pull );
+void bsp_Gpio_configInput(
+    bsp_Gpio_PortId_t  portId,
+    bsp_Gpio_BitMask_t mask,
+    bool_t             openDrain,
+    bsp_Gpio_Pull_t    pull);
 
 /*============================================================================*/
-void
-bsp_Gpio_intControl( bsp_Gpio_PortId_t     portId,
-                     bsp_Gpio_BitMask_t    mask,
-                     bsp_Gpio_IntControl_t control );
+void bsp_Gpio_intControl(
+    bsp_Gpio_PortId_t     portId,
+    bsp_Gpio_BitMask_t    mask,
+    bsp_Gpio_IntControl_t control);
 
 /*============================================================================*/
-void
-bsp_Gpio_intConfig( bsp_Gpio_PortId_t       portId,
-                    bsp_Gpio_BitMask_t      mask,
-                    bool_t                  dmaTriggerEnable,
-                    bool_t                  adcTriggerEnable,
-                    bsp_Gpio_IntType_t      type,
-                    bsp_Gpio_InputHandler_t callback );
+void bsp_Gpio_intConfig(
+    bsp_Gpio_PortId_t       portId,
+    bsp_Gpio_BitMask_t      mask,
+    bool_t                  dmaTriggerEnable,
+    bool_t                  adcTriggerEnable,
+    bsp_Gpio_IntType_t      type,
+    bsp_Gpio_InputHandler_t callback);

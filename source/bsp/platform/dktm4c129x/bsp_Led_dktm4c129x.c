@@ -33,7 +33,8 @@
  *                               Defines
  *============================================================================*/
 /*============================================================================*/
-#define BSP_LED_INFO_ENTRY(_name) {  \
+/* clang-format off */ 
+#define BSP_LED_INFO_ENTRY(_name) {      \
     BSP_PLATFORM_LED_NAME_##_name,       \
     BSP_PLATFORM_LED_COLOR_##_name,      \
     BSP_PLATFORM_LED_PORT_ID_##_name,    \
@@ -42,21 +43,18 @@
     BSP_PLATFORM_LED_DRIVE_##_name,      \
     BSP_PLATFORM_LED_POLARITY_##_name    \
 }
+/* clang-format on */
 
 /*==============================================================================
  *                               Globals
  *============================================================================*/
 /*============================================================================*/
-static const bsp_Led_GroupElementInfo_t bsp_Led_status[] =
-{
+static const bsp_Led_GroupElementInfo_t bsp_Led_status[] = {
     BSP_LED_INFO_ENTRY(LED_0),
     BSP_LED_INFO_ENTRY(LED_1),
-    BSP_LED_INFO_ENTRY(LED_2)
-};
+    BSP_LED_INFO_ENTRY(LED_2)};
 
 /*============================================================================*/
 /* One entry for each IO port. */
-const bsp_Led_Info_t bsp_Led_infoTable[BSP_PLATFORM_LED_NUM] =
-{
-    {"status", bsp_Led_status, DIM(bsp_Led_status)}
-};
+const bsp_Led_Info_t bsp_Led_infoTable[BSP_PLATFORM_LED_NUM] = {
+    {"status", bsp_Led_status, DIM(bsp_Led_status)}};

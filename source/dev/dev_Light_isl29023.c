@@ -33,37 +33,35 @@
 #include "bsp_I2c.h"
 #include "dev_Light.h"
 
-
 #if defined(BSP_PLATFORM_ENABLE_DEV_LIGHT_ISL20023)
 /*=============================================================================
  *                                   Defines
  *===========================================================================*/
 
 // Configuration defines
-#define DEV_LIGHT_I2C_ADDR   ((bsp_I2c_Addr_t)0x44)
-#define DEV_LIGHT_I2C_SPEED  BSP_I2C_SPEED_FAST
+#define DEV_LIGHT_I2C_ADDR  ((bsp_I2c_Addr_t)0x44)
+#define DEV_LIGHT_I2C_SPEED BSP_I2C_SPEED_FAST
 
 #define DEV_LIGHT_INT_PERSIST DEV_LIGHT_REG_INT_PERSIST_CYCLES_1
 #define DEV_LIGHT_RANGE       DEV_LIGHT_REG_RANGE_64000
 #define DEV_LIGHT_RESOLUTION  DEV_LIGHT_REG_RESOLUTION_16BIT
 
-#define DEV_LIGHT_THRESHOLD_LOW_DEFAULT    0x0000
-#define DEV_LIGHT_THRESHOLD_HIGH_DEFAULT   0x0001
+#define DEV_LIGHT_THRESHOLD_LOW_DEFAULT  0x0000
+#define DEV_LIGHT_THRESHOLD_HIGH_DEFAULT 0x0001
 
-
-#define DEV_LIGHT_REG_CMD         ((bsp_Light_I2cCmd_t)0x00)
-#define DEV_LIGHT_REG_CMD1        ((bsp_Light_I2cCmd_t)0x00)
-#define DEV_LIGHT_REG_CMD2        ((bsp_Light_I2cCmd_t)0x01)
-#define DEV_LIGHT_REG_DATA        ((bsp_Light_I2cCmd_t)0x02)
-#define DEV_LIGHT_REG_DATA_LSB    ((bsp_Light_I2cCmd_t)0x02)
-#define DEV_LIGHT_REG_DATA_MSB    ((bsp_Light_I2cCmd_t)0x03)
-#define DEV_LIGHT_REG_INT_LT      ((bsp_Light_I2cCmd_t)0x04)
-#define DEV_LIGHT_REG_INT_LT_LSB  ((bsp_Light_I2cCmd_t)0x04)
-#define DEV_LIGHT_REG_INT_LT_MSB  ((bsp_Light_I2cCmd_t)0x05)
-#define DEV_LIGHT_REG_INT_HT      ((bsp_Light_I2cCmd_t)0x06)
-#define DEV_LIGHT_REG_INT_HT_LSB  ((bsp_Light_I2cCmd_t)0x06)
-#define DEV_LIGHT_REG_INT_HT_MSB  ((bsp_Light_I2cCmd_t)0x07)
-#define DEV_LIGHT_REG_TEST        ((bsp_Light_I2cCmd_t)0x08)
+#define DEV_LIGHT_REG_CMD        ((bsp_Light_I2cCmd_t)0x00)
+#define DEV_LIGHT_REG_CMD1       ((bsp_Light_I2cCmd_t)0x00)
+#define DEV_LIGHT_REG_CMD2       ((bsp_Light_I2cCmd_t)0x01)
+#define DEV_LIGHT_REG_DATA       ((bsp_Light_I2cCmd_t)0x02)
+#define DEV_LIGHT_REG_DATA_LSB   ((bsp_Light_I2cCmd_t)0x02)
+#define DEV_LIGHT_REG_DATA_MSB   ((bsp_Light_I2cCmd_t)0x03)
+#define DEV_LIGHT_REG_INT_LT     ((bsp_Light_I2cCmd_t)0x04)
+#define DEV_LIGHT_REG_INT_LT_LSB ((bsp_Light_I2cCmd_t)0x04)
+#define DEV_LIGHT_REG_INT_LT_MSB ((bsp_Light_I2cCmd_t)0x05)
+#define DEV_LIGHT_REG_INT_HT     ((bsp_Light_I2cCmd_t)0x06)
+#define DEV_LIGHT_REG_INT_HT_LSB ((bsp_Light_I2cCmd_t)0x06)
+#define DEV_LIGHT_REG_INT_HT_MSB ((bsp_Light_I2cCmd_t)0x07)
+#define DEV_LIGHT_REG_TEST       ((bsp_Light_I2cCmd_t)0x08)
 typedef uint8_t bsp_Light_I2cCmd_t;
 
 // Interrupt Persist Bits:
@@ -155,14 +153,14 @@ typedef uint16_t dev_Light_Range_t;
 #define DEV_LIGHT_REG_RESOLUTION_8BIT  2
 #define DEV_LIGHT_REG_RESOLUTION_4BIT  3
 
-#define DEV_LIGHT_REG_CMD_BUILD( _op, _prst, _res, _range ) ( ((_res) << 10) | ((_range) << 8) | ((_op) << 5) | (_prst))
+#define DEV_LIGHT_REG_CMD_BUILD(_op, _prst, _res, _range) \
+    (((_res) << 10) | ((_range) << 8) | ((_op) << 5) | (_prst))
 
 typedef uint16_t dev_Light_Reg_t;
 
 // The User Data parameter for I2C transactions is a callback that this
 // driver uses to chain I2C transactions together
-typedef void (*dev_Light_UsrDataCallback_t)( void );
-
+typedef void (*dev_Light_UsrDataCallback_t)(void);
 
 /*=============================================================================
  *                                   Globals
@@ -187,11 +185,9 @@ dev_Light_OpMode_t dev_Light_opMode;
 
 /*===========================================================================*/
 // Wrapper callback for all I2C transactions
-static void
-dev_Light_i2cTransCallback( bsp_I2c_Status_t status, void* usrData )
+static void dev_Light_i2cTransCallback(bsp_I2c_Status_t status, void *usrData)
 {
-    if( usrData != NULL )
-    {
+    if (usrData != NULL) {
         ((dev_Light_UsrDataCallback_t)usrData)();
     }
     return;
@@ -199,24 +195,20 @@ dev_Light_i2cTransCallback( bsp_I2c_Status_t status, void* usrData )
 
 /*===========================================================================*/
 // Wrapper function to setup the I2C transaction structure and queue it
-static void
-dev_Light_i2cTransQueue( void* usrData )
+static void dev_Light_i2cTransQueue(void *usrData)
 {
     dev_Light_i2cTrans.speed    = DEV_LIGHT_I2C_SPEED;
     dev_Light_i2cTrans.addr     = DEV_LIGHT_I2C_ADDR;
     dev_Light_i2cTrans.callback = dev_Light_i2cTransCallback;
     dev_Light_i2cTrans.usrData  = usrData;
-    bsp_I2c_masterTransQueue( BSP_PLATFORM_I2C_ISL29023, &dev_Light_i2cTrans );
+    bsp_I2c_masterTransQueue(BSP_PLATFORM_I2C_ISL29023, &dev_Light_i2cTrans);
     return;
 }
 
 /*===========================================================================*/
 // Wrapper to write to the config register on the ISL29023. This is a simple write of a single
 // command byte plus a single data byte for the new register value.
-static void
-dev_Light_i2cRegWrite( bsp_Light_I2cCmd_t regId,
-                       dev_Light_Reg_t    regValue,
-                       void*              usrData )
+static void dev_Light_i2cRegWrite(bsp_Light_I2cCmd_t regId, dev_Light_Reg_t regValue, void *usrData)
 {
     dev_Light_i2cBuffer[0]     = regId;
     dev_Light_i2cBuffer[1]     = ((regValue >> 0) & 0xFF);
@@ -226,16 +218,14 @@ dev_Light_i2cRegWrite( bsp_Light_I2cCmd_t regId,
     dev_Light_i2cTrans.wBuffer = dev_Light_i2cBuffer;
     dev_Light_i2cTrans.rLen    = 0;
     dev_Light_i2cTrans.rBuffer = NULL;
-    dev_Light_i2cTransQueue( usrData );
+    dev_Light_i2cTransQueue(usrData);
 }
 
 /*===========================================================================*/
 // Wrapper to read data from the ISL29023. The amount of data available depends on the
 // command previously written. Measurements are 3 bytes, the config register is a
 // single byte
-static void
-dev_Light_i2cRegRead( bsp_Light_I2cCmd_t regId,
-                      void*              usrData )
+static void dev_Light_i2cRegRead(bsp_Light_I2cCmd_t regId, void *usrData)
 {
     dev_Light_i2cBuffer[0]     = regId;
     dev_Light_i2cBuffer[1]     = 0;
@@ -245,43 +235,40 @@ dev_Light_i2cRegRead( bsp_Light_I2cCmd_t regId,
     dev_Light_i2cTrans.wBuffer = &dev_Light_i2cBuffer[0];
     dev_Light_i2cTrans.rLen    = 2;
     dev_Light_i2cTrans.rBuffer = &dev_Light_i2cBuffer[1];
-    dev_Light_i2cTransQueue( usrData );
+    dev_Light_i2cTransQueue(usrData);
 }
-
 
 //*************
 
 /*===========================================================================*/
-static void
-dev_Light_setThresholdLow( void )
+static void dev_Light_setThresholdLow(void)
 {
-    dev_Light_i2cRegWrite( DEV_LIGHT_REG_INT_LT, DEV_LIGHT_THRESHOLD_LOW_DEFAULT, NULL );
+    dev_Light_i2cRegWrite(DEV_LIGHT_REG_INT_LT, DEV_LIGHT_THRESHOLD_LOW_DEFAULT, NULL);
 }
 
 /*===========================================================================*/
-static void
-dev_Light_setThresholdHigh( void )
+static void dev_Light_setThresholdHigh(void)
 {
-    dev_Light_i2cRegWrite( DEV_LIGHT_REG_INT_HT, DEV_LIGHT_THRESHOLD_HIGH_DEFAULT, dev_Light_setThresholdLow );
+    dev_Light_i2cRegWrite(
+        DEV_LIGHT_REG_INT_HT, DEV_LIGHT_THRESHOLD_HIGH_DEFAULT, dev_Light_setThresholdLow);
 }
 
 /*===========================================================================*/
-static void
-dev_Light_clearInterrupt( void )
+static void dev_Light_clearInterrupt(void)
 {
-    dev_Light_i2cRegRead( DEV_LIGHT_REG_CMD, dev_Light_setThresholdHigh );
+    dev_Light_i2cRegRead(DEV_LIGHT_REG_CMD, dev_Light_setThresholdHigh);
 }
 
 /*===========================================================================*/
-static void
-dev_Light_reset( void )
+static void dev_Light_reset(void)
 {
-    dev_Light_Reg_t reg = DEV_LIGHT_REG_CMD_BUILD( DEV_LIGHT_REG_OP_MODE_ONCE_PER_CYCLE_ALS,
-                                                   DEV_LIGHT_INT_PERSIST,
-                                                   DEV_LIGHT_RESOLUTION,
-                                                   DEV_LIGHT_RANGE );
+    dev_Light_Reg_t reg = DEV_LIGHT_REG_CMD_BUILD(
+        DEV_LIGHT_REG_OP_MODE_ONCE_PER_CYCLE_ALS,
+        DEV_LIGHT_INT_PERSIST,
+        DEV_LIGHT_RESOLUTION,
+        DEV_LIGHT_RANGE);
 
-    dev_Light_i2cRegWrite( DEV_LIGHT_REG_CMD, reg, dev_Light_clearInterrupt );
+    dev_Light_i2cRegWrite(DEV_LIGHT_REG_CMD, reg, dev_Light_clearInterrupt);
     return;
 }
 
@@ -289,134 +276,111 @@ dev_Light_reset( void )
 
 /*===========================================================================*/
 // Inline function to convert floating point to 10.6 fixed point.
-inline uint32_t
-dev_Light_cnvFloatToFixed24p8( float input )
+inline uint32_t dev_Light_cnvFloatToFixed24p8(float input)
 {
     return (uint32_t)(input * (1 << 8));
 }
 
 /*===========================================================================*/
-static void
-dev_Light_thresholdReadHandler( void )
+static void dev_Light_thresholdReadHandler(void)
 {
     dev_Light_MeasLight_t data = ((dev_Light_i2cBuffer[2] << 8) | dev_Light_i2cBuffer[1]);
 
     // Clear the interrupt
-    dev_Light_i2cRegRead( DEV_LIGHT_REG_CMD, NULL );
+    dev_Light_i2cRegRead(DEV_LIGHT_REG_CMD, NULL);
 
     // Call the callback
-    if( dev_Light_measCallback != NULL )
-    {
-        static const dev_Light_Range_t rangeAls[] = { DEV_LIGHT_REG_RANGE1,
-                                                      DEV_LIGHT_REG_RANGE2,
-                                                      DEV_LIGHT_REG_RANGE3,
-                                                      DEV_LIGHT_REG_RANGE4 };
-        static const float rangeAdc[] = { 65356, 4096, 256, 16 };
+    if (dev_Light_measCallback != NULL) {
+        static const dev_Light_Range_t rangeAls[] = {
+            DEV_LIGHT_REG_RANGE1, DEV_LIGHT_REG_RANGE2, DEV_LIGHT_REG_RANGE3, DEV_LIGHT_REG_RANGE4};
+        static const float rangeAdc[] = {65356, 4096, 256, 16};
 
         dev_Light_Range_t range;
 
-        if( (dev_Light_opMode ==  DEV_LIGHT_REG_OP_MODE_ONCE_PER_CYCLE_ALS) ||
-            (dev_Light_opMode ==  DEV_LIGHT_REG_OP_MODE_CONTINUOUS_ALS) )
-        {
+        if ((dev_Light_opMode == DEV_LIGHT_REG_OP_MODE_ONCE_PER_CYCLE_ALS) ||
+            (dev_Light_opMode == DEV_LIGHT_REG_OP_MODE_CONTINUOUS_ALS)) {
             range = rangeAls[DEV_LIGHT_RANGE];
         }
-        else
-        {
+        else {
             range = DEV_LIGHT_REG_RANGE_IR;
         }
 
         float dataFloat = (((float)data * range) / rangeAdc[DEV_LIGHT_RESOLUTION]);
 
-        dev_Light_measCallback( dev_Light_cnvFloatToFixed24p8(dataFloat) );
+        dev_Light_measCallback(dev_Light_cnvFloatToFixed24p8(dataFloat));
     }
 }
 
 /*===========================================================================*/
-static void
-dev_Light_intHandler( bsp_Gpio_PortId_t    portId,
-                      bsp_Gpio_PinOffset_t pinOffset )
+static void dev_Light_intHandler(bsp_Gpio_PortId_t portId, bsp_Gpio_PinOffset_t pinOffset)
 {
-    dev_Light_i2cRegRead( DEV_LIGHT_REG_DATA, dev_Light_thresholdReadHandler );
+    dev_Light_i2cRegRead(DEV_LIGHT_REG_DATA, dev_Light_thresholdReadHandler);
     return;
 }
 
-
 /*===========================================================================*/
-static void
-dev_Light_measTriggerCommon( dev_Light_MeasCallback_t callback,
-                             dev_Light_OpMode_t       mode )
+static void dev_Light_measTriggerCommon(dev_Light_MeasCallback_t callback, dev_Light_OpMode_t mode)
 {
-    dev_Light_Reg_t reg = DEV_LIGHT_REG_CMD_BUILD( mode,
-                                                   DEV_LIGHT_INT_PERSIST,
-                                                   DEV_LIGHT_RESOLUTION,
-                                                   DEV_LIGHT_RANGE );
+    dev_Light_Reg_t reg =
+        DEV_LIGHT_REG_CMD_BUILD(mode, DEV_LIGHT_INT_PERSIST, DEV_LIGHT_RESOLUTION, DEV_LIGHT_RANGE);
 
     // Callback is called through interrupt line
     BSP_MCU_CRITICAL_SECTION_ENTER();
     dev_Light_measCallback = callback;
-    dev_Light_opMode = mode;
+    dev_Light_opMode       = mode;
     BSP_MCU_CRITICAL_SECTION_EXIT();
 
     // Trigger the measurement
-    dev_Light_i2cRegWrite( DEV_LIGHT_REG_CMD, reg, NULL );
+    dev_Light_i2cRegWrite(DEV_LIGHT_REG_CMD, reg, NULL);
 }
-
 
 /*=============================================================================
  *                                   Functions
  *===========================================================================*/
 /*===========================================================================*/
-void
-dev_Light_init( void )
+void dev_Light_init(void)
 {
     dev_Light_measCallback = NULL;
 
     /* Disable the GPIO interrupt while configuring */
-    bsp_Gpio_intControl( BSP_GPIO_PORT_ID_INT_LIGHT,
-                         BSP_GPIO_BIT_MASK_INT_LIGHT,
-                         BSP_GPIO_INT_CONTROL_DISABLE );
+    bsp_Gpio_intControl(
+        BSP_GPIO_PORT_ID_INT_LIGHT, BSP_GPIO_BIT_MASK_INT_LIGHT, BSP_GPIO_INT_CONTROL_DISABLE);
 
     /* Configure as input */
-    bsp_Gpio_configInput( BSP_GPIO_PORT_ID_INT_LIGHT,
-                          BSP_GPIO_BIT_MASK_INT_LIGHT,
-                          FALSE,
-                          BSP_GPIO_PULL_NONE );
+    bsp_Gpio_configInput(
+        BSP_GPIO_PORT_ID_INT_LIGHT, BSP_GPIO_BIT_MASK_INT_LIGHT, FALSE, BSP_GPIO_PULL_NONE);
 
-    bsp_Gpio_intConfig( BSP_GPIO_PORT_ID_INT_LIGHT,
-                        BSP_GPIO_BIT_MASK_INT_LIGHT,
-                        FALSE,
-                        FALSE,
-                        BSP_GPIO_INT_TYPE_EDGE_FALLING,
-                        dev_Light_intHandler );
+    bsp_Gpio_intConfig(
+        BSP_GPIO_PORT_ID_INT_LIGHT,
+        BSP_GPIO_BIT_MASK_INT_LIGHT,
+        FALSE,
+        FALSE,
+        BSP_GPIO_INT_TYPE_EDGE_FALLING,
+        dev_Light_intHandler);
 
     /* Enable the GPIO interrupt after done configuring */
-    bsp_Gpio_intControl( BSP_GPIO_PORT_ID_INT_LIGHT,
-                         BSP_GPIO_BIT_MASK_INT_LIGHT,
-                         BSP_GPIO_INT_CONTROL_ENABLE );
+    bsp_Gpio_intControl(
+        BSP_GPIO_PORT_ID_INT_LIGHT, BSP_GPIO_BIT_MASK_INT_LIGHT, BSP_GPIO_INT_CONTROL_ENABLE);
 
     /* make sure I2C is enabled */
-    bsp_I2c_masterControl( BSP_PLATFORM_I2C_ISL29023, BSP_I2C_CONTROL_ENABLE );
+    bsp_I2c_masterControl(BSP_PLATFORM_I2C_ISL29023, BSP_I2C_CONTROL_ENABLE);
 
     dev_Light_reset();
 
     return;
 }
 
-
 /*===========================================================================*/
-void
-dev_Light_measTriggerAls( dev_Light_MeasCallback_t callback )
+void dev_Light_measTriggerAls(dev_Light_MeasCallback_t callback)
 {
-    dev_Light_measTriggerCommon( callback, DEV_LIGHT_REG_OP_MODE_ONCE_PER_CYCLE_ALS );
+    dev_Light_measTriggerCommon(callback, DEV_LIGHT_REG_OP_MODE_ONCE_PER_CYCLE_ALS);
     return;
 }
 
-
 /*===========================================================================*/
-void
-dev_Light_measTriggerIr( dev_Light_MeasCallback_t callback )
+void dev_Light_measTriggerIr(dev_Light_MeasCallback_t callback)
 {
-    dev_Light_measTriggerCommon( callback, DEV_LIGHT_REG_OP_MODE_ONCE_PER_CYCLE_IR );
+    dev_Light_measTriggerCommon(callback, DEV_LIGHT_REG_OP_MODE_ONCE_PER_CYCLE_IR);
     return;
 }
 #endif

@@ -33,39 +33,33 @@
 #include "bsp_I2c.h"
 #include "dev_Pressure.h"
 
-
 #if defined(BSP_PLATFORM_ENABLE_DEV_PRESSURE_BMP180)
 /*=============================================================================
  *                                   Defines
  *===========================================================================*/
 
 // Configuration defines
-#define DEV_PRESSURE_I2C_ADDR   ((bsp_I2c_Addr_t)0x77)
-#define DEV_PRESSURE_I2C_SPEED  BSP_I2C_SPEED_FAST
+#define DEV_PRESSURE_I2C_ADDR  ((bsp_I2c_Addr_t)0x77)
+#define DEV_PRESSURE_I2C_SPEED BSP_I2C_SPEED_FAST
 
 #define DEV_PRESSURE_INT_PERSIST DEV_PRESSURE_REG_INT_PERSIST_CYCLES_1
 #define DEV_PRESSURE_RANGE       DEV_PRESSURE_REG_RANGE_64000
 #define DEV_PRESSURE_RESOLUTION  DEV_PRESSURE_REG_RESOLUTION_16BIT
 
-#define DEV_PRESSURE_THRESHOLD_LOW_DEFAULT    0x0000
-#define DEV_PRESSURE_THRESHOLD_HIGH_DEFAULT   0x0001
+#define DEV_PRESSURE_THRESHOLD_LOW_DEFAULT  0x0000
+#define DEV_PRESSURE_THRESHOLD_HIGH_DEFAULT 0x0001
 
-
-
-
-#define DEV_PRESSURE_REG_CALIB0       ((bsp_Pressure_RegId_t)0xAA)
-#define DEV_PRESSURE_REG_RESET        ((bsp_Pressure_RegId_t)0xE0)
-#define DEV_PRESSURE_REG_CTRL         ((bsp_Pressure_RegId_t)0xF4)
-#define DEV_PRESSURE_REG_MSB          ((bsp_Pressure_RegId_t)0xF6)
-#define DEV_PRESSURE_REG_LSB          ((bsp_Pressure_RegId_t)0xF7)
-#define DEV_PRESSURE_REG_XLSB         ((bsp_Pressure_RegId_t)0xF8)
+#define DEV_PRESSURE_REG_CALIB0 ((bsp_Pressure_RegId_t)0xAA)
+#define DEV_PRESSURE_REG_RESET  ((bsp_Pressure_RegId_t)0xE0)
+#define DEV_PRESSURE_REG_CTRL   ((bsp_Pressure_RegId_t)0xF4)
+#define DEV_PRESSURE_REG_MSB    ((bsp_Pressure_RegId_t)0xF6)
+#define DEV_PRESSURE_REG_LSB    ((bsp_Pressure_RegId_t)0xF7)
+#define DEV_PRESSURE_REG_XLSB   ((bsp_Pressure_RegId_t)0xF8)
 typedef uint8_t bsp_Pressure_RegId_t;
 
 typedef uint8_t dev_Pressure_RegValue_t;
 
-
-typedef struct BSP_ATTR_PACKED dev_Pressure_CalibInfo_s
-{
+typedef struct BSP_ATTR_PACKED dev_Pressure_CalibInfo_s {
     int16_t  ac1;
     int16_t  ac2;
     int16_t  ac3;
@@ -81,8 +75,7 @@ typedef struct BSP_ATTR_PACKED dev_Pressure_CalibInfo_s
 
 // The User Data parameter for I2C transactions is a callback that this
 // driver uses to chain I2C transactions together
-typedef void (*dev_Pressure_UsrDataCallback_t)( void );
-
+typedef void (*dev_Pressure_UsrDataCallback_t)(void);
 
 /*=============================================================================
  *                                   Globals
@@ -108,11 +101,9 @@ dev_Pressure_CalibInfo_t dev_Pressure_calibration;
 
 /*===========================================================================*/
 // Wrapper callback for all I2C transactions
-static void
-dev_Pressure_i2cTransCallback( bsp_I2c_Status_t status, void* usrData )
+static void dev_Pressure_i2cTransCallback(bsp_I2c_Status_t status, void *usrData)
 {
-    if( usrData != NULL )
-    {
+    if (usrData != NULL) {
         ((dev_Pressure_UsrDataCallback_t)usrData)();
     }
     return;
@@ -120,14 +111,13 @@ dev_Pressure_i2cTransCallback( bsp_I2c_Status_t status, void* usrData )
 
 /*===========================================================================*/
 // Wrapper function to setup the I2C transaction structure and queue it
-static void
-dev_Pressure_i2cTransQueue( void* usrData )
+static void dev_Pressure_i2cTransQueue(void *usrData)
 {
     dev_Pressure_i2cTrans.speed    = DEV_PRESSURE_I2C_SPEED;
     dev_Pressure_i2cTrans.addr     = DEV_PRESSURE_I2C_ADDR;
     dev_Pressure_i2cTrans.callback = dev_Pressure_i2cTransCallback;
     dev_Pressure_i2cTrans.usrData  = usrData;
-    bsp_I2c_masterTransQueue( BSP_PLATFORM_I2C_ISL29023, &dev_Pressure_i2cTrans );
+    bsp_I2c_masterTransQueue(BSP_PLATFORM_I2C_ISL29023, &dev_Pressure_i2cTrans);
     return;
 }
 
@@ -152,9 +142,7 @@ dev_Pressure_i2cTransQueue( void* usrData )
 
 /*===========================================================================*/
 // Wrapper to read 16-bit data from the BMP180.
-static void
-dev_Pressure_i2cRegRead( bsp_Pressure_RegId_t regId,
-                         void*                usrData )
+static void dev_Pressure_i2cRegRead(bsp_Pressure_RegId_t regId, void *usrData)
 {
     dev_Pressure_i2cBuffer[0]     = regId;
     dev_Pressure_i2cBuffer[1]     = 0;
@@ -165,23 +153,21 @@ dev_Pressure_i2cRegRead( bsp_Pressure_RegId_t regId,
     dev_Pressure_i2cTrans.wBuffer = &dev_Pressure_i2cBuffer[0];
     dev_Pressure_i2cTrans.rLen    = 3;
     dev_Pressure_i2cTrans.rBuffer = &dev_Pressure_i2cBuffer[1];
-    dev_Pressure_i2cTransQueue( usrData );
+    dev_Pressure_i2cTransQueue(usrData);
     return;
 }
 
 /*===========================================================================*/
-static void
-dev_Pressure_updateCalib0( void )
+static void dev_Pressure_updateCalib0(void)
 {
     dev_Pressure_calibration.ac1 = ((dev_Pressure_i2cBuffer[1] << 8) | dev_Pressure_i2cBuffer[2]);
     return;
 }
 
 /*===========================================================================*/
-static void
-dev_Pressure_calibrationRead( void )
+static void dev_Pressure_calibrationRead(void)
 {
-    dev_Pressure_i2cRegRead( DEV_PRESSURE_REG_CALIB0, dev_Pressure_updateCalib0 );
+    dev_Pressure_i2cRegRead(DEV_PRESSURE_REG_CALIB0, dev_Pressure_updateCalib0);
     return;
 }
 
@@ -189,23 +175,20 @@ dev_Pressure_calibrationRead( void )
  *                                   Functions
  *===========================================================================*/
 /*===========================================================================*/
-void
-dev_Pressure_init( void )
+void dev_Pressure_init(void)
 {
     dev_Pressure_measCallback = NULL;
 
     /* make sure I2C is enabled */
-    bsp_I2c_masterControl( BSP_PLATFORM_I2C_ISL29023, BSP_I2C_CONTROL_ENABLE );
+    bsp_I2c_masterControl(BSP_PLATFORM_I2C_ISL29023, BSP_I2C_CONTROL_ENABLE);
 
     dev_Pressure_calibrationRead();
 
     return;
 }
 
-
 /*===========================================================================*/
-void
-dev_Pressure_measTrigger( dev_Pressure_MeasCallback_t callback )
+void dev_Pressure_measTrigger(dev_Pressure_MeasCallback_t callback)
 {
     return;
 }

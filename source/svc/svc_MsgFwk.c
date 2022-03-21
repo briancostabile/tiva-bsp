@@ -42,14 +42,13 @@
 /*==============================================================================
  *                                Defines
  *============================================================================*/
- // Max number of message subscriber mappings
- #define SVC_MSGFWK_MAX_BCAST_MAP 15
+// Max number of message subscriber mappings
+#define SVC_MSGFWK_MAX_BCAST_MAP 15
 
 /*==============================================================================
  *                                Types
  *============================================================================*/
-typedef struct BSP_ATTR_PACKED svc_MsgFwk_BcastMap_s
-{
+typedef struct BSP_ATTR_PACKED svc_MsgFwk_BcastMap_s {
     svc_MsgFwk_MsgId_t id;
     svc_EhId_t         eh;
 } svc_MsgFwk_BcastMap_t;
@@ -57,181 +56,159 @@ typedef struct BSP_ATTR_PACKED svc_MsgFwk_BcastMap_s
 /*==============================================================================
  *                                Globals
  *============================================================================*/
-void* svc_MsgFwk_queueTable[SVC_EHID_NUM_EHIDS];
-svc_EhId_t svc_MsgFwk_proxyEh;
+void *                      svc_MsgFwk_queueTable[SVC_EHID_NUM_EHIDS];
+svc_EhId_t                  svc_MsgFwk_proxyEh;
 svc_MsgFwk_LoggerCallback_t svc_MsgFwk_logger;
 
 svc_MsgFwk_BcastMap_t svc_MsgFwk_bcastTable[SVC_MSGFWK_MAX_BCAST_MAP];
-uint8_t svc_MsgFwk_bcastTableIdx = 0;
+uint8_t               svc_MsgFwk_bcastTableIdx = 0;
 
 svc_MsgFwk_Stats_t svc_MsgFwk_stats;
 
 /*============================================================================*/
-void
-svc_MsgFwk_msgEnqueue( svc_EhId_t eh, void* msgPtr )
+void svc_MsgFwk_msgEnqueue(svc_EhId_t eh, void *msgPtr)
 {
-    osapi_Queue_t queue = (eh < SVC_EHID_NUM_EHIDS) ? svc_MsgFwk_queueTable[eh] : svc_MsgFwk_queueTable[svc_MsgFwk_proxyEh];
+    osapi_Queue_t queue = (eh < SVC_EHID_NUM_EHIDS) ? svc_MsgFwk_queueTable[eh]
+                                                    : svc_MsgFwk_queueTable[svc_MsgFwk_proxyEh];
 
     // Increment reference count before sending
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    ((svc_MsgFwk_Hdr_t*)msgPtr)->cnt++;
+    ((svc_MsgFwk_Hdr_t *)msgPtr)->cnt++;
     BSP_MCU_CRITICAL_SECTION_EXIT();
 
-    if( svc_MsgFwk_logger != NULL ) { svc_MsgFwk_logger( msgPtr ); }
+    if (svc_MsgFwk_logger != NULL) {
+        svc_MsgFwk_logger(msgPtr);
+    }
     svc_MsgFwk_stats.numSend++;
-    osapi_Queue_enqueue( queue, &msgPtr );
+    osapi_Queue_enqueue(queue, &msgPtr);
 }
 
 /*============================================================================*/
-svc_MsgFwk_Hdr_t*
-svc_MsgFwk_msgAllocCopy( svc_EhId_t          eh,
-                         svc_MsgFwk_MsgId_t  id,
-                         svc_MsgFwk_MsgLen_t len,
-                         void*               data )
+svc_MsgFwk_Hdr_t *
+svc_MsgFwk_msgAllocCopy(svc_EhId_t eh, svc_MsgFwk_MsgId_t id, svc_MsgFwk_MsgLen_t len, void *data)
 {
-    svc_MsgFwk_Hdr_t* msgPtr = svc_MsgFwk_msgAlloc( eh, id, len );
-    void* dataPtr = (msgPtr + 1);
+    svc_MsgFwk_Hdr_t *msgPtr  = svc_MsgFwk_msgAlloc(eh, id, len);
+    void *            dataPtr = (msgPtr + 1);
 
-    if( len > sizeof(svc_MsgFwk_Hdr_t) )
-    {
-        memcpy( dataPtr, data, (len - sizeof(svc_MsgFwk_Hdr_t)) );
+    if (len > sizeof(svc_MsgFwk_Hdr_t)) {
+        memcpy(dataPtr, data, (len - sizeof(svc_MsgFwk_Hdr_t)));
     }
-    return( msgPtr );
+    return (msgPtr);
 }
-
 
 /*==============================================================================
  *                               Functions
  *============================================================================*/
 /*============================================================================*/
-void*
-svc_MsgFwk_msgAlloc( svc_EhId_t          eh,
-                     svc_MsgFwk_MsgId_t  id,
-                     svc_MsgFwk_MsgLen_t len )
+void *svc_MsgFwk_msgAlloc(svc_EhId_t eh, svc_MsgFwk_MsgId_t id, svc_MsgFwk_MsgLen_t len)
 {
-    BSP_ASSERT( len >= sizeof(svc_MsgFwk_Hdr_t) );
-    svc_MsgFwk_SysData_t* sysDataPtr = osapi_Memory_alloc( len + sizeof(svc_MsgFwk_SysData_t) );
-    svc_MsgFwk_Hdr_t* msgPtr = (svc_MsgFwk_Hdr_t*)(sysDataPtr + 1);
-    if( msgPtr != NULL )
-    {
-        msgPtr->eh = eh;
-        msgPtr->id = id;
-        msgPtr->len = len;
+    BSP_ASSERT(len >= sizeof(svc_MsgFwk_Hdr_t));
+    svc_MsgFwk_SysData_t *sysDataPtr = osapi_Memory_alloc(len + sizeof(svc_MsgFwk_SysData_t));
+    svc_MsgFwk_Hdr_t *    msgPtr     = (svc_MsgFwk_Hdr_t *)(sysDataPtr + 1);
+    if (msgPtr != NULL) {
+        msgPtr->eh    = eh;
+        msgPtr->id    = id;
+        msgPtr->len   = len;
         msgPtr->alloc = true;
-        msgPtr->cnt = 0;
+        msgPtr->cnt   = 0;
     }
     svc_MsgFwk_stats.numAlloc++;
-    BSP_ASSERT( msgPtr != NULL );
+    BSP_ASSERT(msgPtr != NULL);
     return msgPtr;
 }
 
 /*============================================================================*/
-void
-svc_MsgFwk_msgSend( void* msgPtr )
+void svc_MsgFwk_msgSend(void *msgPtr)
 {
-    BSP_ASSERT( msgPtr != NULL );
-    svc_EhId_t dstEh = (SVC_MSGFWK_MSG_ID_TYPE_GET( ((svc_MsgFwk_Hdr_t*)msgPtr)->id ) == SVC_MSGFWK_MSG_TYPE_CNF_IND) ?
-                                                        ((svc_MsgFwk_Hdr_t*)msgPtr)->eh :
-                                                        SVC_MSGFWK_MSG_ID_EH_GET( ((svc_MsgFwk_Hdr_t*)msgPtr)->id );
+    BSP_ASSERT(msgPtr != NULL);
+    svc_EhId_t dstEh = (SVC_MSGFWK_MSG_ID_TYPE_GET(((svc_MsgFwk_Hdr_t *)msgPtr)->id) ==
+                        SVC_MSGFWK_MSG_TYPE_CNF_IND)
+        ? ((svc_MsgFwk_Hdr_t *)msgPtr)->eh
+        : SVC_MSGFWK_MSG_ID_EH_GET(((svc_MsgFwk_Hdr_t *)msgPtr)->id);
 
-    svc_MsgFwk_msgEnqueue( dstEh, msgPtr );
+    svc_MsgFwk_msgEnqueue(dstEh, msgPtr);
 }
 
 /*============================================================================*/
-void
-svc_MsgFwk_msgAllocAndSend( svc_EhId_t          eh,
-                            svc_MsgFwk_MsgId_t  id,
-                            svc_MsgFwk_MsgLen_t len,
-                            void*               data )
+void svc_MsgFwk_msgAllocAndSend(
+    svc_EhId_t          eh,
+    svc_MsgFwk_MsgId_t  id,
+    svc_MsgFwk_MsgLen_t len,
+    void *              data)
 {
-    svc_MsgFwk_msgSend( svc_MsgFwk_msgAllocCopy( eh, id, len, data ) );
+    svc_MsgFwk_msgSend(svc_MsgFwk_msgAllocCopy(eh, id, len, data));
 }
 
 /*============================================================================*/
-void
-svc_MsgFwk_msgBroadcast( void* msgPtr )
+void svc_MsgFwk_msgBroadcast(void *msgPtr)
 {
-    BSP_ASSERT( msgPtr != NULL );
-    if( msgPtr != NULL )
-    {
+    BSP_ASSERT(msgPtr != NULL);
+    if (msgPtr != NULL) {
         BSP_MCU_CRITICAL_SECTION_ENTER();
-        ((svc_MsgFwk_Hdr_t*)msgPtr)->cnt++;
+        ((svc_MsgFwk_Hdr_t *)msgPtr)->cnt++;
         BSP_MCU_CRITICAL_SECTION_EXIT();
 
-        for( int idx=0; idx<DIM(svc_MsgFwk_bcastTable); idx++ )
-        {
-            if( svc_MsgFwk_bcastTable[idx].id == ((svc_MsgFwk_Hdr_t*)msgPtr)->id )
-            {
+        for (int idx = 0; idx < DIM(svc_MsgFwk_bcastTable); idx++) {
+            if (svc_MsgFwk_bcastTable[idx].id == ((svc_MsgFwk_Hdr_t *)msgPtr)->id) {
                 svc_MsgFwk_stats.numBcast++;
-                svc_MsgFwk_msgEnqueue( svc_MsgFwk_bcastTable[idx].eh, msgPtr );
+                svc_MsgFwk_msgEnqueue(svc_MsgFwk_bcastTable[idx].eh, msgPtr);
             }
         }
 
         // If message wasn't sent anywhere then the memory will be freed here
-        svc_MsgFwk_msgRelease( msgPtr );
+        svc_MsgFwk_msgRelease(msgPtr);
     }
 }
 
 /*============================================================================*/
-void
-svc_MsgFwk_msgAllocAndBroadcast( svc_MsgFwk_MsgId_t  id,
-                                 svc_MsgFwk_MsgLen_t len,
-                                 void*               data )
+void svc_MsgFwk_msgAllocAndBroadcast(svc_MsgFwk_MsgId_t id, svc_MsgFwk_MsgLen_t len, void *data)
 {
-    svc_MsgFwk_msgBroadcast( svc_MsgFwk_msgAllocCopy( SVC_EHID_BROADCAST, id, len, data ) );
+    svc_MsgFwk_msgBroadcast(svc_MsgFwk_msgAllocCopy(SVC_EHID_BROADCAST, id, len, data));
 }
 
 /*============================================================================*/
-void
-svc_MsgFwk_msgZeroCopy( void* msgPtr )
+void svc_MsgFwk_msgZeroCopy(void *msgPtr)
 {
-    BSP_ASSERT( msgPtr != NULL );
+    BSP_ASSERT(msgPtr != NULL);
     // Increment reference count before sending
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    ((svc_MsgFwk_Hdr_t*)msgPtr)->cnt++;
+    ((svc_MsgFwk_Hdr_t *)msgPtr)->cnt++;
     BSP_MCU_CRITICAL_SECTION_EXIT();
 }
 
 /*============================================================================*/
-void
-svc_MsgFwk_msgRelease( void* msgPtr )
+void svc_MsgFwk_msgRelease(void *msgPtr)
 {
-    BSP_ASSERT( msgPtr != NULL );
+    BSP_ASSERT(msgPtr != NULL);
     BSP_MCU_CRITICAL_SECTION_ENTER();
-    ((svc_MsgFwk_Hdr_t*)msgPtr)->cnt--;
+    ((svc_MsgFwk_Hdr_t *)msgPtr)->cnt--;
     BSP_MCU_CRITICAL_SECTION_EXIT();
 
-    if( (((svc_MsgFwk_Hdr_t*)msgPtr)->alloc == true) &&
-        (((svc_MsgFwk_Hdr_t*)msgPtr)->cnt == 0) )
-    {
+    if ((((svc_MsgFwk_Hdr_t *)msgPtr)->alloc == true) && (((svc_MsgFwk_Hdr_t *)msgPtr)->cnt == 0)) {
         svc_MsgFwk_stats.numFree++;
-        svc_MsgFwk_SysData_t* sysDataPtr = (svc_MsgFwk_SysData_t*)((uint8_t*)msgPtr - sizeof(svc_MsgFwk_SysData_t));
-        osapi_Memory_free( sysDataPtr );
+        svc_MsgFwk_SysData_t *sysDataPtr =
+            (svc_MsgFwk_SysData_t *)((uint8_t *)msgPtr - sizeof(svc_MsgFwk_SysData_t));
+        osapi_Memory_free(sysDataPtr);
     }
 }
 
 /*============================================================================*/
-void
-svc_MsgFwk_registerMsg( svc_EhId_t         eh,
-                        svc_MsgFwk_MsgId_t id )
+void svc_MsgFwk_registerMsg(svc_EhId_t eh, svc_MsgFwk_MsgId_t id)
 {
     BSP_MCU_CRITICAL_SECTION_ENTER();
     bool saveMapping = true;
 
     // Make sure message isn't already registered to go to underlying queue
-    for( size_t i=0; i<svc_MsgFwk_bcastTableIdx; i++ )
-    {
-        if( (id == svc_MsgFwk_bcastTable[i].id) &&
-            (svc_MsgFwk_queueTable[eh] == svc_MsgFwk_queueTable[svc_MsgFwk_bcastTable[i].eh]) )
-        {
+    for (size_t i = 0; i < svc_MsgFwk_bcastTableIdx; i++) {
+        if ((id == svc_MsgFwk_bcastTable[i].id) &&
+            (svc_MsgFwk_queueTable[eh] == svc_MsgFwk_queueTable[svc_MsgFwk_bcastTable[i].eh])) {
             saveMapping = false;
             break;
         }
     }
 
-    if( saveMapping == true )
-    {
-        BSP_ASSERT( svc_MsgFwk_bcastTableIdx < DIM(svc_MsgFwk_bcastTable) );
+    if (saveMapping == true) {
+        BSP_ASSERT(svc_MsgFwk_bcastTableIdx < DIM(svc_MsgFwk_bcastTable));
         svc_MsgFwk_bcastTable[svc_MsgFwk_bcastTableIdx].id = id;
         svc_MsgFwk_bcastTable[svc_MsgFwk_bcastTableIdx].eh = eh;
         svc_MsgFwk_bcastTableIdx++;
@@ -244,19 +221,16 @@ svc_MsgFwk_registerMsg( svc_EhId_t         eh,
 }
 
 /*============================================================================*/
-void
-svc_MsgFwk_registerEh( svc_EhId_t    eh,
-                       osapi_Queue_t queue )
+void svc_MsgFwk_registerEh(svc_EhId_t eh, osapi_Queue_t queue)
 {
     BSP_MCU_CRITICAL_SECTION_ENTER();
     svc_MsgFwk_queueTable[eh] = queue;
-    svc_MsgFwk_stats.numEhId = DIM(svc_MsgFwk_queueTable);
+    svc_MsgFwk_stats.numEhId  = DIM(svc_MsgFwk_queueTable);
     BSP_MCU_CRITICAL_SECTION_EXIT();
 }
 
 /*============================================================================*/
-void
-svc_MsgFwk_registerProxyEh( svc_EhId_t eh )
+void svc_MsgFwk_registerProxyEh(svc_EhId_t eh)
 {
     BSP_MCU_CRITICAL_SECTION_ENTER();
     svc_MsgFwk_proxyEh = eh;
@@ -264,15 +238,13 @@ svc_MsgFwk_registerProxyEh( svc_EhId_t eh )
 }
 
 /*============================================================================*/
-svc_EhId_t
-svc_MsgFwk_getProxyEh( void )
+svc_EhId_t svc_MsgFwk_getProxyEh(void)
 {
-    return( svc_MsgFwk_proxyEh );
+    return (svc_MsgFwk_proxyEh);
 }
 
 /*============================================================================*/
-void
-svc_MsgFwk_registerLogger( svc_MsgFwk_LoggerCallback_t cb )
+void svc_MsgFwk_registerLogger(svc_MsgFwk_LoggerCallback_t cb)
 {
     BSP_MCU_CRITICAL_SECTION_ENTER();
     svc_MsgFwk_logger = cb;
@@ -280,8 +252,7 @@ svc_MsgFwk_registerLogger( svc_MsgFwk_LoggerCallback_t cb )
 }
 
 /*============================================================================*/
-svc_MsgFwk_Stats_t*
-svc_MsgFwk_getStats( void )
+svc_MsgFwk_Stats_t *svc_MsgFwk_getStats(void)
 {
-    return( &svc_MsgFwk_stats );
+    return (&svc_MsgFwk_stats);
 }

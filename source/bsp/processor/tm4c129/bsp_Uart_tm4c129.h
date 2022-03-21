@@ -67,7 +67,7 @@ typedef struct {
     bsp_Gpio_PortId_t    portId;
     bsp_Gpio_BitMask_t   mask;
     bsp_Gpio_AltFuncId_t altFuncId;
-}bsp_Uart_PinInfo_t;
+} bsp_Uart_PinInfo_t;
 
 /*============================================================================*/
 /**
@@ -78,40 +78,39 @@ typedef struct {
     uint32_t                  sysCtrlAddr;
     uint32_t                  intId;
     uint8_t                   rxPinInfoTableLen;
-    const bsp_Uart_PinInfo_t* rxPinInfoTable;
+    const bsp_Uart_PinInfo_t *rxPinInfoTable;
     uint8_t                   txPinInfoTableLen;
-    const bsp_Uart_PinInfo_t* txPinInfoTable;
+    const bsp_Uart_PinInfo_t *txPinInfoTable;
     uint8_t                   rtsPinInfoTableLen;
-    const bsp_Uart_PinInfo_t* rtsPinInfoTable;
+    const bsp_Uart_PinInfo_t *rtsPinInfoTable;
     uint8_t                   ctsPinInfoTableLen;
-    const bsp_Uart_PinInfo_t* ctsPinInfoTable;
+    const bsp_Uart_PinInfo_t *ctsPinInfoTable;
     uint8_t                   riPinInfoTableLen;
-    const bsp_Uart_PinInfo_t* riPinInfoTable;
+    const bsp_Uart_PinInfo_t *riPinInfoTable;
     uint8_t                   dcdPinInfoTableLen;
-    const bsp_Uart_PinInfo_t* dcdPinInfoTable;
+    const bsp_Uart_PinInfo_t *dcdPinInfoTable;
     uint8_t                   dsrPinInfoTableLen;
-    const bsp_Uart_PinInfo_t* dsrPinInfoTable;
+    const bsp_Uart_PinInfo_t *dsrPinInfoTable;
     uint8_t                   dtrPinInfoTableLen;
-    const bsp_Uart_PinInfo_t* dtrPinInfoTable;
-}bsp_Uart_StaticInfo_t;
-
+    const bsp_Uart_PinInfo_t *dtrPinInfoTable;
+} bsp_Uart_StaticInfo_t;
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void bsp_Uart_interruptHandler0( void );
-void bsp_Uart_interruptHandler1( void );
-void bsp_Uart_interruptHandler2( void );
-void bsp_Uart_interruptHandler3( void );
-void bsp_Uart_interruptHandler4( void );
-void bsp_Uart_interruptHandler5( void );
-void bsp_Uart_interruptHandler6( void );
-void bsp_Uart_interruptHandler7( void );
+void bsp_Uart_interruptHandler0(void);
+void bsp_Uart_interruptHandler1(void);
+void bsp_Uart_interruptHandler2(void);
+void bsp_Uart_interruptHandler3(void);
+void bsp_Uart_interruptHandler4(void);
+void bsp_Uart_interruptHandler5(void);
+void bsp_Uart_interruptHandler6(void);
+void bsp_Uart_interruptHandler7(void);
 
 /*==============================================================================
  *                                Globals
  *============================================================================*/
 
 /*============================================================================*/
-extern const bsp_Uart_StaticInfo_t bsp_Uart_staticInfoTable[ BSP_UART_PLATFORM_NUM_UARTS ];
+extern const bsp_Uart_StaticInfo_t bsp_Uart_staticInfoTable[BSP_UART_PLATFORM_NUM_UARTS];

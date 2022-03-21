@@ -37,31 +37,27 @@
 /*==============================================================================
  *                              Types
  *============================================================================*/
- #define BSP_CRC_32P04C11DB7_SEED 0x5A5A5A5A
+#define BSP_CRC_32P04C11DB7_SEED 0x5A5A5A5A
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Crc_init( void )
+void bsp_Crc_init(void)
 {
-    MAP_SysCtlPeripheralEnable( SYSCTL_PERIPH_CCM0 );
-    while( !MAP_SysCtlPeripheralReady(SYSCTL_PERIPH_CCM0) );
+    MAP_SysCtlPeripheralEnable(SYSCTL_PERIPH_CCM0);
+    while (!MAP_SysCtlPeripheralReady(SYSCTL_PERIPH_CCM0))
+        ;
 
     return;
 }
 
-
 /*============================================================================*/
-uint32_t
-bsp_Crc_32p04C11DB7( uint32_t* dataPtr,
-                     size_t    len32 )
+uint32_t bsp_Crc_32p04C11DB7(uint32_t *dataPtr, size_t len32)
 {
-    MAP_CRCConfigSet( CCM0_BASE,
-                      (CRC_CFG_INIT_SEED | CRC_CFG_TYPE_P4C11DB7 | CRC_CFG_SIZE_32BIT) );
+    MAP_CRCConfigSet(CCM0_BASE, (CRC_CFG_INIT_SEED | CRC_CFG_TYPE_P4C11DB7 | CRC_CFG_SIZE_32BIT));
 
-    MAP_CRCSeedSet( CCM0_BASE, BSP_CRC_32P04C11DB7_SEED );
+    MAP_CRCSeedSet(CCM0_BASE, BSP_CRC_32P04C11DB7_SEED);
 
-    return( MAP_CRCDataProcess(CCM0_BASE, dataPtr, len32, false) );
+    return (MAP_CRCDataProcess(CCM0_BASE, dataPtr, len32, false));
 }

@@ -34,23 +34,21 @@
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Trace_init( void )
+void bsp_Trace_init(void)
 {
     uint8_t i;
-
-    for( i=0; i<DIM(bsp_Trace_ioInfoTable); i++ )
-    {
+    size_t  len = bsp_Trace_ioInfoTableLen();
+    for (i = 0; i < len; i++) {
         /* For each port configure the test points as output 2ma drive
          * and set each output to low
          */
-        bsp_Gpio_configOutput( bsp_Trace_ioInfoTable[i].portId,
-                               bsp_Trace_ioInfoTable[i].mask,
-                               FALSE, BSP_GPIO_DRIVE_2MA );
+        bsp_Gpio_configOutput(
+            bsp_Trace_ioInfoTable[i].portId,
+            bsp_Trace_ioInfoTable[i].mask,
+            FALSE,
+            BSP_GPIO_DRIVE_2MA);
 
-        bsp_Gpio_write( bsp_Trace_ioInfoTable[i].portId,
-                        bsp_Trace_ioInfoTable[i].mask,
-                        0 );
+        bsp_Gpio_write(bsp_Trace_ioInfoTable[i].portId, bsp_Trace_ioInfoTable[i].mask, 0);
     }
 
     return;

@@ -26,7 +26,7 @@
  */
 #pragma once
 
-#include BUILD_INCLUDE_STRING( bsp_Interrupt_, PLATFORM_CORE )
+#include BUILD_INCLUDE_STRING(bsp_Interrupt_, PLATFORM_CORE)
 
 /*==============================================================================
  *                                Macros
@@ -36,27 +36,26 @@
  * specific compile time selected GROUP_MODE
  */
 #if (BSP_INTERRUPT_PRIORITY_GROUP_MODE == BSP_INTERRUPT_PRIORITY_MODE_GRP8_SUB1)
-#define BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( _groupName, _subGroupName ) BSP_INTERRUPT_PRIORITY_GROUP_##_groupName
+#define BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP(_groupName, _subGroupName) \
+    BSP_INTERRUPT_PRIORITY_GROUP_##_groupName
 #elif (BSP_INTERRUPT_PRIORITY_GROUP_MODE == BSP_INTERRUPT_PRIORITY_MODE_GRP4_SUB2)
-#define BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( _groupName, _subGroupName ) (((BSP_INTERRUPT_PRIORITY_GROUP_##_groupName) << 1) | (BSP_INTERRUPT_PRIORITY_SUBGROUP_##_subGroupName))
+#define BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP(_groupName, _subGroupName) \
+    (((BSP_INTERRUPT_PRIORITY_GROUP_##_groupName) << 1) |                \
+     (BSP_INTERRUPT_PRIORITY_SUBGROUP_##_subGroupName))
 #elif (BSP_INTERRUPT_PRIORITY_GROUP_MODE == BSP_INTERRUPT_PRIORITY_MODE_GRP2_SUB4)
-#define BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( _groupName, _subGroupName ) (((BSP_INTERRUPT_PRIORITY_GROUP_##_groupName) << 2) | (BSP_INTERRUPT_PRIORITY_SUBGROUP_##_subGroupName))
+#define BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP(_groupName, _subGroupName) \
+    (((BSP_INTERRUPT_PRIORITY_GROUP_##_groupName) << 2) |                \
+     (BSP_INTERRUPT_PRIORITY_SUBGROUP_##_subGroupName))
 #elif (BSP_INTERRUPT_PRIORITY_GROUP_MODE == BSP_INTERRUPT_PRIORITY_MODE_GRP1_SUB8)
-#define BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP( _groupName, _subGroupName ) BSP_INTERRUPT_PRIORITY_SUBGROUP_##_subGroupName
+#define BSP_INTERRUPT_PRIORITY_GROUP_SUBGROUP(_groupName, _subGroupName) \
+    BSP_INTERRUPT_PRIORITY_SUBGROUP_##_subGroupName
 #endif
-
 
 /*==============================================================================
  * Type for the vector handler
  */
-#define BSP_INTERRUPT_BUILD_PRI_REG( _a, _b, _c, _d ) \
-(                                                     \
-    (uint32_t)(((uint32_t)(_d) << 29) |               \
-               ((uint32_t)(_c) << 21) |               \
-               ((uint32_t)(_b) << 13) |               \
-               ((uint32_t)(_a) << 5))                 \
-)
-
+#define BSP_INTERRUPT_BUILD_PRI_REG(_a, _b, _c, _d) \
+    ((uint32_t)(((uint32_t)(_d) << 29) | ((uint32_t)(_c) << 21) | ((uint32_t)(_b) << 13) | ((uint32_t)(_a) << 5)))
 
 /*==============================================================================
  *                                Types
@@ -64,7 +63,7 @@
 /*==============================================================================
  * Type for the vector handler
  */
-typedef void (*bsp_Interrupt_VectorHandler_t)( void );
+typedef void (*bsp_Interrupt_VectorHandler_t)(void);
 
 /*==============================================================================
  * Type for the interrupt priority mode
@@ -96,29 +95,24 @@ typedef uint8_t bsp_Interrupt_Id_t;
 /*==============================================================================
  * Initialize the interrupt driver
  */
-void
-bsp_Interrupt_init( void );
+void bsp_Interrupt_init(void);
 
 /*==============================================================================
  * Enable an interrupt in the NVIC
  */
-bool_t
-bsp_Interrupt_enable( bsp_Interrupt_Id_t intId );
+bool_t bsp_Interrupt_enable(bsp_Interrupt_Id_t intId);
 
 /*==============================================================================
  * Disable an interrupt in the NVIC
  */
-bool_t
-bsp_Interrupt_disable( bsp_Interrupt_Id_t intId );
+bool_t bsp_Interrupt_disable(bsp_Interrupt_Id_t intId);
 
 /*==============================================================================
  * Clear a pending interrupt in the NVIC
  */
-void
-bsp_Interrupt_clearPending( bsp_Interrupt_Id_t intId );
+void bsp_Interrupt_clearPending(bsp_Interrupt_Id_t intId);
 
 /*==============================================================================
  * Get the active interrupt 0 is returned if not running in an interrupt
  */
-bsp_Interrupt_Id_t
-bsp_Interrupt_activeId( void );
+bsp_Interrupt_Id_t bsp_Interrupt_activeId(void);

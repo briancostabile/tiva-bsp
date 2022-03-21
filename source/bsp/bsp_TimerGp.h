@@ -28,7 +28,7 @@
 
 #include "bsp_Platform.h"
 
-#include BUILD_INCLUDE_STRING( bsp_TimerGp_, PLATFORM_CORE )
+#include BUILD_INCLUDE_STRING(bsp_TimerGp_, PLATFORM_CORE)
 
 /*==============================================================================
  *                             Defines
@@ -55,30 +55,27 @@ typedef uint8_t bsp_TimerGp_Type_t;
 typedef uint8_t bsp_TimerGp_ClkSrc_t;
 
 /*============================================================================*/
-#define BSP_TIMERGP_DMA_CTRL_NONE        0x00000000
-#define BSP_TIMERGP_DMA_CTRL_TIMEOUT     0x00000001
-#define BSP_TIMERGP_DMA_CTRL_CAP_MATCH   0x00000002
-#define BSP_TIMERGP_DMA_CTRL_CAP_EVENT   0x00000004
-#define BSP_TIMERGP_DMA_CTRL_CAP_RTC     0x00000008
-#define BSP_TIMERGP_DMA_CTRL_MODE_MATCH  0x00000010
+#define BSP_TIMERGP_DMA_CTRL_NONE       0x00000000
+#define BSP_TIMERGP_DMA_CTRL_TIMEOUT    0x00000001
+#define BSP_TIMERGP_DMA_CTRL_CAP_MATCH  0x00000002
+#define BSP_TIMERGP_DMA_CTRL_CAP_EVENT  0x00000004
+#define BSP_TIMERGP_DMA_CTRL_CAP_RTC    0x00000008
+#define BSP_TIMERGP_DMA_CTRL_MODE_MATCH 0x00000010
 typedef uint8_t bsp_TimerGp_DmaCtrl_t;
-
 
 /*==============================================================================
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_TimerGp_init( void );
+void bsp_TimerGp_init(void);
 
 /*============================================================================*/
-void
-bsp_TimerGp_startCountdown( bsp_TimerGp_TimerId_t        timerId,
-                            bsp_TimerGp_Type_t           type,
-                            bsp_TimerGp_DmaCtrl_t        dmaCtrl,
-                            bsp_TimerGp_Timeout_t        timeout, //in microseconds
-                            bsp_TimerGp_TimeoutHandler_t callback );
+void bsp_TimerGp_startCountdown(
+    bsp_TimerGp_TimerId_t        timerId,
+    bsp_TimerGp_Type_t           type,
+    bsp_TimerGp_DmaCtrl_t        dmaCtrl,
+    bsp_TimerGp_Timeout_t        timeout,    // in microseconds
+    bsp_TimerGp_TimeoutHandler_t callback);
 
 /*============================================================================*/
-void
-bsp_TimerGp_stop( bsp_TimerGp_TimerId_t timerId );
+void bsp_TimerGp_stop(bsp_TimerGp_TimerId_t timerId);

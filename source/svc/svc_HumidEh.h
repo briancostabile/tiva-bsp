@@ -38,35 +38,30 @@
  *============================================================================*/
 /*============================================================================*/
 // Event handler message IDs
-#define SVC_HUMIDEH_MEAS_HUMIDITY_IND    SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_HUMID, 0 )
-#define SVC_HUMIDEH_MEAS_TEMPERATURE_IND SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_HUMID, 1 )
-#define SVC_HUMIDEH_MEAS_COMBO_IND       SVC_MSGFWK_MSG_ID_BUILD_IND( SVC_EHID_HUMID, 2 )
-
+#define SVC_HUMIDEH_MEAS_HUMIDITY_IND    SVC_MSGFWK_MSG_ID_BUILD_IND(SVC_EHID_HUMID, 0)
+#define SVC_HUMIDEH_MEAS_TEMPERATURE_IND SVC_MSGFWK_MSG_ID_BUILD_IND(SVC_EHID_HUMID, 1)
+#define SVC_HUMIDEH_MEAS_COMBO_IND       SVC_MSGFWK_MSG_ID_BUILD_IND(SVC_EHID_HUMID, 2)
 
 /*==============================================================================
  *                                Types
  *============================================================================*/
 /*============================================================================*/
 // Event handler message structures
-typedef struct BSP_ATTR_PACKED svc_HumidEh_MeasHumidityInd_s
-{
+typedef struct BSP_ATTR_PACKED svc_HumidEh_MeasHumidityInd_s {
     svc_MsgFwk_Hdr_t         hdr;
     dev_Humid_MeasHumidity_t humidity;
 } svc_HumidEh_MeasHumidityInd_t;
 
-typedef struct BSP_ATTR_PACKED svc_HumidEh_MeasTemperatureInd_s
-{
+typedef struct BSP_ATTR_PACKED svc_HumidEh_MeasTemperatureInd_s {
     svc_MsgFwk_Hdr_t            hdr;
     dev_Humid_MeasTemperature_t temperature;
 } svc_HumidEh_MeasTemperatureInd_t;
 
-typedef struct BSP_ATTR_PACKED svc_HumidEh_MeasComboInd_s
-{
+typedef struct BSP_ATTR_PACKED svc_HumidEh_MeasComboInd_s {
     svc_MsgFwk_Hdr_t            hdr;
     dev_Humid_MeasHumidity_t    humidity;
     dev_Humid_MeasTemperature_t temperature;
 } svc_HumidEh_MeasComboInd_t;
-
 
 /*==============================================================================
  *                                Globals

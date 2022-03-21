@@ -33,17 +33,10 @@
  *                            Public Functions
  *============================================================================*/
 /*============================================================================*/
-void
-bsp_Eeprom_init( void );
+void bsp_Eeprom_init(void);
 
 /*============================================================================*/
-void
-bsp_Eeprom_read( uint32_t* dataPtr,
-                 uint32_t  eepromAddr,
-                 size_t    len32 );
+void bsp_Eeprom_read(uint32_t *dataPtr, uint32_t eepromAddr, size_t len32);
 
 /*============================================================================*/
-void
-bsp_Eeprom_write( uint32_t  eepromAddr,
-                  uint32_t* dataPtr,
-                  size_t    len32 );
+void bsp_Eeprom_write(uint32_t eepromAddr, uint32_t *dataPtr, size_t len32);

@@ -32,16 +32,12 @@
 #include "tst_Led.h"
 #include "tst_Usb.h"
 
-
 /*==============================================================================
  *                                 Globals
  *============================================================================*/
-const tst_TableElement_t svc_CmdEh_textMenu[] =
-{
-    TST_SUBMENU_ELEMENT( "mem", "Memory commands", tst_Mem_menu ),
-    TST_SUBMENU_ELEMENT( "sys", "System commands", tst_Sys_menu ),
-    TST_SUBMENU_ELEMENT( "usb", "USB commands", tst_Usb_menu ),
-    TST_SUBMENU_ELEMENT( "led", "LED commands", tst_Led_menu ),
-    TST_END_ELEMENT
-};
-
+const tst_TableElement_t svc_CmdEh_textMenu[] = {
+    TST_SUBMENU_ELEMENT("mem", "Memory commands", tst_Mem_menu),
+    TST_SUBMENU_ELEMENT("sys", "System commands", tst_Sys_menu),
+    TST_SUBMENU_ELEMENT("usb", "USB commands", tst_Usb_menu),
+    TST_SUBMENU_ELEMENT("led", "LED commands", tst_Led_menu),
+    TST_END_ELEMENT};

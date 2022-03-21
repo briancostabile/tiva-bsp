@@ -34,19 +34,16 @@
 // Signed Fixed point 24.8 values
 typedef uint32_t dev_Light_MeasLight_t;
 
-typedef void (*dev_Light_MeasCallback_t)( dev_Light_MeasLight_t light );
+typedef void (*dev_Light_MeasCallback_t)(dev_Light_MeasLight_t light);
 
 /*==============================================================================
  *                               Prototypes
  *============================================================================*/
 /*===========================================================================*/
-void
-dev_Light_init( void );
+void dev_Light_init(void);
 
 /*===========================================================================*/
-void
-dev_Light_measTriggerAls( dev_Light_MeasCallback_t callback );
+void dev_Light_measTriggerAls(dev_Light_MeasCallback_t callback);
 
 /*===========================================================================*/
-void
-dev_Light_measTriggerIr( dev_Light_MeasCallback_t callback );
+void dev_Light_measTriggerIr(dev_Light_MeasCallback_t callback);
